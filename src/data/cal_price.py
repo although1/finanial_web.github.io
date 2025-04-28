@@ -4,7 +4,7 @@ import json
 # 配置参数
 import os
 FILE_PATH = os.path.join(os.path.dirname(__file__), "personal_page.xlsx")
-TARGET_DATE = "2025-04-27"
+TARGET_DATE = "2025-04-28"
 OUTPUT_JSON = os.path.join(os.path.dirname(__file__), f"app_totals_{TARGET_DATE}.json")
 
 def load_sheets(file_path):
