@@ -12,8 +12,10 @@ type FinancialData = {
   [key: string]: {
     detail: { [category: string]: number };
     total: number;
+    total_profit?: number;
   };
   grand_total: number;
+  grand_total_profit?: number;
 };
 
 // 1. 读取 JSON 文件目录
@@ -43,11 +45,13 @@ export const mockData: { data: FinancialData; date: string }[] = [
     data: {
       ${Object.entries(item.data).map(([key, value]) => {
         if (key === 'grand_total') return `"${key}": ${value}`;
+        if (key === 'grand_total_profit') return `"${key}": ${value}`;
         return `"${key}": {
           "detail": {
             ${Object.entries((value as any).detail).map(([k, v]) => `"${k}": ${v}`).join(',\n            ')}
           },
-          "total": ${(value as any).total}
+          "total": ${(value as any).total}${(value as any).total_profit !== undefined ? `,
+          "total_profit": ${(value as any).total_profit}` : ''}
         }`;
       }).join(',\n      ')}
     }

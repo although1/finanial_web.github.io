@@ -17,6 +17,7 @@ export const processFinancialData = (
   const timeSeriesData: TimeSeriesPoint[] = sortedData.map((item) => ({
     date: item.date,
     value: item.data.grand_total as number,
+    profit: item.data.grand_total_profit as number,
   }));
 
   // Get the latest data for distribution charts

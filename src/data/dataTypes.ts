@@ -7,16 +7,20 @@ export interface DetailData {
 export interface InstitutionData {
   detail: DetailData;
   total: number;
+  total_profit?: number;
 }
 
-export interface FinancialData {
-  [institution: string]: InstitutionData | number;
+type InstitutionKeys = string;
+
+export type FinancialData = Record<InstitutionKeys, InstitutionData> & {
   grand_total: number;
+  grand_total_profit?: number;
 }
 
 export interface TimeSeriesPoint {
   date: string;
   value: number;
+  profit: number;
 }
 
 export interface CategoryData {
