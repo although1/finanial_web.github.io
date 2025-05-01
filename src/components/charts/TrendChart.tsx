@@ -39,8 +39,8 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
             formatter: (value: string) => {
               // Format date for better readability
               const date = new Date(value);
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
+              return date.toLocaleDateString('zh-CN', {
+                month: 'numeric',
                 day: 'numeric',
               });
             },

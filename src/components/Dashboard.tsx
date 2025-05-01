@@ -50,15 +50,15 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
-          title="Total Assets Over Time" 
-          description="Track the changes in your total financial assets over time."
+          title="总资产趋势" 
+          description="追踪您总资产随时间的变化趋势。"
         >
           <TrendChart data={data.timeSeriesData} />
         </ChartContainer>
         
         <ChartContainer 
-          title="Latest Asset Distribution" 
-          description="Breakdown of your financial assets by institution for the most recent date."
+          title="最新资产分布" 
+          description="按机构分类展示您最新日期的金融资产分布情况。"
         >
           <DistributionPieChart data={data.latestData} />
         </ChartContainer>
@@ -66,15 +66,15 @@ const Dashboard: React.FC = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
-          title="Month-over-Month Changes" 
-          description="Visualize how your total assets changed over time with detailed breakdowns."
+          title="月度变化" 
+          description="可视化展示您总资产随时间变化的详细情况。"
         >
           <WaterfallChart data={data.timeSeriesData} />
         </ChartContainer>
 
         <ChartContainer 
-          title="USD Investment Daily Changes" 
-          description="Track daily changes in USD investment amounts across all institutions."
+          title="美元投资每日变化" 
+          description="追踪所有机构美元投资金额的每日变化。"
         >
           <USDInvestmentChart data={mockData} />
         </ChartContainer>
@@ -82,15 +82,15 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
-          title="Asset Hierarchy View" 
-          description="Hierarchical visualization of your entire investment portfolio."
+          title="资产层级视图" 
+          description="您整个投资组合的层级可视化展示。"
         >
           <TreemapChart data={data.latestData} />
         </ChartContainer>
 
         <ChartContainer 
-          title="Detailed Category Breakdown" 
-          description="Detailed view of asset categories within each financial institution."
+          title="详细类别分析" 
+          description="展示每个金融机构内部资产类别的详细情况。"
         >
           <DetailedBarChart data={data.latestData} />
         </ChartContainer>

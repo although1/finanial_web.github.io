@@ -52,9 +52,9 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
           axisLabel: {
             formatter: (value: string) => {
               const date = new Date(value);
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
+              return date.toLocaleDateString('zh-CN', {
+                month: 'numeric',
+                day: 'numeric',
               });
             },
             interval: 0,
