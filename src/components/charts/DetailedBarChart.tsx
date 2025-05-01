@@ -55,11 +55,11 @@ export const DetailedBarChart: React.FC<DetailedBarChartProps> = ({ data }) => {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             });
-            result += `${param.seriesName}: ￥${value}<br/>`;
+            result += `${param.seriesName}: ¥${value}<br/>`;
             total += param.value;
           }
         });
-        result += `总计: ￥${total.toLocaleString('zh-CN', {
+        result += `总计: ¥${total.toLocaleString('zh-CN', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`;
@@ -82,12 +82,7 @@ export const DetailedBarChart: React.FC<DetailedBarChartProps> = ({ data }) => {
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => {
-          return value.toLocaleString('zh-CN', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          });
-        },
+        formatter: (value: number) => `¥${value.toLocaleString('zh-CN')}`,
       },
     },
     series,

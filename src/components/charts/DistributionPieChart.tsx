@@ -29,12 +29,10 @@ export const DistributionPieChart: React.FC<DistributionPieChartProps> = ({ data
         tooltip: {
           trigger: 'item',
           formatter: (params: any) => {
-            const value = params.value.toLocaleString('zh-CN', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            });
-            return `${params.name}<br/>￥${value} (${params.percent}%)`;
-          },
+            const value = params.value.toLocaleString('zh-CN');
+            const percent = params.percent.toFixed(1);
+            return `${params.name}<br/>¥${value} (${percent}%)`; 
+          }
         },
         legend: {
           orient: 'vertical',
@@ -64,11 +62,7 @@ export const DistributionPieChart: React.FC<DistributionPieChartProps> = ({ data
             },
             label: {
               formatter: (params: any) => {
-                const value = params.value.toLocaleString('zh-CN', {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-                return `${params.name}\n￥${value}`;
+                return `${params.name}\n¥${params.value.toLocaleString('zh-CN')}`;
               },
             },
             emphasis: {

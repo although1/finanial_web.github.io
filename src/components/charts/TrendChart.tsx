@@ -14,19 +14,14 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
       setOptions({
         tooltip: {
           trigger: 'axis',
-          formatter: (params: any) => {
-            const dataIndex = params[0].dataIndex;
-            const date = data[dataIndex].date;
-            const value = `￥${data[dataIndex].value.toLocaleString('zh-CN', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}`;
-            const profit = `￥${data[dataIndex].profit.toLocaleString('zh-CN', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}`;
-            return `${date}<br/>总额: <strong>${value}</strong><br/>收益: <strong class="text-green-500">${profit}</strong>`;
-          },
+          formatter: function(params: any) {
+            let result = `${params[0].name}<br/>`;
+            params.forEach((param: any) => {
+              const value = param.value.toLocaleString('zh-CN');
+              result += `${param.marker} ${param.seriesName}: ¥${value}<br/>`;
+            });
+            return result;
+          }
         },
         legend: {
           data: ['总资产', '总收益']
@@ -54,9 +49,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
         yAxis: {
           type: 'value',
           axisLabel: {
-            formatter: (value: number) => {
-              return (value / 1000).toFixed(0) + 'k';
-            },
+            formatter: (value: number) => `¥${value.toLocaleString('zh-CN')}`
           },
         },
         series: [

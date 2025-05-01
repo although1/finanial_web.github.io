@@ -35,12 +35,7 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
           formatter: (params: any) => {
             const value = params.value;
             if (value) {
-              const formattedValue = value.toLocaleString('zh-CN', {
-                style: 'currency',
-                currency: 'CNY',
-                minimumFractionDigits: 2,
-              });
-              return `${params.name}<br/>${formattedValue}`;
+              return `${params.name}<br/>¥${value.toLocaleString('zh-CN')}`;
             }
             return params.name;
           },
@@ -72,7 +67,10 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
             },
             label: {
               show: true,
-              formatter: '{b}\n{c}元',
+              formatter: function (params: any) {
+                const value = params.value;
+                return `${params.name}\n¥${value.toLocaleString('zh-CN')}`;
+              },
             },
             upperLabel: {
               show: true,

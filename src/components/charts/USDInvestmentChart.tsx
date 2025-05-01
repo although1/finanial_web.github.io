@@ -45,17 +45,18 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'shadow'
+            type: 'cross',
+            label: {
+              backgroundColor: '#6a7985'
+            }
           },
-          formatter: (params: any) => {
-            const value = params[0].value;
-            const formattedValue = Math.abs(value).toLocaleString('zh-CN', {
-              style: 'currency',
-              currency: 'CNY',
-              minimumFractionDigits: 2
+          formatter: function(params: any) {
+            let result = `${params[0].name}<br/>`;
+            params.forEach((param: any) => {
+              const value = param.value.toLocaleString('zh-CN');
+              result += `${param.marker} ${param.seriesName}: ¥${value}<br/>`;
             });
-            const direction = value >= 0 ? '增加' : '减少';
-            return `${params[0].name}<br/>美元理财${direction}: ${formattedValue}`;
+            return result;
           }
         },
         grid: {
@@ -82,20 +83,16 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
         yAxis: [
           {
             type: 'value',
-            name: 'USD',
+            name: '投资金额',
             axisLabel: {
-              formatter: (value: number) => {
-                return `$${(value / 1000).toLocaleString('en-US')}k`;
-              },
+              formatter: (value: number) => `¥${value.toLocaleString('zh-CN')}`
             },
           },
           {
             type: 'value',
-            name: 'CNY',
+            name: '汇率',
             axisLabel: {
-              formatter: (value: number) => {
-                return `￥${(value / 1000).toLocaleString('zh-CN')}k`;
-              },
+              formatter: '{value}'
             },
           },
         ],
