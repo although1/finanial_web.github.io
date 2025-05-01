@@ -85,9 +85,25 @@ const Dashboard: React.FC = () => {
                 </p>
               </div>
               <div>
+                <p className="text-sm text-gray-600">月均收益</p>
+                <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {(data.yearToDateProfit / new Date().getMonth() + 1).toLocaleString('zh-CN', {
+                    style: 'currency',
+                    currency: 'CNY',
+                    minimumFractionDigits: 2
+                  })}
+                </p>
+              </div>
+              <div>
                 <p className="text-sm text-gray-600">实际年化收益率</p>
                 <p className={`text-xl font-bold ${data.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {data.annualizedReturn.toFixed(2)}%
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">达标所需月份</p>
+                <p className="text-xl font-bold text-blue-600">
+                  {Math.max(0, Math.ceil((data.latestData.grand_total * 0.03 - data.yearToDateProfit) / (data.yearToDateProfit / (new Date().getMonth() + 1))))}个月
                 </p>
               </div>
             </div>

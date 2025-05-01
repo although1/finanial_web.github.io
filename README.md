@@ -13,12 +13,14 @@ project/
 │   │   ├── charts/          # 图表组件库
 │   │   │   ├── DetailedBarChart.tsx   # 多维度柱状图
 │   │   │   ├── DistributionPieChart.tsx # 分布饼图
-│   │   │   ├── RadarChart.tsx        # 多维度指标对比雷达图
 │   │   │   ├── TreemapChart.tsx      # 成本结构分析树图
 │   │   │   ├── TrendChart.tsx        # 趋势折线图
-│   │   │   ├── WaterfallChart.tsx    # 财务数据流向瀑布图
-│   │   │   └── ...                   # 其他可视化组件
+│   │   │   ├── USDInvestmentChart.tsx # 投资分析图表
+│   │   │   └── WaterfallChart.tsx    # 财务数据流向瀑布图
 │   │   ├── common/          # 公共组件
+│   │   │   ├── ChartContainer.tsx    # 图表容器组件
+│   │   │   ├── LoadingIndicator.tsx  # 加载指示器
+│   │   │   └── SummaryTable.tsx      # 汇总表格
 │   │   ├── Dashboard.tsx    # 核心仪表盘组件
 │   │   └── Header.tsx       # 全局导航组件
 │   ├── data/
@@ -29,16 +31,9 @@ project/
 │   │   ├── dataTypes.ts     # TypeScript类型定义
 │   │   ├── mockData.ts      # 模拟数据
 │   │   ├── mockData_origin.ts # 原始模拟数据
-│   │   └── 个人记账.xlsx    # Excel记账模板
-├── .bolt/                  # Bolt配置
-│   └── config.json         # Bolt配置文件
-├── .vite/                 # Vite缓存
-│   └── deps/              # 依赖缓存
-├── scripts/               # 脚本目录
-├── .gitignore             # Git忽略规则
+│   │   └── personal_page.xlsx    # Excel记账模板
 ├── eslint.config.js       # ESLint配置
 ├── index.html             # 应用入口HTML
-├── package-lock.json      # 依赖锁文件
 ├── package.json           # 依赖管理
 ├── postcss.config.js      # PostCSS配置
 ├── tailwind.config.js     # TailwindCSS配置
@@ -65,22 +60,30 @@ project/
 ```bash
 # 安装依赖
 npm install
-npm install -g typescript ts-node
 
 # 启动开发服务器
 npm run dev
-node scripts/autoProcess.js
 
 # 构建生产版本
 npm run build
 ```
 
+### 新增数据说明
+
+```
+1、在src\data\personal_page.xlsx中更新全部的最新数据
+2、打开src\data\cal_price.py，执行该脚本
+3、npm run convert-data 将最新的数据合入到src\data\mockData.ts中
+4、刷新界面，查看更新后的数据
+```
+
+
+
 ## 依赖说明
+
 - 核心依赖：`echarts-for-react`实现图表集成
 - 样式系统：TailwindCSS + Lucide图标库
 - 代码规范：ESLint + React Hooks校验规则
-
-"convert-data": "node --loader ts-node/esm src/data/convertJsonToMockData.ts"
 
 ### 20250501
 
@@ -153,10 +156,6 @@ npm run build
 
 余额宝，550.03
 
-
-
-
-
 ### 待修改
 目前每次更新完成个人记账.xlsx后，需要手动运行cal_price.py脚本，将xlsx转换为json文件，
 然后再运行npm run convert-data脚本，生成模拟数据。
@@ -165,3 +164,5 @@ npm run build
 #### 0501
 
 在总资产趋势下方添加目标收益率展示，需要展示的内容包括，最新日期的总金额，目标年收益率（需要手动填写），最新收益总额（最新日期的总收益额-当年一月的总收益额），最新收益的年收益率（最新收益总额/(当前月份-当年一月)*12）
+
+在收益率分析增加，平均每月收益（当年收益总额/月份），还有按照当前的平均每月收益还需要几个月才能达到目标收益率
