@@ -79,17 +79,26 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
             rotate: 30
           }
         },
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-            formatter: (value: number) => {
-              if (Math.abs(value) >= 10000) {
-                return (value / 10000).toFixed(1) + '万';
-              }
-              return value.toString();
-            }
-          }
-        },
+        yAxis: [
+          {
+            type: 'value',
+            name: 'USD',
+            axisLabel: {
+              formatter: (value: number) => {
+                return `$${(value / 1000).toLocaleString('en-US')}k`;
+              },
+            },
+          },
+          {
+            type: 'value',
+            name: 'CNY',
+            axisLabel: {
+              formatter: (value: number) => {
+                return `￥${(value / 1000).toLocaleString('zh-CN')}k`;
+              },
+            },
+          },
+        ],
         series: [
           {
             name: '美元理财变化',
@@ -106,7 +115,22 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
                 return value.toFixed(0);
               }
             },
-            data: changes
+            data: changes,
+            markPoint: {
+              data: [
+                { type: 'max', name: '最高' },
+                { type: 'min', name: '最低' },
+              ],
+              label: {
+                formatter: (params: any) => {
+                  const usdValue = params.value.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  });
+                  return `$${usdValue}`;
+                },
+              },
+            },
           }
         ],
         animation: true

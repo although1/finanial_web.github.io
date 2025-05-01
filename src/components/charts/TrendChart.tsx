@@ -17,12 +17,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
           formatter: (params: any) => {
             const dataIndex = params[0].dataIndex;
             const date = data[dataIndex].date;
-            const value = data[dataIndex].value.toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'CNY',
+            const value = `￥${data[dataIndex].value.toLocaleString('zh-CN', {
               minimumFractionDigits: 2,
-            });
-            return `${date}<br/>Total: <strong>${value}</strong>`;
+              maximumFractionDigits: 2,
+            })}`;
+            return `${date}<br/>总额: <strong>${value}</strong>`;
           },
         },
         grid: {
@@ -105,17 +104,15 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
             },
             markPoint: {
               data: [
-                { type: 'max', name: 'Max' },
-                { type: 'min', name: 'Min' },
+                { type: 'max', name: '最高' },
+                { type: 'min', name: '最低' },
               ],
               label: {
                 formatter: (params: any) => {
-                  return params.value.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'CNY',
+                  return `￥${params.value.toLocaleString('zh-CN', {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
-                  });
+                  })}`;
                 },
               },
             },

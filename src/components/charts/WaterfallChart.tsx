@@ -30,14 +30,11 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
             type: 'shadow'
           },
           formatter: (params: any) => {
-            const value = params[0].value;
-            const formattedValue = Math.abs(value).toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'CNY',
-              minimumFractionDigits: 2
+            const value = params[0].value.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             });
-            const direction = value >= 0 ? 'Increase' : 'Decrease';
-            return `${params[0].name}<br/>${direction}: ${formattedValue}`;
+            return `${params[0].name}<br/>￥${value}`;
           }
         },
         grid: {
@@ -65,10 +62,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
           type: 'value',
           axisLabel: {
             formatter: (value: number) => {
-              if (Math.abs(value) >= 10000) {
-                return (value / 10000).toFixed(1) + '万';
-              }
-              return value.toString();
+              return `￥${(value / 1000).toLocaleString('zh-CN')}k`;
             }
           }
         },
@@ -81,11 +75,10 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
               show: true,
               position: 'top',
               formatter: (params: any) => {
-                const value = params.value;
-                if (value >= 0) {
-                  return '+' + value.toFixed(0);
-                }
-                return value.toFixed(0);
+                return `￥${params.value.toLocaleString('zh-CN', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}`;
               }
             },
             data: changes
