@@ -7,8 +7,10 @@ import { DistributionPieChart } from './charts/DistributionPieChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
 import { WaterfallChart } from './charts/WaterfallChart';
 import { TreemapChart } from './charts/TreemapChart';
+import { USDInvestmentChart } from './charts/USDInvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
+import { SummaryTable } from './common/SummaryTable';
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">投资类型汇总</h2>
+        <SummaryTable data={data.latestData} />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
           title="Total Assets Over Time" 
@@ -66,21 +73,30 @@ const Dashboard: React.FC = () => {
         </ChartContainer>
 
         <ChartContainer 
-        title="Asset Hierarchy View" 
-        description="Hierarchical visualization of your entire investment portfolio."
-      >
-        <TreemapChart data={data.latestData} />
-      </ChartContainer>
+          title="USD Investment Daily Changes" 
+          description="Track daily changes in USD investment amounts across all institutions."
+        >
+          <USDInvestmentChart data={mockData} />
+        </ChartContainer>
       </div>
-      
-      <ChartContainer 
-        title="Detailed Category Breakdown" 
-        description="Detailed view of asset categories within each financial institution."
-      >
-        <DetailedBarChart data={data.latestData} />
-      </ChartContainer>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ChartContainer 
+          title="Asset Hierarchy View" 
+          description="Hierarchical visualization of your entire investment portfolio."
+        >
+          <TreemapChart data={data.latestData} />
+        </ChartContainer>
+
+        <ChartContainer 
+          title="Detailed Category Breakdown" 
+          description="Detailed view of asset categories within each financial institution."
+        >
+          <DetailedBarChart data={data.latestData} />
+        </ChartContainer>
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard
