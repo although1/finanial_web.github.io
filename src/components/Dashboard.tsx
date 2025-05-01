@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">投资类型汇总</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">最新日期投资类型汇总</h2>
         <SummaryTable data={data.latestData} />
       </div>
 
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
         </ChartContainer>
         
         <ChartContainer 
-          title="最新资产分布" 
+          title="最新日期资产分布" 
           description="按机构分类展示您最新日期的金融资产分布情况。"
         >
           <DistributionPieChart data={data.latestData} />
@@ -82,14 +82,14 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
-          title="资产层级视图" 
+          title="最新日期资产层级视图" 
           description="您整个投资组合的层级可视化展示。"
         >
           <TreemapChart data={data.latestData} />
         </ChartContainer>
 
         <ChartContainer 
-          title="详细类别分析" 
+          title="最新日期详细类别分析" 
           description="展示每个金融机构内部资产类别的详细情况。"
         >
           <DetailedBarChart data={data.latestData} />

@@ -12,7 +12,7 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
   useEffect(() => {
     if (data) {
       const treeData = {
-        name: 'Total Assets',
+        name: '总资产',
         children: Object.entries(data)
           .filter(([key]) => key !== 'grand_total')
           .map(([institution, value]) => {
@@ -33,7 +33,7 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
           formatter: (params: any) => {
             const value = params.value;
             if (value) {
-              const formattedValue = value.toLocaleString('en-US', {
+              const formattedValue = value.toLocaleString('zh-CN', {
                 style: 'currency',
                 currency: 'CNY',
                 minimumFractionDigits: 2,
@@ -45,7 +45,7 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
         },
         series: [
           {
-            name: 'Asset Distribution',
+            name: '资产分布',
             type: 'treemap',
             data: treeData.children,
             levels: [
@@ -70,7 +70,7 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
             },
             label: {
               show: true,
-              formatter: '{b}\n{c}',
+              formatter: '{b}\n{c}元',
             },
             upperLabel: {
               show: true,
