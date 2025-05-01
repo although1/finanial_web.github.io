@@ -5,6 +5,7 @@ import os
 
 FILE_PATH = os.path.join(os.path.dirname(__file__), "personal_page.xlsx")
 TARGET_DATE = datetime.now().strftime("%Y-%m-%d")
+# TARGET_DATE = "2025-01-01"
 OUTPUT_JSON = os.path.join(os.path.dirname(__file__), f"app_totals_{TARGET_DATE}.json")
 
 def load_sheets(file_path):
