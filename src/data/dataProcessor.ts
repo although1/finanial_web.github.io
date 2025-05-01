@@ -20,18 +20,42 @@ export const processFinancialData = (
     profit: item.data.grand_total_profit as number,
   }));
 
-  // Get the latest data for distribution charts
-  const latestData = sortedData[sortedData.length - 1].data;
+  // Get the latest data point
+  const latestDataPoint = sortedData[sortedData.length - 1];
+  const latestData = latestDataPoint.data;
 
   // Extract dates for reference
   const dates = sortedData.map((item) => item.date);
 
+  // Calculate year-to-date profit and annualized return
+  const currentYear = new Date(latestDataPoint.date).getFullYear();
+  const januaryData = sortedData.find(item => 
+    new Date(item.date).getFullYear() === currentYear && 
+    new Date(item.date).getMonth() === 0
+  );
+
+  const yearToDateProfit = januaryData 
+    ? (latestData.grand_total_profit || 0) - (januaryData.data.grand_total_profit || 0)
+    : (latestData.grand_total_profit || 0);
+
+  // Calculate months elapsed (if starting from January, current month + 1)
+  const currentDate = new Date(latestDataPoint.date);
+  const monthsElapsed = currentDate.getMonth() + 1;
+  
+  // Calculate annualized return rate
+  const januaryTotal = januaryData ? januaryData.data.grand_total : 0;
+  const annualizedReturn = januaryTotal > 0 
+    ? (yearToDateProfit / januaryTotal * (12 / monthsElapsed) * 100)
+    : 0;
+
   // Return the processed data
   return {
-    rawData: sortedData.map((item) => item.data),
+    rawData: sortedData.map(item => item.data),
     timeSeriesData,
     latestData,
     dates,
+    yearToDateProfit,
+    annualizedReturn
   };
 };
 

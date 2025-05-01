@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { processFinancialData } from '../data/dataProcessor';
-import { FinancialData, ProcessedData } from '../data/dataTypes';
+import { ProcessedData } from '../data/dataTypes';
 import { mockData } from '../data/mockData';
 import { TrendChart } from './charts/TrendChart';
 import { DistributionPieChart } from './charts/DistributionPieChart';
@@ -49,12 +49,50 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <ChartContainer 
-          title="总资产趋势" 
-          description="追踪您总资产随时间的变化趋势。"
-        >
-          <TrendChart data={data.timeSeriesData} />
-        </ChartContainer>
+        <div>
+          <ChartContainer 
+            title="总资产趋势" 
+            description="追踪您总资产随时间的变化趋势。"
+          >
+            <TrendChart data={data.timeSeriesData} />
+          </ChartContainer>
+          
+          <div className="mt-4 bg-white rounded-lg shadow-md p-4">
+            <h3 className="text-lg font-semibold mb-3">收益率分析</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">最新总资产</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {data.latestData.grand_total.toLocaleString('zh-CN', {
+                    style: 'currency',
+                    currency: 'CNY',
+                    minimumFractionDigits: 2
+                  })}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">目标年收益率</p>
+                <p className="text-xl font-bold text-blue-600">3.00%</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">当年收益总额</p>
+                <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {data.yearToDateProfit.toLocaleString('zh-CN', {
+                    style: 'currency',
+                    currency: 'CNY',
+                    minimumFractionDigits: 2
+                  })}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">实际年化收益率</p>
+                <p className={`text-xl font-bold ${data.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {data.annualizedReturn.toFixed(2)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <ChartContainer 
           title="最新日期资产分布" 

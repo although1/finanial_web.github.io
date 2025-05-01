@@ -41,4 +41,6 @@ export interface ProcessedData {
   timeSeriesData: TimeSeriesPoint[];
   latestData: FinancialData;
   dates: string[];
+  yearToDateProfit: number;
+  annualizedReturn: number;
 }
