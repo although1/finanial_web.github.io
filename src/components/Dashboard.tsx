@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
         </ChartContainer>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> */}
         <ChartContainer 
           title="最新日期资产层级视图" 
           description="您整个投资组合的层级可视化展示。"
@@ -94,7 +94,7 @@ const Dashboard: React.FC = () => {
         >
           <DetailedBarChart data={data.latestData} />
         </ChartContainer>
-      </div>
+      {/* </div> */}
     </div>
   );
 };

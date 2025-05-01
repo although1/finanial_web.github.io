@@ -101,20 +101,6 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
                 ],
               },
             },
-            markPoint: {
-              data: [
-                { type: 'max', name: '最高' },
-                { type: 'min', name: '最低' },
-              ],
-              label: {
-                formatter: (params: any) => {
-                  return `￥${params.value.toLocaleString('zh-CN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}`;
-                },
-              },
-            },
           },
           {
             name: '总收益',
