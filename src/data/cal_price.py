@@ -1,10 +1,11 @@
 import pandas as pd
 import json
+from datetime import datetime
 
 # 配置参数
 import os
 FILE_PATH = os.path.join(os.path.dirname(__file__), "personal_page.xlsx")
-TARGET_DATE = "2025-05-01"
+TARGET_DATE = datetime.now().strftime("%Y-%m-%d")
 OUTPUT_JSON = os.path.join(os.path.dirname(__file__), f"app_totals_{TARGET_DATE}.json")
 
 def load_sheets(file_path):

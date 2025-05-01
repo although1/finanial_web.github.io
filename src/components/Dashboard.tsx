@@ -6,7 +6,6 @@ import { TrendChart } from './charts/TrendChart';
 import { DistributionPieChart } from './charts/DistributionPieChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
 import { WaterfallChart } from './charts/WaterfallChart';
-import { RadarChart } from './charts/RadarChart';
 import { TreemapChart } from './charts/TreemapChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
@@ -67,19 +66,12 @@ const Dashboard: React.FC = () => {
         </ChartContainer>
 
         <ChartContainer 
-          title="Investment Category Analysis" 
-          description="Compare investment categories across different institutions."
-        >
-          <RadarChart data={data.latestData} />
-        </ChartContainer>
-      </div>
-
-      <ChartContainer 
         title="Asset Hierarchy View" 
         description="Hierarchical visualization of your entire investment portfolio."
       >
         <TreemapChart data={data.latestData} />
       </ChartContainer>
+      </div>
       
       <ChartContainer 
         title="Detailed Category Breakdown" 
