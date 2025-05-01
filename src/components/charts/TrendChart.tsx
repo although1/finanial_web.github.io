@@ -21,8 +21,15 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}`;
-            return `${date}<br/>总额: <strong>${value}</strong>`;
+            const profit = `￥${data[dataIndex].profit.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`;
+            return `${date}<br/>总额: <strong>${value}</strong><br/>收益: <strong class="text-green-500">${profit}</strong>`;
           },
+        },
+        legend: {
+          data: ['总资产', '总收益']
         },
         grid: {
           left: '3%',
@@ -36,7 +43,6 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
           boundaryGap: false,
           axisLabel: {
             formatter: (value: string) => {
-              // Format date for better readability
               const date = new Date(value);
               return date.toLocaleDateString('zh-CN', {
                 month: 'numeric',
@@ -55,7 +61,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
         },
         series: [
           {
-            name: 'Total Assets',
+            name: '总资产',
             type: 'line',
             data: data.map((item) => item.value),
             symbol: 'circle',
@@ -74,11 +80,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
                 colorStops: [
                   {
                     offset: 0,
-                    color: '#3182CE', // blue-600
+                    color: '#3182CE',
                   },
                   {
                     offset: 1,
-                    color: '#63B3ED', // blue-400
+                    color: '#63B3ED',
                   },
                 ],
               },
@@ -93,11 +99,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
                 colorStops: [
                   {
                     offset: 0,
-                    color: 'rgba(66, 153, 225, 0.3)', // blue-500 with opacity
+                    color: 'rgba(66, 153, 225, 0.3)',
                   },
                   {
                     offset: 1,
-                    color: 'rgba(66, 153, 225, 0.05)', // blue-500 with low opacity
+                    color: 'rgba(66, 153, 225, 0.05)',
                   },
                 ],
               },
@@ -115,6 +121,20 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
                   })}`;
                 },
               },
+            },
+          },
+          {
+            name: '总收益',
+            type: 'line',
+            data: data.map((item) => item.profit),
+            symbol: 'circle',
+            symbolSize: 6,
+            itemStyle: {
+              color: '#48BB78',
+            },
+            lineStyle: {
+              width: 2,
+              type: 'dashed',
             },
           },
         ],

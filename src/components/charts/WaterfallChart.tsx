@@ -13,11 +13,13 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
     if (data && data.length > 1) {
       const changes = data.slice(1).map((point, index) => {
         const change = point.value - data[index].value;
+        const profit = point.profit - data[index].profit;
         return {
           value: change,
           itemStyle: {
             color: change >= 0 ? '#48BB78' : '#F56565'
-          }
+          },
+          profit: profit
         };
       });
 
@@ -34,7 +36,13 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             });
-            return `${params[0].name}<br/>￥${value}`;
+            const profitValue = changes[params[0].dataIndex].profit.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return `${params[0].name}<br/>
+                    资产变化: ￥${value}<br/>
+                    收益变化: ￥${profitValue}`;
           }
         },
         grid: {
@@ -68,7 +76,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
         },
         series: [
           {
-            name: 'Change',
+            name: '资产变化',
             type: 'bar',
             stack: 'Total',
             label: {
@@ -81,7 +89,10 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
                 })}`;
               }
             },
-            data: changes
+            data: changes.map(item => ({
+              value: item.value,
+              itemStyle: item.itemStyle
+            }))
           }
         ],
         animation: true

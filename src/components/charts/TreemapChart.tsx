@@ -14,16 +14,18 @@ export const TreemapChart: React.FC<TreemapChartProps> = ({ data }) => {
       const treeData = {
         name: '总资产',
         children: Object.entries(data)
-          .filter(([key]) => key !== 'grand_total')
+          .filter(([key]) => !['grand_total', 'grand_total_profit'].includes(key))
           .map(([institution, value]) => {
             const institutionData = value as any;
             return {
               name: institution,
               value: institutionData.total,
-              children: Object.entries(institutionData.detail).map(([category, amount]) => ({
-                name: category,
-                value: amount,
-              })),
+              children: Object.entries(institutionData.detail)
+                .filter(([category]) => !category.endsWith('_收益')) // 过滤掉收益相关字段
+                .map(([category, amount]) => ({
+                  name: category,
+                  value: amount,
+                })),
             };
           }),
       };

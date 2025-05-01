@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
         </ChartContainer>
 
         <ChartContainer 
-          title="美元投资每日变化" 
+          title="美元投资月度变化" 
           description="追踪所有机构美元投资金额的每日变化。"
         >
           <USDInvestmentChart data={mockData} />

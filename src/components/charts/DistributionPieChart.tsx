@@ -13,19 +13,15 @@ export const DistributionPieChart: React.FC<DistributionPieChartProps> = ({ data
   useEffect(() => {
     if (data) {
       // Extract institutions and their totals
-      const institutions = Object.keys(data).filter(
-        (key) => key !== 'grand_total' && typeof data[key] === 'object'
-      );
-
-      const pieData = institutions.map((institution) => {
-        const institutionData = data[institution] as any;
-        return {
+      const pieData = Object.entries(data)
+        .filter(([key]) => !['grand_total', 'grand_total_profit'].includes(key))
+        .map(([institution, value]) => ({
           name: institution,
-          value: institutionData.total,
-        };
-      });
+          value: (value as any).total,
+        }));
 
       // Generate color map for institutions
+      const institutions = pieData.map((item) => item.name);
       const colorMap = generateColorMap(institutions);
       const colors = institutions.map((institution) => colorMap[institution]);
 

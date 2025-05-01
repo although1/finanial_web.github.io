@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import { FinancialData } from '../../data/dataTypes';
 import { generateColorMap } from '../../data/dataProcessor';
@@ -8,108 +8,91 @@ interface DetailedBarChartProps {
 }
 
 export const DetailedBarChart: React.FC<DetailedBarChartProps> = ({ data }) => {
-  const [options, setOptions] = useState({});
+  // 获取所有机构
+  const institutions = Object.keys(data).filter(
+    (key) => !['grand_total', 'grand_total_profit'].includes(key)
+  );
 
-  useEffect(() => {
-    if (data) {
-      // Extract institutions and categories
-      const institutions = Object.keys(data).filter(
-        (key) => key !== 'grand_total' && typeof data[key] === 'object'
-      );
+  // 获取所有产品类别（过滤掉收益相关字段）
+  const categories = new Set<string>();
+  institutions.forEach((institution) => {
+    Object.keys(data[institution].detail).forEach((category) => {
+      if (!category.endsWith('_收益')) {
+        categories.add(category);
+      }
+    });
+  });
 
-      // Extract all unique categories across all institutions
-      const allCategories = new Set<string>();
-      institutions.forEach((institution) => {
-        const institutionData = data[institution] as any;
-        Object.keys(institutionData.detail).forEach((category) => {
-          allCategories.add(category);
-        });
-      });
-      const categories = Array.from(allCategories);
+  const categoryList = Array.from(categories);
+  const colorMap = generateColorMap(categoryList);
 
-      // Generate series data for each category
-      const seriesData = categories.map((category) => {
-        return {
-          name: category,
-          type: 'bar',
-          stack: 'total',
-          emphasis: {
-            focus: 'series',
-          },
-          data: institutions.map((institution) => {
-            const institutionData = data[institution] as any;
-            return institutionData.detail[category] || 0;
-          }),
-        };
-      });
+  // 准备系列数据
+  const series = categoryList.map((category) => ({
+    name: category,
+    type: 'bar',
+    stack: 'total',
+    emphasis: {
+      focus: 'series',
+    },
+    data: institutions.map((institution) => data[institution].detail[category] || 0),
+    itemStyle: {
+      color: colorMap[category],
+    },
+  }));
 
-      // Generate color map for categories
-      const colorMap = generateColorMap(categories);
-      const colors = categories.map((category) => colorMap[category]);
-
-      setOptions({
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow',
-          },
-          formatter: (params: any) => {
-            const institutionIndex = params[0].dataIndex;
-            const institution = institutions[institutionIndex];
-            
-            let content = `<strong>${institution}</strong><br/>`;
-            
-            params.forEach((param: any) => {
-              if (param.value > 0) {
-                const formattedValue = param.value.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'CNY',
-                  minimumFractionDigits: 2,
-                });
-                content += `${param.seriesName}: ${formattedValue}<br/>`;
-              }
+  const options = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter: (params: any) => {
+        let result = `${params[0].name}<br/>`;
+        let total = 0;
+        params.forEach((param: any) => {
+          if (param.value > 0) {
+            const value = param.value.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             });
-            
-            return content;
-          },
+            result += `${param.seriesName}: ￥${value}<br/>`;
+            total += param.value;
+          }
+        });
+        result += `总计: ￥${total.toLocaleString('zh-CN', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+        return result;
+      },
+    },
+    legend: {
+      data: categoryList,
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: institutions,
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: (value: number) => {
+          return value.toLocaleString('zh-CN', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          });
         },
-        legend: {
-          data: categories,
-          bottom: 0,
-          type: 'scroll',
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '15%',
-          top: '3%',
-          containLabel: true,
-        },
-        xAxis: {
-          type: 'category',
-          data: institutions,
-          axisLabel: {
-            interval: 0,
-            rotate: 30,
-          },
-        },
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-            formatter: (value: number) => {
-              if (value >= 10000) {
-                return (value / 10000).toFixed(0) + '万';
-              }
-              return value.toString();
-            },
-          },
-        },
-        series: seriesData,
-        color: colors,
-        animation: true,
-      });
-    }
-  }, [data]);
+      },
+    },
+    series,
+    animation: true,
+  };
 
   return <ReactECharts option={options} style={{ height: '100%', width: '100%' }} />;
 };
