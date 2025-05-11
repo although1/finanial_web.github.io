@@ -4,16 +4,25 @@ import { TimeSeriesPoint } from '../../data/dataTypes';
 
 interface WaterfallChartProps {
   data: TimeSeriesPoint[];
+  showAllDates?: boolean;
 }
 
-export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
+export const WaterfallChart: React.FC<WaterfallChartProps> = ({ 
+  data,
+  showAllDates = false 
+}) => {
   const [options, setOptions] = useState({});
 
   useEffect(() => {
     if (data && data.length > 1) {
-      const changes = data.slice(1).map((point, index) => {
-        const change = point.value - data[index].value;
-        const profit = point.profit - data[index].profit;
+      // 根据 showAllDates 过滤数据
+      const filteredData = showAllDates 
+        ? data 
+        : data.filter(item => item.date.endsWith('-01'));
+
+      const changes = filteredData.slice(1).map((point, index) => {
+        const change = point.value - filteredData[index].value;
+        const profit = point.profit - filteredData[index].profit;
         return {
           value: change,
           itemStyle: {
@@ -23,7 +32,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
         };
       });
 
-      const dates = data.slice(1).map(point => point.date);
+      const dates = filteredData.slice(1).map(point => point.date);
 
       setOptions({
         tooltip: {
@@ -99,7 +108,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({ data }) => {
         animation: true
       });
     }
-  }, [data]);
+  }, [data, showAllDates]);
 
   return <ReactECharts option={options} style={{ height: '100%', width: '100%' }} />;
 };

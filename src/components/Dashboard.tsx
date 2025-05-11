@@ -283,7 +283,10 @@ const Dashboard: React.FC = () => {
           </button>            
         </div>
         {activeChart === 'monthly' ? (
-          <WaterfallChart data={data.timeSeriesData} />
+          <WaterfallChart 
+            data={data.timeSeriesData}
+            showAllDates={showAllDates}
+          />
         ) : (
           <InvestmentChart 
             data={mockData} 
