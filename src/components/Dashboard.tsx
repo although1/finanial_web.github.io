@@ -16,6 +16,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ProcessedData | null>(null);
+  const [showUSDChart, setShowUSDChart] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -120,35 +121,38 @@ const Dashboard: React.FC = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer 
-          title="月度变化" 
-          description="可视化展示您总资产随时间变化的详细情况。"
+          title={showUSDChart ? "美元投资月度变化" : "月度变化"}
+          description={showUSDChart ? "追踪所有机构美元投资金额的每日变化。" : "可视化展示您总资产随时间变化的详细情况。"}
         >
-          <WaterfallChart data={data.timeSeriesData} />
+          <div className="mb-4 flex justify-end">
+            <button
+              onClick={() => setShowUSDChart(!showUSDChart)}
+              className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+            >
+              切换到{showUSDChart ? "月度变化" : "美元投资"}图表
+            </button>
+          </div>
+          {showUSDChart ? (
+            <USDInvestmentChart data={mockData} />
+          ) : (
+            <WaterfallChart data={data.timeSeriesData} />
+          )}
         </ChartContainer>
 
-        <ChartContainer 
-          title="美元投资月度变化" 
-          description="追踪所有机构美元投资金额的每日变化。"
-        >
-          <USDInvestmentChart data={mockData} />
-        </ChartContainer>
-      </div>
-
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> */}
         <ChartContainer 
           title="最新日期资产层级视图" 
           description="您整个投资组合的层级可视化展示。"
         >
           <TreemapChart data={data.latestData} />
         </ChartContainer>
+      </div>
 
-        <ChartContainer 
-          title="最新日期详细类别分析" 
-          description="展示每个金融机构内部资产类别的详细情况。"
-        >
-          <DetailedBarChart data={data.latestData} />
-        </ChartContainer>
-      {/* </div> */}
+      <ChartContainer 
+        title="最新日期详细类别分析" 
+        description="展示每个金融机构内部资产类别的详细情况。"
+      >
+        <DetailedBarChart data={data.latestData} />
+      </ChartContainer>
     </div>
   );
 };
