@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
         <SummaryTable data={getSelectedDateData() || data.latestData} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> */}
         <div>
           <ChartContainer 
             title="总资产趋势" 
@@ -93,65 +93,112 @@ const Dashboard: React.FC = () => {
           </ChartContainer>
           
           <div className="mt-4 bg-white rounded-lg shadow-md p-4">
-            <h3 className="text-lg font-semibold mb-3">收益率分析</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">最新总资产</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {data.latestData.grand_total.toLocaleString('zh-CN', {
-                    style: 'currency',
-                    currency: 'CNY',
-                    minimumFractionDigits: 2
-                  })}
-                </p>
+            <h3 className="text-lg font-semibold mb-3">收益率与攒钱分析</h3>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+              <div className="col-span-2 border-b pb-4">
+                <h4 className="text-md font-medium text-gray-700 mb-3">收益率分析</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">最新总资产</p>
+                    <p className="text-xl font-bold text-gray-900">
+                      {data.latestData.grand_total.toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">目标年收益率</p>
+                    <p className="text-xl font-bold text-blue-600">3.00%</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">当年收益总额</p>
+                    <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.yearToDateProfit.toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">月均收益</p>
+                    <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {(data.yearToDateProfit / data.savingsData.monthsPassed).toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">实际年化收益率</p>
+                    <p className={`text-xl font-bold ${data.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.annualizedReturn.toFixed(2)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">达标所需月份</p>
+                    <p className="text-xl font-bold text-blue-600">
+                      {Math.max(0, Math.ceil((data.latestData.grand_total * 0.03 - data.yearToDateProfit) / (data.yearToDateProfit / data.savingsData.monthsPassed)))}个月
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">目标年收益率</p>
-                <p className="text-xl font-bold text-blue-600">3.00%</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">当年收益总额</p>
-                <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.yearToDateProfit.toLocaleString('zh-CN', {
-                    style: 'currency',
-                    currency: 'CNY',
-                    minimumFractionDigits: 2
-                  })}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">月均收益</p>
-                <p className={`text-xl font-bold ${data.yearToDateProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {(data.yearToDateProfit / new Date().getMonth() + 1).toLocaleString('zh-CN', {
-                    style: 'currency',
-                    currency: 'CNY',
-                    minimumFractionDigits: 2
-                  })}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">实际年化收益率</p>
-                <p className={`text-xl font-bold ${data.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.annualizedReturn.toFixed(2)}%
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">达标所需月份</p>
-                <p className="text-xl font-bold text-blue-600">
-                  {Math.max(0, Math.ceil((data.latestData.grand_total * 0.03 - data.yearToDateProfit) / (data.yearToDateProfit / (new Date().getMonth() + 1))))}个月
-                </p>
+              
+              <div className="col-span-2">
+                <h4 className="text-md font-medium text-gray-700 mb-3">攒钱目标分析 (月标准¥12,500)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">当年已攒钱数</p>
+                    <p className={`text-xl font-bold ${data.savingsData.yearToDateSavings >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.savingsData.yearToDateSavings.toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">目标攒钱数</p>
+                    <p className="text-xl font-bold text-blue-600">
+                      {data.savingsData.yearSavingsTarget.toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">月均攒钱数</p>
+                    <p className={`text-xl font-bold ${data.savingsData.averageMonthlySavings >= 12500 ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.savingsData.averageMonthlySavings.toLocaleString('zh-CN', {
+                        style: 'currency',
+                        currency: 'CNY',
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">目标达成所需月份</p>
+                    <p className="text-xl font-bold text-blue-600">
+                      {Math.max(0, Math.ceil((150000 - data.savingsData.yearToDateSavings) / data.savingsData.averageMonthlySavings))}个月
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         
-        <ChartContainer 
+        {/* <ChartContainer 
           title="最新日期资产分布" 
           description="按机构分类展示您最新日期的金融资产分布情况。"
         >
           <DistributionPieChart data={data.latestData} />
         </ChartContainer>
-      </div>
+      </div> */}
       
       <ChartContainer 
         title={

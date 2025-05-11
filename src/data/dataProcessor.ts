@@ -1,5 +1,7 @@
 import { FinancialData, ProcessedData, TimeSeriesPoint } from './dataTypes';
 
+const MONTHLY_SAVINGS_TARGET = 12500; // 每月攒钱目标金额
+
 /**
  * Process financial data from multiple sources
  * @param dataArray Array of financial data objects with dates
@@ -48,6 +50,15 @@ export const processFinancialData = (
     ? (yearToDateProfit / januaryTotal * (12 / monthsElapsed) * 100)
     : 0;
 
+  // 计算攒钱相关指标
+  const currentYearData = sortedData.filter(item => item.date.startsWith('2025'));
+  const januaryDataTotal = currentYearData[0]?.data.grand_total || 0;
+  const latestTotal = latestData.grand_total;
+  const yearToDateSavings = latestTotal - januaryDataTotal;
+  const monthsPassed = new Date().getMonth() + 1;
+  const yearSavingsTarget = MONTHLY_SAVINGS_TARGET * 12;
+  const averageMonthlySavings = yearToDateSavings / monthsPassed;
+
   // Return the processed data
   return {
     rawData: sortedData.map(item => item.data),
@@ -55,7 +66,13 @@ export const processFinancialData = (
     latestData,
     dates,
     yearToDateProfit,
-    annualizedReturn
+    annualizedReturn,
+    savingsData: {
+      yearToDateSavings,
+      yearSavingsTarget,
+      averageMonthlySavings,
+      monthsPassed
+    }
   };
 };
 
