@@ -10,69 +10,70 @@ const MONTHLY_SAVINGS_TARGET = 12500; // 每月攒钱目标金额
 export const processFinancialData = (
   dataArray: { data: FinancialData; date: string }[]
 ): ProcessedData => {
-  // Sort data by date
+  // 按日期排序
   const sortedData = [...dataArray].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  // Extract time series data for trend chart
+  // 获取时间序列数据
   const timeSeriesData: TimeSeriesPoint[] = sortedData.map((item) => ({
     date: item.date,
     value: item.data.grand_total as number,
     profit: item.data.grand_total_profit as number,
   }));
 
-  // Get the latest data point
-  const latestDataPoint = sortedData[sortedData.length - 1];
-  const latestData = latestDataPoint.data;
+  // 获取最新月份和最新月份1号的数据
+  const latestDate = new Date(sortedData[sortedData.length - 1].date);
+  const latestMonth = latestDate.getMonth();
+  const currentMonthFirstDay = sortedData
+    .filter(item => {
+      const itemDate = new Date(item.date);
+      return itemDate.getMonth() === latestMonth && item.date.endsWith('-01');
+    })
+    .pop();
 
-  // Extract dates for reference
-  const dates = sortedData.map((item) => item.date);
+  // 如果找不到当月1号的数据，使用最新数据
+  const latestData = currentMonthFirstDay?.data || sortedData[sortedData.length - 1].data;
 
-  // Calculate year-to-date profit and annualized return
-  const currentYear = new Date(latestDataPoint.date).getFullYear();
-  const januaryData = sortedData.find(item => 
-    new Date(item.date).getFullYear() === currentYear && 
-    new Date(item.date).getMonth() === 0
-  );
+  // 获取当年1月1号的数据
+  const currentYear = latestDate.getFullYear();
+  const januaryData = sortedData.find(item => {
+    const itemDate = new Date(item.date);
+    return itemDate.getFullYear() === currentYear && 
+           itemDate.getMonth() === 0 && 
+           item.date.endsWith('-01');
+  });
 
-  const yearToDateProfit = januaryData 
-    ? (latestData.grand_total_profit || 0) - (januaryData.data.grand_total_profit || 0)
-    : (latestData.grand_total_profit || 0);
+  // 使用月初数据计算收益
+  const januaryDataTotal = januaryData?.data.grand_total || 0;
+  const januaryProfit = januaryData?.data.grand_total_profit || 0;
+  const currentMonthProfit = currentMonthFirstDay?.data.grand_total_profit || latestData.grand_total_profit || 0;
+  const yearToDateProfit = currentMonthProfit - januaryProfit;
 
-  // Calculate months elapsed (if starting from January, current month + 1)
-  const currentDate = new Date(latestDataPoint.date);
-  const monthsElapsed = currentDate.getMonth() + 1;
-  
-  // Calculate annualized return rate
-  const januaryTotal = januaryData ? januaryData.data.grand_total : 0;
-  const annualizedReturn = januaryTotal > 0 
-    ? (yearToDateProfit / januaryTotal * (12 / monthsElapsed) * 100)
+  // 计算月数和年化收益率
+  const monthsPassed = latestDate.getMonth();
+  const annualizedReturn = januaryDataTotal > 0 
+    ? (yearToDateProfit / januaryDataTotal * (12 / monthsPassed) * 100)
     : 0;
 
-  // 计算攒钱相关指标
-  const currentYearData = sortedData.filter(item => item.date.startsWith('2025'));
-  const januaryDataTotal = currentYearData[0]?.data.grand_total || 0;
-  const latestTotal = latestData.grand_total;
-  const yearToDateSavings = latestTotal - januaryDataTotal;
-  const monthsPassed = new Date().getMonth() + 1;
-  const yearSavingsTarget = MONTHLY_SAVINGS_TARGET * 12;
+  // 计算攒钱相关数据（只使用月初数据）
+  const currentMonthTotal = currentMonthFirstDay?.data.grand_total || latestData.grand_total;
+  const yearToDateSavings = currentMonthTotal - januaryDataTotal;
   const averageMonthlySavings = yearToDateSavings / monthsPassed;
 
-  // Return the processed data
   return {
-    rawData: sortedData.map(item => item.data),
-    timeSeriesData,
     latestData,
-    dates,
+    timeSeriesData,
     yearToDateProfit,
     annualizedReturn,
     savingsData: {
       yearToDateSavings,
-      yearSavingsTarget,
+      yearSavingsTarget: MONTHLY_SAVINGS_TARGET * 12,
       averageMonthlySavings,
       monthsPassed
-    }
+    },
+    rawData: sortedData,
+    dates: sortedData.map(item => item.date)
   };
 };
 

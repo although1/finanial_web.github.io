@@ -44,7 +44,7 @@ interface SavingsData {
 }
 
 export interface ProcessedData {
-  rawData: FinancialData[];
+  rawData: Array<{ data: FinancialData; date: string }>;
   timeSeriesData: TimeSeriesPoint[];
   latestData: FinancialData;
   dates: string[];

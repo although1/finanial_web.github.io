@@ -23,6 +23,7 @@ const Dashboard: React.FC = () => {
   const [data, setData] = useState<ProcessedData | null>(null);
   const [activeChart, setActiveChart] = useState<ChartType>('monthly');
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [showAllDates, setShowAllDates] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -63,7 +64,19 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8">
       <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">投资类型汇总</h2>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-xl font-bold text-gray-800">投资类型汇总</h2>
+            <button
+              onClick={() => setShowAllDates(!showAllDates)}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                showAllDates
+                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {showAllDates ? '显示所有日期' : '仅显示月初'}
+            </button>
+          </div>
           <div className="flex items-center space-x-2">
             <label htmlFor="dateSelect" className="text-sm text-gray-600">选择日期：</label>
             <select
@@ -72,10 +85,12 @@ const Dashboard: React.FC = () => {
               onChange={(e) => setSelectedDate(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {mockData.map(item => (
-                <option key={item.date} value={item.date}>
-                  {item.date}
-                </option>
+              {mockData
+                .filter(item => showAllDates || item.date.endsWith('-01'))
+                .map(item => (
+                  <option key={item.date} value={item.date}>
+                    {item.date}
+                  </option>
               ))}
             </select>
           </div>
@@ -89,7 +104,10 @@ const Dashboard: React.FC = () => {
             title="总资产趋势" 
             description="追踪您总资产随时间的变化趋势。"
           >
-            <TrendChart data={data.timeSeriesData} />
+            <TrendChart 
+              data={data.timeSeriesData}
+              showAllDates={showAllDates}
+            />
           </ChartContainer>
           
           <div className="mt-4 bg-white rounded-lg shadow-md p-4">

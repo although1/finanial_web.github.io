@@ -4,13 +4,19 @@ import { TimeSeriesPoint } from '../../data/dataTypes';
 
 interface TrendChartProps {
   data: TimeSeriesPoint[];
+  showAllDates?: boolean;
 }
 
-export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
+export const TrendChart: React.FC<TrendChartProps> = ({ data, showAllDates = false }) => {
   const [options, setOptions] = useState({});
 
   useEffect(() => {
     if (data && data.length) {
+      // 根据 showAllDates 过滤数据
+      const filteredData = showAllDates 
+        ? data 
+        : data.filter(item => item.date.endsWith('-01'));
+
       setOptions({
         tooltip: {
           trigger: 'axis',
@@ -34,7 +40,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
         },
         xAxis: {
           type: 'category',
-          data: data.map((item) => item.date),
+          data: filteredData.map((item) => item.date),
           boundaryGap: false,
           axisLabel: {
             formatter: (value: string) => {
@@ -56,7 +62,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
           {
             name: '总资产',
             type: 'line',
-            data: data.map((item) => item.value),
+            data: filteredData.map((item) => item.value),
             symbol: 'circle',
             symbolSize: 8,
             itemStyle: {
@@ -105,22 +111,38 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
           {
             name: '总收益',
             type: 'line',
-            data: data.map((item) => item.profit),
+            data: filteredData.map((item) => item.profit),
             symbol: 'circle',
-            symbolSize: 6,
+            symbolSize: 8,
             itemStyle: {
               color: '#48BB78',
             },
             lineStyle: {
-              width: 2,
-              type: 'dashed',
+              width: 3,
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: '#38A169',
+                  },
+                  {
+                    offset: 1,
+                    color: '#68D391',
+                  },
+                ],
+              },
             },
           },
         ],
         animation: true,
       });
     }
-  }, [data]);
+  }, [data, showAllDates]);
 
   return <ReactECharts option={options} style={{ height: '100%', width: '100%' }} />;
 };
