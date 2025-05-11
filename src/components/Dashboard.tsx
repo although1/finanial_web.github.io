@@ -21,18 +21,30 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ProcessedData | null>(null);
   const [activeChart, setActiveChart] = useState<ChartType>('monthly');
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   useEffect(() => {
     setLoading(true);
     try {
       const processedData = processFinancialData(mockData);
       setData(processedData);
+      // 设置最新日期为默认选中日期
+      if (mockData.length > 0) {
+        setSelectedDate(mockData[mockData.length - 1].date);
+      }
       setLoading(false);
     } catch (err) {
       setError('Error loading financial data. Please try again later.');
       setLoading(false);
     }
   }, []);
+
+  // 获取选定日期的数据
+  const getSelectedDateData = () => {
+    if (!data || !selectedDate) return null;
+    const selectedData = mockData.find(item => item.date === selectedDate);
+    return selectedData ? selectedData.data : null;
+  };
 
   if (loading) {
     return <LoadingIndicator />;
@@ -49,8 +61,25 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">最新日期投资类型汇总</h2>
-        <SummaryTable data={data.latestData} />
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-800">投资类型汇总</h2>
+          <div className="flex items-center space-x-2">
+            <label htmlFor="dateSelect" className="text-sm text-gray-600">选择日期：</label>
+            <select
+              id="dateSelect"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {mockData.map(item => (
+                <option key={item.date} value={item.date}>
+                  {item.date}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <SummaryTable data={getSelectedDateData() || data.latestData} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
