@@ -17,7 +17,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         <h2 className="text-xl font-bold text-gray-800">{title}</h2>
         <p className="text-sm text-gray-600 mt-1">{description}</p>
       </div>
-      <div className="h-[300px] md:h-[350px]">
+      <div className="h-[400px] md:h-[450px]">
         {children}
       </div>
     </div>

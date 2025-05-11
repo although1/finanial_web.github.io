@@ -2,41 +2,41 @@ import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { FinancialData } from '../../data/dataTypes';
 
-interface FUNDInvestmentChartProps {
+interface STOCKInvestmentChartProps {
   data: { data: FinancialData; date: string }[];
 }
 
-export const FUNDInvestmentChart: React.FC<FUNDInvestmentChartProps> = ({ data }) => {
+export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data }) => {
   const [options, setOptions] = useState({});
 
   useEffect(() => {
     if (data && data.length > 1) {
-      // Extract FUND investment data for each date
-      const fundData = data.map(item => {
-        let totalFUND = 0;
-        let totalFUNDProfit = 0;
+      // Extract STOCK investment data for each date
+      const stockData = data.map(item => {
+        let totalSTOCK = 0;
+        let totalSTOCKProfit = 0;
         Object.entries(item.data).forEach(([institution, value]) => {
           if (institution !== 'grand_total' && typeof value === 'object') {
             const institutionData = value as any;
-            if (institutionData.detail['基金']) {
-              totalFUND += institutionData.detail['基金'];
+            if (institutionData.detail['股票']) {
+              totalSTOCK += institutionData.detail['股票'];
             }
-            if (institutionData.detail['基金_收益']) {
-              totalFUNDProfit += institutionData.detail['基金_收益'];
+            if (institutionData.detail['股票_收益']) {
+              totalSTOCKProfit += institutionData.detail['股票_收益'];
             }
           }
         });
         return {
           date: item.date,
-          value: totalFUND,
-          profit: totalFUNDProfit
+          value: totalSTOCK,
+          profit: totalSTOCKProfit
         };
       });
 
       // Calculate daily changes
-      const changes = fundData.slice(1).map((point, index) => {
-        const change = point.value - fundData[index].value;
-        const profit = point.profit - fundData[index].profit;
+      const changes = stockData.slice(1).map((point, index) => {
+        const change = point.value - stockData[index].value;
+        const profit = point.profit - stockData[index].profit;
         return {
           value: change,
           itemStyle: {
@@ -46,7 +46,7 @@ export const FUNDInvestmentChart: React.FC<FUNDInvestmentChartProps> = ({ data }
         };
       });
 
-      const dates = fundData.slice(1).map(point => point.date);
+      const dates = stockData.slice(1).map(point => point.date);
 
       setOptions({
         tooltip: {
@@ -102,7 +102,7 @@ export const FUNDInvestmentChart: React.FC<FUNDInvestmentChartProps> = ({ data }
         },
         series: [
           {
-            name: '基金变化',
+            name: '股票变化',
             type: 'bar',
             stack: 'Total',
             label: {

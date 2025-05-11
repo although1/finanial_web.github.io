@@ -70,11 +70,11 @@ export const CNYInvestmentChart: React.FC<CNYInvestmentChartProps> = ({ data }) 
                     资产变化: ￥${value}<br/>
                     收益变化: ￥${profitValue}`;
           }
-        },
-        grid: {
+        },        grid: {
           left: '3%',
           right: '4%',
-          bottom: '3%',
+          bottom: '15%',
+          top: '10%',
           containLabel: true
         },
         xAxis: {
