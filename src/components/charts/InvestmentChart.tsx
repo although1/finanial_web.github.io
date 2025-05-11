@@ -2,62 +2,92 @@ import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { FinancialData } from '../../data/dataTypes';
 
-interface STOCKInvestmentChartProps {
+interface InvestmentChartProps {
   data: { data: FinancialData; date: string }[];
+  type: 'usd' | 'cny' | 'fund' | 'stock';
+  showAllDates?: boolean;
 }
 
-export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data }) => {
+const INVESTMENT_CONFIG = {
+  usd: {
+    name: '美元理财',
+    color: '#48BB78',
+    profitKey: '美元理财_收益'
+  },
+  cny: {
+    name: '人民币理财',
+    color: '#3182CE',
+    profitKey: '人民币理财_收益'
+  },
+  fund: {
+    name: '基金',
+    color: '#9F7AEA',
+    profitKey: '基金_收益'
+  },
+  stock: {
+    name: '股票',
+    color: '#ED8936',
+    profitKey: '股票_收益'
+  }
+} as const;
+
+export const InvestmentChart: React.FC<InvestmentChartProps> = ({ 
+  data, 
+  type,
+  showAllDates = false
+}) => {
   const [options, setOptions] = useState({});
+  const config = INVESTMENT_CONFIG[type];
 
   useEffect(() => {
     if (data && data.length > 1) {
-      // Extract STOCK investment data for each date
-      const stockData = data.map(item => {
-        let totalSTOCK = 0;
-        let totalSTOCKProfit = 0;
+      // Filter data if showAllDates is false
+      const filteredData = showAllDates ? data : data.filter(item => item.date.endsWith('-01'));
+      
+      // Extract investment data for each date
+      const investmentData = filteredData.map(item => {
+        let total = 0;
+        let totalProfit = 0;
+        
         Object.entries(item.data).forEach(([institution, value]) => {
           if (institution !== 'grand_total' && typeof value === 'object') {
             const institutionData = value as any;
-            if (institutionData.detail['股票']) {
-              totalSTOCK += institutionData.detail['股票'];
-            }
-            if (institutionData.detail['股票_收益']) {
-              totalSTOCKProfit += institutionData.detail['股票_收益'];
+            if (institutionData.detail[config.name]) {
+              total += institutionData.detail[config.name];
+              if (institutionData.detail[config.profitKey]) {
+                totalProfit += institutionData.detail[config.profitKey];
+              }
             }
           }
         });
+        
         return {
           date: item.date,
-          value: totalSTOCK,
-          profit: totalSTOCKProfit
+          value: total,
+          profit: totalProfit
         };
       });
 
       // Calculate daily changes
-      const changes = stockData.slice(1).map((point, index) => {
-        const change = point.value - stockData[index].value;
-        const profit = point.profit - stockData[index].profit;
+      const changes = investmentData.slice(1).map((point, index) => {
+        const change = point.value - investmentData[index].value;
+        const profitChange = point.profit - investmentData[index].profit;
         return {
           value: change,
+          profit: profitChange,
           itemStyle: {
-            color: change >= 0 ? '#48BB78' : '#F56565'
-          },
-          profit: profit
+            color: change >= 0 ? config.color : '#F56565'
+          }
         };
       });
-
-      const dates = stockData.slice(1).map(point => point.date);
 
       setOptions({
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
+            type: 'shadow'
           },
-          formatter: (params: any) => {
+          formatter: function(params: any) {
             const value = params[0].value.toLocaleString('zh-CN', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
@@ -70,7 +100,8 @@ export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data
                     资产变化: ￥${value}<br/>
                     收益变化: ￥${profitValue}`;
           }
-        },        grid: {
+        },
+        grid: {
           left: '3%',
           right: '4%',
           bottom: '15%',
@@ -79,14 +110,10 @@ export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data
         },
         xAxis: {
           type: 'category',
-          data: dates,
+          data: investmentData.slice(1).map(item => item.date),
           axisLabel: {
             formatter: (value: string) => {
-              const date = new Date(value);
-              return date.toLocaleDateString('zh-CN', {
-                month: 'numeric',
-                day: 'numeric'
-              });
+              return value.substring(5); // 只显示月-日
             },
             interval: 0,
             rotate: 30
@@ -95,16 +122,17 @@ export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data
         yAxis: {
           type: 'value',
           axisLabel: {
-            formatter: (value: number) => {
-              return `￥${(value / 1000).toLocaleString('zh-CN')}k`;
-            }
-          }
+            formatter: (value: number) => `¥${value.toLocaleString('zh-CN')}`
+          },
         },
         series: [
           {
-            name: '股票变化',
+            name: `${config.name}变化`,
             type: 'bar',
-            stack: 'Total',
+            data: changes.map(item => ({
+              value: item.value,
+              itemStyle: item.itemStyle
+            })),
             label: {
               show: true,
               position: 'top',
@@ -114,17 +142,13 @@ export const STOCKInvestmentChart: React.FC<STOCKInvestmentChartProps> = ({ data
                   maximumFractionDigits: 0,
                 })}`;
               }
-            },
-            data: changes.map(item => ({
-              value: item.value,
-              itemStyle: item.itemStyle
-            }))
+            }
           }
         ],
         animation: true
       });
     }
-  }, [data]);
+  }, [data, type, showAllDates]);
 
   return <ReactECharts option={options} style={{ height: '100%', width: '100%' }} />;
 };

@@ -3,14 +3,10 @@ import { processFinancialData } from '../data/dataProcessor';
 import { ProcessedData } from '../data/dataTypes';
 import { mockData } from '../data/mockData';
 import { TrendChart } from './charts/TrendChart';
-import { DistributionPieChart } from './charts/DistributionPieChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
 import { WaterfallChart } from './charts/WaterfallChart';
 import { TreemapChart } from './charts/TreemapChart';
-import { USDInvestmentChart } from './charts/USDInvestmentChart';
-import { CNYInvestmentChart } from './charts/CNYInvestmentChart';
-import { FUNDInvestmentChart } from './charts/FUNDInvestmentChart';
-import { STOCKInvestmentChart } from './charts/STOCKInvestmentChart';
+import { InvestmentChart } from './charts/InvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
 import { SummaryTable } from './common/SummaryTable';
@@ -288,14 +284,12 @@ const Dashboard: React.FC = () => {
         </div>
         {activeChart === 'monthly' ? (
           <WaterfallChart data={data.timeSeriesData} />
-        ) : activeChart === 'usd' ? (
-          <USDInvestmentChart data={mockData} />
-        )  : activeChart === 'cny' ? (
-          <CNYInvestmentChart data={mockData} />
-        ) : activeChart === 'fund' ? (
-          <FUNDInvestmentChart data={mockData} />
-        ) :  (
-          <STOCKInvestmentChart data={mockData} />
+        ) : (
+          <InvestmentChart 
+            data={mockData} 
+            type={activeChart} 
+            showAllDates={showAllDates}
+          />
         )}
       </ChartContainer>
 
