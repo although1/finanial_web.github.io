@@ -9,11 +9,12 @@ import { WaterfallChart } from './charts/WaterfallChart';
 import { TreemapChart } from './charts/TreemapChart';
 import { USDInvestmentChart } from './charts/USDInvestmentChart';
 import { CNYInvestmentChart } from './charts/CNYInvestmentChart';
+import { FUNDInvestmentChart } from './charts/FUNDInvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
 import { SummaryTable } from './common/SummaryTable';
 
-type ChartType = 'monthly' | 'usd' | 'cny';
+type ChartType = 'monthly' | 'usd' | 'cny'| 'fund';
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -127,12 +128,14 @@ const Dashboard: React.FC = () => {
           title={
             activeChart === 'monthly' ? "月度变化" :
             activeChart === 'usd' ? "美元投资月度变化" :
-            "人民币理财月度变化"
+            activeChart === 'cny' ? "人民币理财月度变化" :
+            "基金月度变化"
           }
           description={
             activeChart === 'monthly' ? "可视化展示您总资产随时间变化的详细情况。" :
             activeChart === 'usd' ? "追踪所有机构美元投资金额的每日变化。" :
-            "追踪所有机构人民币理财金额的每日变化。"
+            activeChart === 'cny' ? "追踪所有机构人民币理财金额的每日变化。" :
+            "追踪所有机构基金金额的每日变化。"
           }
         >
           <div className="mb-4 flex justify-end space-x-2">
@@ -166,13 +169,25 @@ const Dashboard: React.FC = () => {
             >
               人民币理财
             </button>
+            <button
+              onClick={() => setActiveChart('fund')}
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
+                activeChart === 'fund'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-blue-600 hover:text-blue-800'
+              } focus:outline-none`}
+            >
+              基金
+            </button>  
           </div>
           {activeChart === 'monthly' ? (
             <WaterfallChart data={data.timeSeriesData} />
           ) : activeChart === 'usd' ? (
             <USDInvestmentChart data={mockData} />
-          ) : (
+          )  : activeChart === 'cny' ? (
             <CNYInvestmentChart data={mockData} />
+          ) : (
+            <FUNDInvestmentChart data={mockData} />
           )}
         </ChartContainer>
 
