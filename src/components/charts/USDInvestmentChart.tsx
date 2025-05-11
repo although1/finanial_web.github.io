@@ -14,28 +14,35 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
       // Extract USD investment data for each date
       const usdData = data.map(item => {
         let totalUSD = 0;
+        let totalUSDProfit = 0;
         Object.entries(item.data).forEach(([institution, value]) => {
           if (institution !== 'grand_total' && typeof value === 'object') {
             const institutionData = value as any;
             if (institutionData.detail['美元理财']) {
               totalUSD += institutionData.detail['美元理财'];
             }
+            if (institutionData.detail['美元理财_收益']) {
+              totalUSDProfit += institutionData.detail['美元理财_收益'];
+            }
           }
         });
         return {
           date: item.date,
-          value: totalUSD
+          value: totalUSD,
+          profit: totalUSDProfit
         };
       });
 
       // Calculate daily changes
       const changes = usdData.slice(1).map((point, index) => {
         const change = point.value - usdData[index].value;
+        const profit = point.profit - usdData[index].profit;
         return {
           value: change,
           itemStyle: {
             color: change >= 0 ? '#48BB78' : '#F56565'
-          }
+          },
+          profit: profit
         };
       });
 
@@ -45,18 +52,20 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
+            type: 'shadow'
           },
-          formatter: function(params: any) {
-            let result = `${params[0].name}<br/>`;
-            params.forEach((param: any) => {
-              const value = param.value.toLocaleString('zh-CN');
-              result += `${param.marker} ${param.seriesName}: ¥${value}<br/>`;
+          formatter: (params: any) => {
+            const value = params[0].value.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             });
-            return result;
+            const profitValue = changes[params[0].dataIndex].profit.toLocaleString('zh-CN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return `${params[0].name}<br/>
+                    资产变化: ￥${value}<br/>
+                    收益变化: ￥${profitValue}`;
           }
         },
         grid: {
@@ -82,10 +91,11 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
         },
         yAxis: {
           type: 'value',
-          name: '投资金额',
           axisLabel: {
-            formatter: (value: number) => `¥${value.toLocaleString('zh-CN')}`
-          },
+            formatter: (value: number) => {
+              return `￥${(value / 1000).toLocaleString('zh-CN')}k`;
+            }
+          }
         },
         series: [
           {
@@ -96,14 +106,16 @@ export const USDInvestmentChart: React.FC<USDInvestmentChartProps> = ({ data }) 
               show: true,
               position: 'top',
               formatter: (params: any) => {
-                const value = params.value;
-                if (value >= 0) {
-                  return '+' + value.toFixed(0);
-                }
-                return value.toFixed(0);
+                return `￥${params.value.toLocaleString('zh-CN', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}`;
               }
             },
-            data: changes
+            data: changes.map(item => ({
+              value: item.value,
+              itemStyle: item.itemStyle
+            }))
           }
         ],
         animation: true
