@@ -5,6 +5,7 @@ import { USDInvestmentTable } from './common/USDInvestmentTable';
 import { USDInvestmentDetail, USDInvestmentDetailWithDates } from '../data/dataTypes';
 import { usdInvestmentData } from '../data/usdInvestmentData';
 import { EditForm } from './common/EditForm';
+import { AddForm } from './common/AddForm';
 
 // 计算两个日期之间的天数差
 const calculateDaysBetween = (date1: string, date2: string): number => {
@@ -24,6 +25,7 @@ const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(usdInvestmentData);
   const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
   const [currentDate, setCurrentDate] = useState("2025/05/13"); // 设置默认当前日期
 
   // 使用 useMemo 计算带有日期信息的完整数据
@@ -42,19 +44,31 @@ const FinancialPage: React.FC = () => {
 
   const handleEdit = (item: USDInvestmentDetailWithDates) => {
     setEditingItem(item);
+    setIsAdding(false);
+  };
+
+  const handleAdd = () => {
+    setIsAdding(true);
+    setEditingItem(null);
   };
 
   const handleSave = (updatedItem: USDInvestmentDetail) => {
-    setData(data.map(item => 
-      item.name === updatedItem.name && item.app === updatedItem.app 
-        ? updatedItem 
-        : item
-    ));
+    if (editingItem) {
+      setData(data.map(item => 
+        item.name === updatedItem.name && item.app === updatedItem.app 
+          ? updatedItem 
+          : item
+      ));
+    } else {
+      setData([...data, updatedItem]);
+    }
     setEditingItem(null);
+    setIsAdding(false);
   };
 
   const handleCancel = () => {
     setEditingItem(null);
+    setIsAdding(false);
   };
 
   const handleDateChange = (newDate: string) => {
@@ -63,23 +77,31 @@ const FinancialPage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-4">
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={() => navigate('/')}
-          className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 rounded-md border border-blue-600 hover:border-blue-800"
-        >
-          返回主页
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800">理财详情</h1>
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium text-gray-700">当前日期：</label>
-          <input
-            type="date"
-            value={currentDate.split('/').join('-')}
-            onChange={(e) => handleDateChange(e.target.value.split('-').join('/'))}
-            className="mt-1 block rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate('/')}
+            className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 rounded-md border border-blue-600 hover:border-blue-800"
+          >
+            返回主页
+          </button>
+          <h1 className="text-2xl font-bold text-gray-800">理财详情</h1>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-medium text-gray-700">当前日期：</label>
+            <input
+              type="date"
+              value={currentDate.split('/').join('-')}
+              onChange={(e) => handleDateChange(e.target.value.split('-').join('/'))}
+              className="mt-1 block rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
         </div>
+        <button
+          onClick={handleAdd}
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+        >
+          新增理财产品
+        </button>
       </div>
 
       <ChartContainer 
@@ -89,6 +111,12 @@ const FinancialPage: React.FC = () => {
         {editingItem ? (
           <EditForm 
             item={editingItem} 
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        ) : isAdding ? (
+          <AddForm 
+            currentDate={currentDate}
             onSave={handleSave}
             onCancel={handleCancel}
           />

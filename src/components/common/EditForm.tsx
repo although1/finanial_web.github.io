@@ -7,14 +7,6 @@ interface EditFormProps {
   onCancel: () => void;
 }
 
-// 计算两个日期之间的天数差
-const calculateDaysBetween = (date1: string, date2: string): number => {
-  const d1 = new Date(date1.split('/').join('-'));
-  const d2 = new Date(date2.split('/').join('-'));
-  const diffTime = Math.abs(d2.getTime() - d1.getTime());
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-};
-
 // 计算年化收益率
 const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number): number => {
   if (holdingDays <= 0 || initialRMB <= 0) return 0;
