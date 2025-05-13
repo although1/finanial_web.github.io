@@ -1,9 +1,9 @@
 import React from 'react';
-import { USDInvestmentDetail } from '../../data/dataTypes';
+import { USDInvestmentDetailWithDates } from '../../data/dataTypes';
 
 interface USDInvestmentTableProps {
-  data: USDInvestmentDetail[];
-  onEdit?: (item: USDInvestmentDetail) => void;
+  data: USDInvestmentDetailWithDates[];
+  onEdit?: (item: USDInvestmentDetailWithDates) => void;
 }
 
 export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, onEdit }) => {
@@ -23,7 +23,8 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
   });
 
   // 计算总体年化收益率
-  const totalAnnualizedReturn = (totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100);
+  const totalAnnualizedReturn = data.length > 0 ? 
+    (totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100) : 0;
 
   return (
     <div className="overflow-x-auto">
@@ -40,7 +41,6 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             <th className="px-4 py-2 text-right text-sm font-semibold">结汇价</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">当前RMB数额</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">实际收益</th>
-            <th className="px-4 py-2 text-center text-sm font-semibold">日期</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
             {onEdit && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
@@ -78,7 +78,6 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
               }`}>
                 ¥{item.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
               </td>
-              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.date}</td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">{item.holdingDays}</td>
               <td className={`px-4 py-2 text-sm text-right font-medium ${
                 item.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'
@@ -95,7 +94,8 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
                   </button>
                 </td>
               )}
-            </tr>          ))}
+            </tr>
+          ))}
           {/* 添加总计行 */}
           <tr className="bg-blue-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-blue-50">总计</td>
@@ -120,14 +120,13 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             }`}>
               ¥{totals.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
             </td>
-            <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
             <td className={`px-4 py-2 text-sm text-right font-medium ${
               totalAnnualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'
             }`}>
               {totalAnnualizedReturn.toFixed(2)}
             </td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
+            {onEdit && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
         </tbody>
       </table>

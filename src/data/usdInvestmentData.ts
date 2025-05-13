@@ -11,10 +11,7 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 10338.39,
     currentRate: 722.66,
     currentRMB: 74711.41,
-    profit: 2421.44,
-    date: "2025/05/13",
-    holdingDays: 285,
-    annualizedReturn: 428.99
+    profit: 2421.44
   },
   {
     app: "工商银行",
@@ -26,10 +23,7 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 54.28,
     currentRate: 722.66,
     currentRMB: 392.26,
-    profit: 11.82,
-    date: "2025/05/13",
-    holdingDays: 285,
-    annualizedReturn: 397.96
+    profit: 11.82
   },
   {
     app: "工商银行",
@@ -41,10 +35,7 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 2049.12,
     currentRate: 722.66,
     currentRMB: 14808.17,
-    profit: 316.17,
-    date: "2025/05/13",
-    holdingDays: 406,
-    annualizedReturn: 196.14
+    profit: 316.17
   },
   {
     app: "工商银行",
@@ -56,10 +47,7 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 53.25,
     currentRate: 722.66,
     currentRMB: 384.82,
-    profit: 8.02,
-    date: "2025/05/13",
-    holdingDays: 406,
-    annualizedReturn: 191.46
+    profit: 8.02
   },
   {
     app: "招商银行",
@@ -71,10 +59,7 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 1028.83,
     currentRate: 722.23,
     currentRMB: 7430.52,
-    profit: 280.02,
-    date: "2025/05/13",
-    holdingDays: 265,
-    annualizedReturn: 539.38
+    profit: 280.02
   },
   {
     app: "招商银行",
@@ -86,9 +71,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     currentUSD: 2060.13,
     currentRate: 722.23,
     currentRMB: 14878.88,
-    profit: 559.48,
-    date: "2025/05/13",
-    holdingDays: 266,
-    annualizedReturn: 536.13
+    profit: 559.48
   }
 ];

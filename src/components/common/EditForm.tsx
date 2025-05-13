@@ -1,41 +1,29 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail } from '../../data/dataTypes';
-
-// 计算两个日期之间的天数差
-const calculateDaysBetween = (date1: string, date2: string): number => {
-  const d1 = new Date(date1.split('/').join('-'));
-  const d2 = new Date(date2.split('/').join('-'));
-  const diffTime = Math.abs(d2.getTime() - d1.getTime());
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-};
+import { USDInvestmentDetailWithDates } from '../../data/dataTypes';
 
 interface EditFormProps {
-  item: USDInvestmentDetail;
-  onSave: (item: USDInvestmentDetail) => void;
+  item: USDInvestmentDetailWithDates;
+  onSave: (item: USDInvestmentDetailWithDates) => void;
   onCancel: () => void;
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(item);  const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number) => {
-    return parseFloat((10000 / initialRMB * profit / holdingDays * 365).toFixed(2));
-  };
+  const [formData, setFormData] = useState(item);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const numValue = name.includes('USD') || name.includes('RMB') || name.includes('Rate') || name.includes('Return')
+    const numValue = name.includes('USD') || name.includes('RMB') || name.includes('Rate')
       ? parseFloat(value)
       : value;
 
     setFormData(prev => {
-      const updates = { [name]: numValue };
-        // 如果修改的是当前美元数额或结汇价，自动计算当前RMB数额和相关指标
-      if (name === 'currentUSD' || name === 'currentRate' || name === 'date') {
-        const currentUSD = name === 'currentUSD' ? numValue : prev.currentUSD;
-        const currentRate = name === 'currentRate' ? numValue : prev.currentRate;
-        const holdingDays = name === 'date' ? 
-          calculateDaysBetween(prev.purchaseDate, value as string) : 
-          prev.holdingDays;
-
+      const updates: Partial<USDInvestmentDetailWithDates> = { [name]: numValue };
+      
+      // 如果修改的是当前美元数额或结汇价，自动计算当前RMB数额
+      if (name === 'currentUSD' || name === 'currentRate') {
+        const currentUSD = name === 'currentUSD' ? (numValue as number) : prev.currentUSD;
+        const currentRate = name === 'currentRate' ? (numValue as number) : prev.currentRate;
+        
         // 计算当前RMB数额
         const currentRMB = parseFloat((currentUSD * currentRate/100).toFixed(2));
         updates.currentRMB = currentRMB;
@@ -43,45 +31,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
         // 计算实际收益
         const profit = parseFloat((currentRMB - prev.initialRMB).toFixed(2));
         updates.profit = profit;
-
-        // 更新持有天数
-        updates.holdingDays = holdingDays;
-
-        // 计算年化收益率
-        if (holdingDays > 0 && prev.initialRMB > 0) {
-          const annualizedReturn = (10000 / prev.initialRMB * profit / holdingDays * 365);
-          updates.annualizedReturn = parseFloat(annualizedReturn.toFixed(2));
-        }
       }
 
       return { ...prev, ...updates };
-    });
-  };
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    // 将 YYYY-MM-DD 格式转换为 YYYY/MM/DD 格式
-    const formattedDate = date.split('-').join('/');
-    
-    setFormData(prev => {
-      // 计算持有天数
-      const holdingDays = calculateDaysBetween(prev.purchaseDate, formattedDate);
-      
-      // 计算年化收益率
-      let updates: any = {
-        date: formattedDate,
-        holdingDays: holdingDays
-      };
-
-      if (holdingDays > 0 && prev.initialRMB > 0) {
-        const profit = prev.currentRMB - prev.initialRMB;
-        const annualizedReturn = (10000 / prev.initialRMB * profit / holdingDays * 365);
-        updates.annualizedReturn = parseFloat(annualizedReturn.toFixed(2));
-      }
-      
-      return {
-        ...prev,
-        ...updates
-      };
     });
   };
 
@@ -89,9 +41,10 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
     e.preventDefault();
     onSave(formData);
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4">      
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">机构名称</label>
           <input
@@ -200,16 +153,6 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             readOnly
             disabled
             className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">日期</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date.split('/').join('-')}
-            onChange={handleDateChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
         <div>

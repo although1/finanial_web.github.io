@@ -64,7 +64,9 @@ export interface USDInvestmentDetail {
   currentRate: number;          // 结汇价
   currentRMB: number;           // 当前RMB数额
   profit: number;               // 实际收益
-  date: string;                 // 日期
+}
+
+export interface USDInvestmentDetailWithDates extends USDInvestmentDetail {
   holdingDays: number;          // 持有天数
   annualizedReturn: number;     // 对应的年化率
 }
