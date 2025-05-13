@@ -3,9 +3,10 @@ import { USDInvestmentDetail } from '../../data/dataTypes';
 
 interface USDInvestmentTableProps {
   data: USDInvestmentDetail[];
+  onEdit?: (item: USDInvestmentDetail) => void;
 }
 
-export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) => {
+export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, onEdit }) => {
   // 计算总计数据
   const totals = data.reduce((acc, curr) => ({
     initialUSD: acc.initialUSD + curr.initialUSD,
@@ -42,6 +43,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) 
             <th className="px-4 py-2 text-center text-sm font-semibold">日期</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
+            {onEdit && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -83,6 +85,16 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) 
               }`}>
                 {item.annualizedReturn.toFixed(2)}
               </td>
+              {onEdit && (
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button
+                    onClick={() => onEdit(item)}
+                    className="text-blue-600 hover:text-blue-900"
+                  >
+                    编辑
+                  </button>
+                </td>
+              )}
             </tr>          ))}
           {/* 添加总计行 */}
           <tr className="bg-blue-50 font-semibold">

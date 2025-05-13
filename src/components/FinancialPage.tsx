@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
+import { USDInvestmentDetail } from '../data/dataTypes';
 import { usdInvestmentData } from '../data/usdInvestmentData';
+import { EditForm } from './common/EditForm';
 
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
+  const [data, setData] = useState(usdInvestmentData);
+  const [editingItem, setEditingItem] = useState<USDInvestmentDetail | null>(null);
+
+  const handleEdit = (item: USDInvestmentDetail) => {
+    setEditingItem(item);
+  };
+
+  const handleSave = (updatedItem: USDInvestmentDetail) => {
+    setData(data.map(item => 
+      item.name === updatedItem.name && item.app === updatedItem.app 
+        ? updatedItem 
+        : item
+    ));
+    setEditingItem(null);
+  };
+
+  const handleCancel = () => {
+    setEditingItem(null);
+  };
 
   return (
     <div className="space-y-8 p-4">
@@ -23,7 +44,18 @@ const FinancialPage: React.FC = () => {
         title="美元理财产品详情" 
         description="展示所有美元理财产品的详细信息。"
       >
-        <USDInvestmentTable data={usdInvestmentData} />
+        {editingItem ? (
+          <EditForm 
+            item={editingItem} 
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        ) : (
+          <USDInvestmentTable 
+            data={data} 
+            onEdit={handleEdit}
+          />
+        )}
       </ChartContainer>
     </div>
   );
