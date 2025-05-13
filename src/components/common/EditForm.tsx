@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { USDInvestmentDetail } from '../../data/dataTypes';
 
+// 计算两个日期之间的天数差
+const calculateDaysBetween = (date1: string, date2: string): number => {
+  const d1 = new Date(date1.split('/').join('-'));
+  const d2 = new Date(date2.split('/').join('-'));
+  const diffTime = Math.abs(d2.getTime() - d1.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
+
 interface EditFormProps {
   item: USDInvestmentDetail;
   onSave: (item: USDInvestmentDetail) => void;
@@ -8,25 +16,62 @@ interface EditFormProps {
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(item);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name.includes('USD') || name.includes('RMB') || name.includes('Rate') || name.includes('Return')
-        ? parseFloat(value)
-        : value
-    }));
+  const [formData, setFormData] = useState(item);  const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number) => {
+    return parseFloat((10000 / initialRMB * profit / holdingDays * 365).toFixed(2));
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const numValue = name.includes('USD') || name.includes('RMB') || name.includes('Rate') || name.includes('Return')
+      ? parseFloat(value)
+      : value;
+
+    setFormData(prev => {
+      const updates = { [name]: numValue };
+        // 如果修改的是当前美元数额或结汇价，自动计算当前RMB数额和相关指标
+      if (name === 'currentUSD' || name === 'currentRate' || name === 'date') {
+        const currentUSD = name === 'currentUSD' ? numValue : prev.currentUSD;
+        const currentRate = name === 'currentRate' ? numValue : prev.currentRate;
+        const holdingDays = name === 'date' ? 
+          calculateDaysBetween(prev.purchaseDate, value as string) : 
+          prev.holdingDays;
+
+        // 计算当前RMB数额
+        const currentRMB = parseFloat((currentUSD * currentRate/100).toFixed(2));
+        updates.currentRMB = currentRMB;
+        
+        // 计算实际收益
+        const profit = parseFloat((currentRMB - prev.initialRMB).toFixed(2));
+        updates.profit = profit;
+
+        // 更新持有天数
+        updates.holdingDays = holdingDays;
+
+        // 计算年化收益率
+        if (holdingDays > 0 && prev.initialRMB > 0) {
+          const annualizedReturn = (10000 / prev.initialRMB * profit / holdingDays * 365);
+          updates.annualizedReturn = parseFloat(annualizedReturn.toFixed(2));
+        }
+      }
+
+      return { ...prev, ...updates };
+    });
+  };
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
     // 将 YYYY-MM-DD 格式转换为 YYYY/MM/DD 格式
     const formattedDate = date.split('-').join('/');
-    setFormData(prev => ({
-      ...prev,
-      date: formattedDate
-    }));
+    
+    setFormData(prev => {
+      // 计算持有天数
+      const holdingDays = calculateDaysBetween(prev.purchaseDate, formattedDate);
+      
+      return {
+        ...prev,
+        date: formattedDate,
+        holdingDays: holdingDays
+      };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -124,8 +169,7 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">当前RMB数额</label>
+        <div>          <label className="block text-sm font-medium text-gray-700 mb-1">当前RMB数额 (自动计算)</label>
           <input
             type="number"
             name="currentRMB"
@@ -135,8 +179,7 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">实际收益</label>
+        <div>          <label className="block text-sm font-medium text-gray-700 mb-1">实际收益 (自动计算)</label>
           <input
             type="number"
             name="profit"
@@ -157,7 +200,7 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">持有天数</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">持有天数 (自动计算)</label>
           <input
             type="number"
             name="holdingDays"
