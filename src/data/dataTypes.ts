@@ -55,8 +55,7 @@ export interface ProcessedData {
 
 export interface USDInvestmentDetail {
   app: string;                   // 对应APP
-  type: string;                  // 理财类型
-  name: string;                  // 理财名称
+  name: string;                  // 产品名称
   initialUSD: number;           // 美元本金
   buyRate: number;              // 购汇价
   initialRMB: number;           // 购汇RMB价格

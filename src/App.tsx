@@ -8,7 +8,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="container mx-auto px-2 py-8">
+        <main className="w-[90%]  mx-auto px-2 py-8">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/financial" element={<FinancialPage />} />

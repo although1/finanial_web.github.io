@@ -3,7 +3,6 @@ import { USDInvestmentDetail } from './dataTypes';
 export const usdInvestmentData: USDInvestmentDetail[] = [
   {
     app: "工商银行",
-    type: "理财/美元理财",
     name: "高盛每日理财",
     initialUSD: 10029.13,
     buyRate: 720.80,
@@ -19,7 +18,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
   },
   {
     app: "工商银行",
-    type: "理财/美元理财",
     name: "高盛工银",
     initialUSD: 52.78,
     buyRate: 720.80,
@@ -35,7 +33,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
   },
   {
     app: "工商银行",
-    type: "理财/美元理财",
     name: "工银理财",
     initialUSD: 2000.00,
     buyRate: 724.60,
@@ -51,7 +48,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
   },
   {
     app: "工商银行",
-    type: "理财/美元理财",
     name: "工银理财",
     initialUSD: 52.00,
     buyRate: 724.60,
@@ -67,7 +63,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
   },
   {
     app: "招商银行",
-    type: "理财/美元理财",
     name: "招银稳健型",
     initialUSD: 1000.00,
     buyRate: 715.05,
@@ -83,7 +78,6 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
   },
   {
     app: "招商银行",
-    type: "理财/美元理财",
     name: "招银信用优选",
     initialUSD: 2000.00,
     buyRate: 715.97,

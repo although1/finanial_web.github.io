@@ -30,7 +30,6 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) 
         <thead className="bg-blue-500 text-white">
           <tr>
             <th className="px-4 py-2 text-left text-sm font-semibold sticky left-0 bg-blue-500">对应APP</th>
-            <th className="px-4 py-2 text-left text-sm font-semibold">理财类型</th>
             <th className="px-4 py-2 text-left text-sm font-semibold">理财名称</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">美元本金</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">购汇价</th>
@@ -50,8 +49,8 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) 
             <tr 
               key={`${item.app}-${item.name}-${index}`}
               className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-            >              <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
-              <td className="px-4 py-2 text-sm text-gray-900">{item.type}</td>
+            >              
+              <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">
                 ${item.initialUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -88,7 +87,6 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data }) 
           {/* 添加总计行 */}
           <tr className="bg-blue-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-blue-50">总计</td>
-            <td className="px-4 py-2 text-sm text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">
               ${totals.initialUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
