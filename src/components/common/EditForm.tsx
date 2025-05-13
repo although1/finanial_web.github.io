@@ -9,7 +9,6 @@ interface EditFormProps {
 
 export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) => {
   const [formData, setFormData] = useState(item);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -20,21 +19,32 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
     }));
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
+    // 将 YYYY-MM-DD 格式转换为 YYYY/MM/DD 格式
+    const formattedDate = date.split('-').join('/');
+    setFormData(prev => ({
+      ...prev,
+      date: formattedDate
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
   };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4">      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">      
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">机构名称</label>
           <input
             type="text"
             name="app"
             value={formData.app}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -43,8 +53,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="text"
             name="name"
             value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -53,9 +64,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="initialUSD"
             value={formData.initialUSD}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -64,9 +75,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="buyRate"
             value={formData.buyRate}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -75,9 +86,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="initialRMB"
             value={formData.initialRMB}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -86,9 +97,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="text"
             name="purchaseDate"
             value={formData.purchaseDate}
-            onChange={handleChange}
-            placeholder="YYYY/MM/DD"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -119,9 +130,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="currentRMB"
             value={formData.currentRMB}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -130,19 +141,18 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="profit"
             value={formData.profit}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">日期</label>
           <input
-            type="text"
+            type="date"
             name="date"
-            value={formData.date}
-            onChange={handleChange}
-            placeholder="YYYY/MM/DD"
+            value={formData.date.split('/').join('-')}
+            onChange={handleDateChange}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
@@ -152,8 +162,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="holdingDays"
             value={formData.holdingDays}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
         <div>
@@ -162,9 +173,9 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             type="number"
             name="annualizedReturn"
             value={formData.annualizedReturn}
-            onChange={handleChange}
-            step="0.01"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            readOnly
+            disabled
+            className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
       </div>
