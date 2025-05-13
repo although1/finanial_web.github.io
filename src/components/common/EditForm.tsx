@@ -7,6 +7,20 @@ interface EditFormProps {
   onCancel: () => void;
 }
 
+// 计算两个日期之间的天数差
+const calculateDaysBetween = (date1: string, date2: string): number => {
+  const d1 = new Date(date1.split('/').join('-'));
+  const d2 = new Date(date2.split('/').join('-'));
+  const diffTime = Math.abs(d2.getTime() - d1.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
+
+// 计算年化收益率
+const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number): number => {
+  if (holdingDays <= 0 || initialRMB <= 0) return 0;
+  return parseFloat((10000 / initialRMB * profit / holdingDays * 365).toFixed(2));
+};
+
 export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) => {
   const [formData, setFormData] = useState(item);
 
@@ -31,6 +45,10 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
         // 计算实际收益
         const profit = parseFloat((currentRMB - prev.initialRMB).toFixed(2));
         updates.profit = profit;
+
+        // 计算年化收益率
+        const annualizedReturn = calculateAnnualizedReturn(profit, prev.initialRMB, prev.holdingDays);
+        updates.annualizedReturn = annualizedReturn;
       }
 
       return { ...prev, ...updates };
@@ -167,7 +185,7 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">年化收益率</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">年化收益率 (自动计算)</label>
           <input
             type="number"
             name="annualizedReturn"
