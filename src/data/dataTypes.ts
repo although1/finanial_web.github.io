@@ -52,3 +52,20 @@ export interface ProcessedData {
   annualizedReturn: number;
   savingsData: SavingsData;
 }
+
+export interface USDInvestmentDetail {
+  app: string;                   // 对应APP
+  type: string;                  // 理财类型
+  name: string;                  // 理财名称
+  initialUSD: number;           // 美元本金
+  buyRate: number;              // 购汇价
+  initialRMB: number;           // 购汇RMB价格
+  purchaseDate: string;         // 购买时间
+  currentUSD: number;           // 当前美元数额
+  currentRate: number;          // 结汇价
+  currentRMB: number;           // 当前RMB数额
+  profit: number;               // 实际收益
+  date: string;                 // 日期
+  holdingDays: number;          // 持有天数
+  annualizedReturn: number;     // 对应的年化率
+}

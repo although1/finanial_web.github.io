@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { processFinancialData } from '../data/dataProcessor';
 import { ProcessedData } from '../data/dataTypes';
 import { mockData } from '../data/mockData';
+import { usdInvestmentData } from '../data/usdInvestmentData';
 import { TrendChart } from './charts/TrendChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
 import { WaterfallChart } from './charts/WaterfallChart';
@@ -10,6 +11,7 @@ import { InvestmentChart } from './charts/InvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
 import { SummaryTable } from './common/SummaryTable';
+import { USDInvestmentTable } from './common/USDInvestmentTable';
 
 type ChartType = 'monthly' | 'usd' | 'cny'| 'fund'| 'stock';
 
@@ -308,6 +310,13 @@ const Dashboard: React.FC = () => {
         description="展示每个金融机构内部资产类别的详细情况。"
       >
         <DetailedBarChart data={data.latestData} />
+      </ChartContainer>
+
+      <ChartContainer 
+        title="美元理财产品详情" 
+        description="展示所有美元理财产品的详细信息。"
+      >
+        <USDInvestmentTable data={usdInvestmentData} />
       </ChartContainer>
     </div>
   );
