@@ -57,7 +57,7 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
       return { ...prev, ...updates };
     });
   };
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
     // 将 YYYY-MM-DD 格式转换为 YYYY/MM/DD 格式
     const formattedDate = date.split('-').join('/');
@@ -66,10 +66,21 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
       // 计算持有天数
       const holdingDays = calculateDaysBetween(prev.purchaseDate, formattedDate);
       
-      return {
-        ...prev,
+      // 计算年化收益率
+      let updates: any = {
         date: formattedDate,
         holdingDays: holdingDays
+      };
+
+      if (holdingDays > 0 && prev.initialRMB > 0) {
+        const profit = prev.currentRMB - prev.initialRMB;
+        const annualizedReturn = (10000 / prev.initialRMB * profit / holdingDays * 365);
+        updates.annualizedReturn = parseFloat(annualizedReturn.toFixed(2));
+      }
+      
+      return {
+        ...prev,
+        ...updates
       };
     });
   };
@@ -169,7 +180,8 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
-        <div>          <label className="block text-sm font-medium text-gray-700 mb-1">当前RMB数额 (自动计算)</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">当前RMB数额 (自动计算)</label>
           <input
             type="number"
             name="currentRMB"
@@ -179,7 +191,8 @@ export const EditForm: React.FC<EditFormProps> = ({ item, onSave, onCancel }) =>
             className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
           />
         </div>
-        <div>          <label className="block text-sm font-medium text-gray-700 mb-1">实际收益 (自动计算)</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">实际收益 (自动计算)</label>
           <input
             type="number"
             name="profit"
