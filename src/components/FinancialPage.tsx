@@ -6,6 +6,7 @@ import { USDInvestmentDetail, USDInvestmentDetailWithDates } from '../data/dataT
 import { usdInvestmentData } from '../data/usdInvestmentData';
 import { EditForm } from './common/EditForm';
 import { AddForm } from './common/AddForm';
+import { saveToFile } from '../utils/saveData';
 
 // 计算两个日期之间的天数差
 const calculateDaysBetween = (date1: string, date2: string): number => {
@@ -27,6 +28,7 @@ const FinancialPage: React.FC = () => {
   const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [currentDate, setCurrentDate] = useState("2025/05/13"); // 设置默认当前日期
+  const [isSaving, setIsSaving] = useState(false);
 
   // 使用 useMemo 计算带有日期信息的完整数据
   const dataWithDates = useMemo(() => {
@@ -52,18 +54,28 @@ const FinancialPage: React.FC = () => {
     setEditingItem(null);
   };
 
-  const handleSave = (updatedItem: USDInvestmentDetail) => {
-    if (editingItem) {
-      setData(data.map(item => 
-        item.name === updatedItem.name && item.app === updatedItem.app 
-          ? updatedItem 
-          : item
-      ));
-    } else {
-      setData([...data, updatedItem]);
+  const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
+    setIsSaving(true);
+    const success = await saveToFile(newData);
+    setIsSaving(false);
+    if (!success) {
+      alert('保存失败，请稍后重试');
     }
+  };
+
+  const handleSave = async (updatedItem: USDInvestmentDetail) => {
+    const newData = editingItem 
+      ? data.map(item => 
+          item.name === updatedItem.name && item.app === updatedItem.app 
+            ? updatedItem 
+            : item
+        )
+      : [...data, updatedItem];
+    
+    setData(newData);
     setEditingItem(null);
     setIsAdding(false);
+    await handleSaveToFile(newData);
   };
 
   const handleCancel = () => {
@@ -73,13 +85,16 @@ const FinancialPage: React.FC = () => {
 
   const handleDateChange = (newDate: string) => {
     setCurrentDate(newDate);
+    handleSaveToFile(data);
   };
 
-  const handleDelete = (itemToDelete: USDInvestmentDetailWithDates) => {
+  const handleDelete = async (itemToDelete: USDInvestmentDetailWithDates) => {
     if (window.confirm('确定要删除这条记录吗？')) {
-      setData(data.filter(item => 
+      const newData = data.filter(item => 
         !(item.name === itemToDelete.name && item.app === itemToDelete.app)
-      ));
+      );
+      setData(newData);
+      await handleSaveToFile(newData);
     }
   };
 
@@ -103,6 +118,7 @@ const FinancialPage: React.FC = () => {
               className="mt-1 block rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
+          {isSaving && <span className="text-sm text-gray-500">保存中...</span>}
         </div>
         <button
           onClick={handleAdd}
