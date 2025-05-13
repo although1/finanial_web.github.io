@@ -4,9 +4,10 @@ import { USDInvestmentDetailWithDates } from '../../data/dataTypes';
 interface USDInvestmentTableProps {
   data: USDInvestmentDetailWithDates[];
   onEdit?: (item: USDInvestmentDetailWithDates) => void;
+  onDelete?: (item: USDInvestmentDetailWithDates) => void;
 }
 
-export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, onEdit }) => {
+export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, onEdit, onDelete }) => {
   // 计算总计数据
   const totals = data.reduce((acc, curr) => ({
     initialUSD: acc.initialUSD + curr.initialUSD,
@@ -43,7 +44,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             <th className="px-4 py-2 text-right text-sm font-semibold">实际收益</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
-            {onEdit && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
+            {(onEdit || onDelete) && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -84,14 +85,24 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
               }`}>
                 {item.annualizedReturn.toFixed(2)}
               </td>
-              {onEdit && (
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => onEdit(item)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    编辑
-                  </button>
+              {(onEdit || onDelete) && (
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(item)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      编辑
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(item)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      删除
+                    </button>
+                  )}
                 </td>
               )}
             </tr>
@@ -126,7 +137,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             }`}>
               {totalAnnualizedReturn.toFixed(2)}
             </td>
-            {onEdit && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
+            {(onEdit || onDelete) && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
         </tbody>
       </table>

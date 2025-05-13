@@ -75,6 +75,14 @@ const FinancialPage: React.FC = () => {
     setCurrentDate(newDate);
   };
 
+  const handleDelete = (itemToDelete: USDInvestmentDetailWithDates) => {
+    if (window.confirm('确定要删除这条记录吗？')) {
+      setData(data.filter(item => 
+        !(item.name === itemToDelete.name && item.app === itemToDelete.app)
+      ));
+    }
+  };
+
   return (
     <div className="space-y-8 p-4">
       <div className="flex items-center justify-between">
@@ -124,6 +132,7 @@ const FinancialPage: React.FC = () => {
           <USDInvestmentTable 
             data={dataWithDates}
             onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         )}
       </ChartContainer>
