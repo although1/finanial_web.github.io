@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { processFinancialData } from '../data/dataProcessor';
 import { ProcessedData } from '../data/dataTypes';
 import { mockData } from '../data/mockData';
-import { usdInvestmentData } from '../data/usdInvestmentData';
 import { TrendChart } from './charts/TrendChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
 import { WaterfallChart } from './charts/WaterfallChart';
@@ -11,11 +11,11 @@ import { InvestmentChart } from './charts/InvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
 import { SummaryTable } from './common/SummaryTable';
-import { USDInvestmentTable } from './common/USDInvestmentTable';
 
 type ChartType = 'monthly' | 'usd' | 'cny'| 'fund'| 'stock';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ProcessedData | null>(null);
@@ -63,6 +63,12 @@ const Dashboard: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/financial')}
+              className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 rounded-md border border-blue-600 hover:border-blue-800"
+            >
+              理财详情
+            </button>
             <h2 className="text-xl font-bold text-gray-800">投资类型汇总</h2>
             <button
               onClick={() => setShowAllDates(!showAllDates)}
@@ -310,13 +316,6 @@ const Dashboard: React.FC = () => {
         description="展示每个金融机构内部资产类别的详细情况。"
       >
         <DetailedBarChart data={data.latestData} />
-      </ChartContainer>
-
-      <ChartContainer 
-        title="美元理财产品详情" 
-        description="展示所有美元理财产品的详细信息。"
-      >
-        <USDInvestmentTable data={usdInvestmentData} />
       </ChartContainer>
     </div>
   );
