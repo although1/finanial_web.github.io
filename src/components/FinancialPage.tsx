@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
 import { USDInvestmentDetail, USDInvestmentDetailWithDates } from '../data/dataTypes';
-import { usdInvestmentData } from '../data/usdInvestmentData';
+import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
 import { EditForm } from './common/EditForm';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
@@ -24,10 +24,9 @@ const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDa
 
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState(usdInvestmentData);
-  const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
+  const [data, setData] = useState(usdInvestmentData);  const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [currentDate, setCurrentDate] = useState("2025/05/13"); // 设置默认当前日期
+  const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
 
   // 使用 useMemo 计算带有日期信息的完整数据
@@ -53,10 +52,9 @@ const FinancialPage: React.FC = () => {
     setIsAdding(true);
     setEditingItem(null);
   };
-
   const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
     setIsSaving(true);
-    const success = await saveToFile(newData);
+    const success = await saveToFile(newData, currentDate);
     setIsSaving(false);
     if (!success) {
       alert('保存失败，请稍后重试');
@@ -82,7 +80,6 @@ const FinancialPage: React.FC = () => {
     setEditingItem(null);
     setIsAdding(false);
   };
-
   const handleDateChange = (newDate: string) => {
     setCurrentDate(newDate);
     handleSaveToFile(data);

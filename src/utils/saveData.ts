@@ -1,8 +1,9 @@
 import { USDInvestmentDetail } from '../data/dataTypes';
 
-export const saveToFile = async (data: USDInvestmentDetail[]) => {
-  try {
-    const content = `import { USDInvestmentDetail } from './dataTypes';
+export const saveToFile = async (data: USDInvestmentDetail[], currentDate: string) => {
+  try {    const content = `import { USDInvestmentDetail } from './dataTypes';
+
+export const DEFAULT_DATE = "${currentDate}";
 
 export const usdInvestmentData: USDInvestmentDetail[] = ${JSON.stringify(data, null, 2)};
 `;
