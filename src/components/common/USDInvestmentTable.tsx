@@ -1,13 +1,42 @@
 import React from 'react';
-import { USDInvestmentDetailWithDates } from '../../data/dataTypes';
-
+import { USDInvestmentDetailWithDates } from '../../data/dataTypes'; 
 interface USDInvestmentTableProps {
   data: USDInvestmentDetailWithDates[];
   onEdit?: (item: USDInvestmentDetailWithDates) => void;
   onDelete?: (item: USDInvestmentDetailWithDates) => void;
+  onUpdateItem?: (index: number, updates: Partial<USDInvestmentDetailWithDates>) => void;
+  onSaveAll?: () => void;
 }
 
-export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, onEdit, onDelete }) => {
+export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ 
+  data, 
+  onEdit, 
+  onDelete,
+  onUpdateItem,
+  onSaveAll
+}) => {
+  const handleValueChange = (index: number, field: keyof USDInvestmentDetailWithDates, value: string) => {
+    if (!onUpdateItem) return;
+
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return;
+
+    const item = data[index];
+    const updates: Partial<USDInvestmentDetailWithDates> = { [field]: numValue };
+
+    // 如果修改了当前美元数额，自动计算当前RMB数额和收益
+    if (field === 'currentUSD') {
+      updates.currentRMB = parseFloat((numValue * item.currentRate / 100).toFixed(2));
+      updates.profit = parseFloat((updates.currentRMB - item.initialRMB).toFixed(2));
+    }
+    // 如果修改了结汇价，自动计算当前RMB数额和收益
+    else if (field === 'currentRate') {
+      updates.currentRMB = parseFloat((item.currentUSD * numValue / 100).toFixed(2));
+      updates.profit = parseFloat((updates.currentRMB - item.initialRMB).toFixed(2));
+    }
+
+    onUpdateItem(index, updates);
+  };
   // 计算总计数据
   const totals = data.reduce((acc, curr) => ({
     initialUSD: acc.initialUSD + curr.initialUSD,
@@ -26,9 +55,8 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
   // 计算总体年化收益率
   const totalAnnualizedReturn = data.length > 0 ? 
     (totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100) : 0;
-
   return (
-    <div className="overflow-x-auto">
+    <div className="space-y-4">
       <table className="min-w-full bg-white rounded-lg overflow-hidden">
         <thead className="bg-blue-500 text-white">
           <tr>
@@ -47,8 +75,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             {(onEdit || onDelete) && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
-          {data.map((item, index) => (
+        <tbody className="divide-y divide-gray-200">          {data.map((item: USDInvestmentDetailWithDates, index: number) => (
             <tr 
               key={`${item.app}-${item.name}-${index}`}
               className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
@@ -64,12 +91,23 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
               <td className="px-4 py-2 text-sm text-right text-gray-900">
                 ¥{item.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
               </td>
-              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-900">
-                ${item.currentUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>              <td className="px-4 py-2 text-sm text-right text-gray-900">
+                <input
+                  type="number"
+                  value={item.currentUSD}
+                  onChange={(e) => handleValueChange(index, 'currentUSD', e.target.value)}
+                  className="w-24 text-right border-b border-gray-300 focus:border-blue-500 focus:outline-none"
+                  step="0.01"
+                />
               </td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">
-                ¥{item.currentRate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+                <input
+                  type="number"
+                  value={item.currentRate}
+                  onChange={(e) => handleValueChange(index, 'currentRate', e.target.value)}
+                  className="w-24 text-right border-b border-gray-300 focus:border-blue-500 focus:outline-none"
+                  step="0.01"
+                />
               </td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">
                 ¥{item.currentRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
@@ -131,8 +169,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
             }`}>
               ¥{totals.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
             </td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
-            <td className={`px-4 py-2 text-sm text-right font-medium ${
+            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>            <td className={`px-4 py-2 text-sm text-right font-medium ${
               totalAnnualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'
             }`}>
               {totalAnnualizedReturn.toFixed(2)}
@@ -141,6 +178,16 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ data, on
           </tr>
         </tbody>
       </table>
+      {onSaveAll && (
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={onSaveAll}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+          >
+            保存修改
+          </button>
+        </div>
+      )}
     </div>
   );
 };

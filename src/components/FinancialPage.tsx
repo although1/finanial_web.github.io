@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
@@ -25,12 +25,14 @@ const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDa
 
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState(usdInvestmentData);  const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
+  const [data, setData] = useState(usdInvestmentData);
+  const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
+  const [editedData, setEditedData] = useState<USDInvestmentDetailWithDates[]>([]);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // 使用 useMemo 计算带有日期信息的完整数据
   const dataWithDates = useMemo(() => {
     return data.map(item => {
       const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
@@ -44,6 +46,13 @@ const FinancialPage: React.FC = () => {
     });
   }, [data, currentDate]);
 
+  // Initialize editedData when dataWithDates changes and there are no pending changes
+  useEffect(() => {
+    if (!hasChanges) {
+      setEditedData(dataWithDates);
+    }
+  }, [dataWithDates, hasChanges]);
+
   const handleEdit = (item: USDInvestmentDetailWithDates) => {
     setEditingItem(item);
     setIsAdding(false);
@@ -53,6 +62,7 @@ const FinancialPage: React.FC = () => {
     setIsAdding(true);
     setEditingItem(null);
   };  
+
   const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
     setIsSaving(true);
     const success = await saveToFile(newData);
@@ -60,6 +70,7 @@ const FinancialPage: React.FC = () => {
     if (!success) {
       alert('保存失败，请稍后重试');
     }
+    return success;
   };
 
   const handleSave = async (updatedItem: USDInvestmentDetail) => {
@@ -71,23 +82,48 @@ const FinancialPage: React.FC = () => {
         )
       : [...data, updatedItem];
     
-    setData(newData);
-    setEditingItem(null);
-    setIsAdding(false);
-    await handleSaveToFile(newData);
+    const success = await handleSaveToFile(newData);
+    if (success) {
+      setData(newData);
+      setEditingItem(null);
+      setIsAdding(false);
+    }
+  };
+
+  const handleUpdateItem = (index: number, updates: Partial<USDInvestmentDetailWithDates>) => {
+    setEditedData(prevData => {
+      const newData = [...prevData];
+      newData[index] = { ...newData[index], ...updates };
+      return newData;
+    });
+    setHasChanges(true);
+  };
+
+  const handleSaveAll = async () => {
+    if (!hasChanges) return;
+    
+    const success = await handleSaveToFile(editedData);
+    if (success) {
+      setData(editedData);
+      setHasChanges(false);
+    }
   };
 
   const handleCancel = () => {
     setEditingItem(null);
     setIsAdding(false);
-  };  
+    if (hasChanges) {
+      setEditedData(dataWithDates);
+      setHasChanges(false);
+    }
+  };
+
   const handleDateChange = (newDate: string) => {
     if (!isValidDate(newDate)) {
       alert(`不能选择超过${SYSTEM_DATE}的日期`);
       return;
     }
     setCurrentDate(newDate);
-    handleSaveToFile(data);
   };
 
   const handleDelete = async (itemToDelete: USDInvestmentDetailWithDates) => {
@@ -95,10 +131,15 @@ const FinancialPage: React.FC = () => {
       const newData = data.filter(item => 
         !(item.name === itemToDelete.name && item.app === itemToDelete.app)
       );
-      setData(newData);
-      await handleSaveToFile(newData);
+      const success = await handleSaveToFile(newData);
+      if (success) {
+        setData(newData);
+      }
     }
   };
+
+  // Determine which data to display - edited data if there are changes, otherwise the current data with dates
+  const displayData = hasChanges ? editedData : dataWithDates;
 
   return (
     <div className="space-y-8 p-4">
@@ -148,9 +189,11 @@ const FinancialPage: React.FC = () => {
           />
         ) : (
           <USDInvestmentTable 
-            data={dataWithDates}
+            data={displayData}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUpdateItem={handleUpdateItem}
+            onSaveAll={hasChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
