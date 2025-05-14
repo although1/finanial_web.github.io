@@ -132,11 +132,14 @@ const FinancialPage: React.FC = () => {
       const newCurrentData = data.filter(d => !(d.app === item.app && d.name === item.name));
       const newRedeemedData = [...redeemedData, redeemedItem];
       
-      // 保存所有更改
-      const success = await saveToFile(newCurrentData, newRedeemedData);
-      if (success) {
+      // 保存所有更改      
+      try {
+        await saveToFile(newCurrentData, newRedeemedData);
         setData(newCurrentData);
         setRedeemedData(newRedeemedData);
+      } catch (error) {
+        console.error('Failed to save data:', error);
+        alert('保存失败：' + (error as Error).message);
       }
     }
   };

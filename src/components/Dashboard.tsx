@@ -28,9 +28,12 @@ const Dashboard: React.FC = () => {
     try {
       const processedData = processFinancialData(mockData);
       setData(processedData);
-      // 设置最新日期为默认选中日期
+      // 找到最新日期并设置为默认选中日期
       if (mockData.length > 0) {
-        setSelectedDate(mockData[mockData.length - 1].date);
+        const latestDate = mockData.reduce((latest, curr) => 
+          new Date(curr.date) > new Date(latest) ? curr.date : latest
+        , mockData[0].date);
+        setSelectedDate(latestDate);
       }
       setLoading(false);
     } catch (err) {
@@ -91,6 +94,7 @@ const Dashboard: React.FC = () => {
             >
               {mockData
                 .filter(item => showAllDates || item.date.endsWith('-01'))
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // 按日期降序排序
                 .map(item => (
                   <option key={item.date} value={item.date}>
                     {item.date}
