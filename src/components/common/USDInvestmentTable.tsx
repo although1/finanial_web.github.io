@@ -20,20 +20,37 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
     if (isNaN(numValue)) return;
 
     const item = data[index];
-    const updates: Partial<USDInvestmentDetailWithDates> = { [field]: numValue };
 
-    // 如果修改了当前美元数额，自动计算当前RMB数额和收益
+    // 如果修改了当前美元数额，只更新当前项
     if (field === 'currentUSD') {
-      updates.currentRMB = parseFloat((numValue * item.currentRate / 100).toFixed(2));
-      updates.profit = parseFloat((updates.currentRMB - item.initialRMB).toFixed(2));
+      const currentRMB = parseFloat((numValue * item.currentRate / 100).toFixed(2));
+      onUpdateItem(index, {
+        currentUSD: numValue,
+        currentRMB: currentRMB,
+        profit: parseFloat((currentRMB - item.initialRMB).toFixed(2))
+      });
     }
-    // 如果修改了结汇价，自动计算当前RMB数额和收益
+    // 如果修改了结汇价，更新同一个app的所有产品
     else if (field === 'currentRate') {
-      updates.currentRMB = parseFloat((item.currentUSD * numValue / 100).toFixed(2));
-      updates.profit = parseFloat((updates.currentRMB - item.initialRMB).toFixed(2));
-    }
+      // 找出所有同app的产品索引
+      const sameAppIndexes = data.reduce((indexes: number[], curr, currIndex) => {
+        if (curr.app === item.app) {
+          indexes.push(currIndex);
+        }
+        return indexes;
+      }, []);
 
-    onUpdateItem(index, updates);
+      // 更新所有同app产品的结汇价和相关计算
+      sameAppIndexes.forEach(idx => {
+        const currentItem = data[idx];
+        const currentRMB = parseFloat((currentItem.currentUSD * numValue / 100).toFixed(2));
+        onUpdateItem(idx, {
+          currentRate: numValue,
+          currentRMB: currentRMB,
+          profit: parseFloat((currentRMB - currentItem.initialRMB).toFixed(2))
+        });
+      });
+    }
   };
   // 计算总计数据
   const totals = data.reduce((acc, curr) => ({
