@@ -70,3 +70,11 @@ export interface USDInvestmentDetailWithDates extends USDInvestmentDetail {
   holdingDays: number;          // 持有天数
   annualizedReturn: number;     // 对应的年化率
 }
+
+export interface RedeemedInvestment extends USDInvestmentDetailWithDates {
+  redeemDate: string;           // 赎回时间
+  finalUSD: number;             // 赎回时的美元数额
+  finalRate: number;            // 赎回时的汇率
+  finalRMB: number;             // 赎回时的人民币数额
+  finalProfit: number;          // 最终收益
+}

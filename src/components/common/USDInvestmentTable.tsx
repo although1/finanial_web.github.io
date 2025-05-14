@@ -148,12 +148,11 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
                 {item.annualizedReturn.toFixed(2)}
               </td>
               {onDelete && (
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">                  <button
                     onClick={() => onDelete(item)}
-                    className="text-red-600 hover:text-red-900"
+                    className="px-2 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded"
                   >
-                    删除
+                    赎回
                   </button>
                 </td>
               )}

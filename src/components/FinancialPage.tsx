@@ -2,8 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
-import { USDInvestmentDetail, USDInvestmentDetailWithDates } from '../data/dataTypes';
+import { RedeemedInvestmentsTable } from './common/RedeemedInvestmentsTable';
+import { USDInvestmentDetail, USDInvestmentDetailWithDates, RedeemedInvestment } from '../data/dataTypes';
 import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
+import { redeemedInvestmentData } from '../data/redeemedInvestments';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
 import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
@@ -25,11 +27,17 @@ const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDa
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(usdInvestmentData);
+  const [redeemedData, setRedeemedData] = useState<RedeemedInvestment[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
   const [editedData, setEditedData] = useState<USDInvestmentDetailWithDates[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
+  // 初始化数据
+  useEffect(() => {
+    setData(usdInvestmentData);
+    setRedeemedData(redeemedInvestmentData);
+  }, []);
 
   const dataWithDates = useMemo(() => {
     return data.map(item => {
@@ -54,9 +62,9 @@ const FinancialPage: React.FC = () => {
     setIsAdding(true);
   };  
 
-  const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
+  const handleSaveToFile = async (newData: USDInvestmentDetail[], newRedeemedData?: RedeemedInvestment[]) => {
     setIsSaving(true);
-    const success = await saveToFile(newData);
+    const success = await saveToFile(newData, newRedeemedData || redeemedData);
     setIsSaving(false);
     if (!success) {
       alert('保存失败，请稍后重试');
@@ -66,7 +74,7 @@ const FinancialPage: React.FC = () => {
 
   const handleSave = async (newItem: USDInvestmentDetail) => {
     const newData = [...data, newItem];
-    const success = await handleSaveToFile(newData);
+    const success = await saveToFile(newData, redeemedData);
     if (success) {
       setData(newData);
       setIsAdding(false);
@@ -85,7 +93,7 @@ const FinancialPage: React.FC = () => {
   const handleSaveAll = async () => {
     if (!hasChanges) return;
     
-    const success = await handleSaveToFile(editedData);
+    const success = await saveToFile(editedData, redeemedData);
     if (success) {
       setData(editedData);
       setHasChanges(false);
@@ -108,14 +116,27 @@ const FinancialPage: React.FC = () => {
     setCurrentDate(newDate);
   };
 
-  const handleDelete = async (itemToDelete: USDInvestmentDetailWithDates) => {
-    if (window.confirm('确定要删除这条记录吗？')) {
-      const newData = data.filter(item => 
-        !(item.name === itemToDelete.name && item.app === itemToDelete.app)
-      );
-      const success = await handleSaveToFile(newData);
+  const handleDelete = async (item: USDInvestmentDetailWithDates) => {
+    if (window.confirm('确定要赎回该产品？赎回后将保存到历史记录中。')) {
+      // 创建赎回记录
+      const redeemedItem: RedeemedInvestment = {
+        ...item,
+        redeemDate: currentDate,
+        finalUSD: item.currentUSD,
+        finalRate: item.currentRate,
+        finalRMB: item.currentRMB,
+        finalProfit: item.profit
+      };
+
+      // 更新数据
+      const newCurrentData = data.filter(d => !(d.app === item.app && d.name === item.name));
+      const newRedeemedData = [...redeemedData, redeemedItem];
+      
+      // 保存所有更改
+      const success = await saveToFile(newCurrentData, newRedeemedData);
       if (success) {
-        setData(newData);
+        setData(newCurrentData);
+        setRedeemedData(newRedeemedData);
       }
     }
   };
@@ -153,8 +174,8 @@ const FinancialPage: React.FC = () => {
       </div>
 
       <ChartContainer 
-        title="美元理财产品详情" 
-        description="展示所有美元理财产品的详细信息。"
+        title="当前投资产品" 
+        description="展示所有正在进行中的投资产品。"
       >
         {isAdding ? (
           <AddForm 
@@ -171,6 +192,15 @@ const FinancialPage: React.FC = () => {
           />
         )}
       </ChartContainer>
+
+      {redeemedData.length > 0 && (
+        <ChartContainer 
+          title="已赎回产品记录" 
+          description="展示所有已赎回产品的最终收益情况。"
+        >
+          <RedeemedInvestmentsTable data={redeemedData} />
+        </ChartContainer>
+      )}
     </div>
   );
 };
