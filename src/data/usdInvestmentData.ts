@@ -11,7 +11,9 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 10338.39,
     "currentRate": 722.66,
     "currentRMB": 74711.41,
-    "profit": 2421.44
+    "profit": 2421.44,
+    "holdingDays": 285,
+    "annualizedReturn": 428.99
   },
   {
     "app": "工商银行",
@@ -23,11 +25,13 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 54.28,
     "currentRate": 722.66,
     "currentRMB": 392.26,
-    "profit": 11.82
+    "profit": 11.82,
+    "holdingDays": 285,
+    "annualizedReturn": 397.9
   },
   {
     "app": "工商银行",
-    "name": "工银理财",
+    "name": "工银理财月月",
     "initialUSD": 2000,
     "buyRate": 724.6,
     "initialRMB": 14492,
@@ -35,11 +39,13 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 2049.12,
     "currentRate": 722.66,
     "currentRMB": 14808.17,
-    "profit": 316.17
+    "profit": 316.17,
+    "holdingDays": 406,
+    "annualizedReturn": 196.14
   },
   {
     "app": "工商银行",
-    "name": "工银理财",
+    "name": "工银理财全球",
     "initialUSD": 52,
     "buyRate": 724.6,
     "initialRMB": 376.79,
@@ -47,7 +53,9 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 53.25,
     "currentRate": 722.66,
     "currentRMB": 384.82,
-    "profit": 8.02
+    "profit": 8.03,
+    "holdingDays": 406,
+    "annualizedReturn": 191.59
   },
   {
     "app": "招商银行",
@@ -59,7 +67,9 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 1028.83,
     "currentRate": 722.23,
     "currentRMB": 7430.52,
-    "profit": 280.02
+    "profit": 280.02,
+    "holdingDays": 265,
+    "annualizedReturn": 539.39
   },
   {
     "app": "招商银行",
@@ -71,6 +81,8 @@ export const usdInvestmentData: USDInvestmentDetail[] = [
     "currentUSD": 2060.13,
     "currentRate": 722.23,
     "currentRMB": 14878.88,
-    "profit": 559.48
+    "profit": 559.48,
+    "holdingDays": 266,
+    "annualizedReturn": 536.13
   }
 ];
