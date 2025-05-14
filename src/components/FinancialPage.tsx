@@ -172,10 +172,10 @@ const FinancialPage: React.FC = () => {
           新增理财产品
         </button>
       </div>
-
       <ChartContainer 
         title="当前投资产品" 
         description="展示所有正在进行中的投资产品。"
+        useFixedHeight={false}
       >
         {isAdding ? (
           <AddForm 
@@ -197,6 +197,7 @@ const FinancialPage: React.FC = () => {
         <ChartContainer 
           title="已赎回产品记录" 
           description="展示所有已赎回产品的最终收益情况。"
+          useFixedHeight={false}
         >
           <RedeemedInvestmentsTable data={redeemedData} />
         </ChartContainer>
