@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { USDInvestmentDetail } from '../../data/dataTypes';
+import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
@@ -22,9 +23,17 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel 
     currentRMB: 0,
     profit: 0,
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    // 验证日期
+    if (name === 'purchaseDate') {
+      if (!isValidDate(value)) {
+        alert(`不能选择超过${SYSTEM_DATE}的日期`);
+        return;
+      }
+    }
+    
     let numValue: string | number = value;
     
     if (name.includes('USD') || name.includes('Rate')) {

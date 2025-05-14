@@ -1,6 +1,7 @@
 import { USDInvestmentDetail } from './dataTypes';
+import { SYSTEM_DATE } from '../utils/dateUtils';
 
-export const DEFAULT_DATE = "2025/05/14"; // 默认日期
+export const DEFAULT_DATE = SYSTEM_DATE;
 
 export const usdInvestmentData: USDInvestmentDetail[] = [
   {

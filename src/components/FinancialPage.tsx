@@ -7,6 +7,7 @@ import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
 import { EditForm } from './common/EditForm';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
+import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
 
 // 计算两个日期之间的天数差
 const calculateDaysBetween = (date1: string, date2: string): number => {
@@ -51,10 +52,10 @@ const FinancialPage: React.FC = () => {
   const handleAdd = () => {
     setIsAdding(true);
     setEditingItem(null);
-  };
+  };  
   const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
     setIsSaving(true);
-    const success = await saveToFile(newData, currentDate);
+    const success = await saveToFile(newData);
     setIsSaving(false);
     if (!success) {
       alert('保存失败，请稍后重试');
@@ -79,8 +80,12 @@ const FinancialPage: React.FC = () => {
   const handleCancel = () => {
     setEditingItem(null);
     setIsAdding(false);
-  };
+  };  
   const handleDateChange = (newDate: string) => {
+    if (!isValidDate(newDate)) {
+      alert(`不能选择超过${SYSTEM_DATE}的日期`);
+      return;
+    }
     setCurrentDate(newDate);
     handleSaveToFile(data);
   };

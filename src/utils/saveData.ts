@@ -1,9 +1,11 @@
 import { USDInvestmentDetail } from '../data/dataTypes';
+import { SYSTEM_DATE } from './dateUtils';
 
-export const saveToFile = async (data: USDInvestmentDetail[], currentDate: string) => {
+export const saveToFile = async (data: USDInvestmentDetail[]) => {
   try {    const content = `import { USDInvestmentDetail } from './dataTypes';
+import { SYSTEM_DATE } from '../utils/dateUtils';
 
-export const DEFAULT_DATE = "${currentDate}";
+export const DEFAULT_DATE = SYSTEM_DATE;
 
 export const usdInvestmentData: USDInvestmentDetail[] = ${JSON.stringify(data, null, 2)};
 `;
