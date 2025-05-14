@@ -13,6 +13,11 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
   onUpdateItem,
   onSaveAll
 }) => {
+  const calculateNewAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number): number => {
+    if (holdingDays <= 0 || initialRMB <= 0) return 0;
+    return parseFloat(((10000 / initialRMB * profit / holdingDays * 365)).toFixed(2));
+  };
+
   const handleValueChange = (index: number, field: keyof USDInvestmentDetailWithDates, value: string) => {
     if (!onUpdateItem) return;
 
@@ -24,10 +29,12 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
     // 如果修改了当前美元数额，只更新当前项
     if (field === 'currentUSD') {
       const currentRMB = parseFloat((numValue * item.currentRate / 100).toFixed(2));
+      const profit = parseFloat((currentRMB - item.initialRMB).toFixed(2));
       onUpdateItem(index, {
         currentUSD: numValue,
         currentRMB: currentRMB,
-        profit: parseFloat((currentRMB - item.initialRMB).toFixed(2))
+        profit: profit,
+        annualizedReturn: calculateNewAnnualizedReturn(profit, item.initialRMB, item.holdingDays)
       });
     }
     // 如果修改了结汇价，更新同一个app的所有产品
@@ -44,10 +51,12 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
       sameAppIndexes.forEach(idx => {
         const currentItem = data[idx];
         const currentRMB = parseFloat((currentItem.currentUSD * numValue / 100).toFixed(2));
+        const profit = parseFloat((currentRMB - currentItem.initialRMB).toFixed(2));
         onUpdateItem(idx, {
           currentRate: numValue,
           currentRMB: currentRMB,
-          profit: parseFloat((currentRMB - currentItem.initialRMB).toFixed(2))
+          profit: profit,
+          annualizedReturn: calculateNewAnnualizedReturn(profit, currentItem.initialRMB, currentItem.holdingDays)
         });
       });
     }
