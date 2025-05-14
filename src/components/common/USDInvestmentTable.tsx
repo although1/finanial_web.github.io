@@ -115,23 +115,29 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
               <td className="px-4 py-2 text-sm text-right text-gray-900">
                 ¥{item.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
               </td>
-              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>              <td className="px-4 py-2 text-sm text-right text-gray-900">
-                <input
-                  type="number"
-                  value={item.currentUSD}
-                  onChange={(e) => handleValueChange(index, 'currentUSD', e.target.value)}
-                  className="w-24 text-right border-b border-gray-300 focus:border-blue-500 focus:outline-none"
-                  step="0.01"
-                />
+              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>              <td className="px-4 py-2 text-base text-right text-gray-900">
+                <div className="relative group">
+                  <input
+                    type="number"
+                    value={item.currentUSD}
+                    onChange={(e) => handleValueChange(index, 'currentUSD', e.target.value)}
+                    className="w-32 py-1 text-lg font-medium text-right bg-blue-50 border-2 border-blue-200 rounded-md hover:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
+                    step="0.01"
+                  />
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-blue-600 font-medium">$</span>
+                </div>
               </td>
-              <td className="px-4 py-2 text-sm text-right text-gray-900">
-                <input
-                  type="number"
-                  value={item.currentRate}
-                  onChange={(e) => handleValueChange(index, 'currentRate', e.target.value)}
-                  className="w-24 text-right border-b border-gray-300 focus:border-blue-500 focus:outline-none"
-                  step="0.01"
-                />
+              <td className="px-4 py-2 text-base text-right text-gray-900">
+                <div className="relative group">
+                  <input
+                    type="number"
+                    value={item.currentRate}
+                    onChange={(e) => handleValueChange(index, 'currentRate', e.target.value)}
+                    className="w-32 py-1 text-lg font-medium text-right bg-blue-50 border-2 border-blue-200 rounded-md hover:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
+                    step="0.01"
+                  />
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-blue-600 font-medium">¥</span>
+                </div>
               </td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">
                 ¥{item.currentRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
