@@ -4,7 +4,6 @@ import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
 import { USDInvestmentDetail, USDInvestmentDetailWithDates } from '../data/dataTypes';
 import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
-import { EditForm } from './common/EditForm';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
 import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
@@ -26,7 +25,6 @@ const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDa
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(usdInvestmentData);
-  const [editingItem, setEditingItem] = useState<USDInvestmentDetailWithDates | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,21 +44,14 @@ const FinancialPage: React.FC = () => {
     });
   }, [data, currentDate]);
 
-  // Initialize editedData when dataWithDates changes and there are no pending changes
   useEffect(() => {
     if (!hasChanges) {
       setEditedData(dataWithDates);
     }
   }, [dataWithDates, hasChanges]);
 
-  const handleEdit = (item: USDInvestmentDetailWithDates) => {
-    setEditingItem(item);
-    setIsAdding(false);
-  };
-
   const handleAdd = () => {
     setIsAdding(true);
-    setEditingItem(null);
   };  
 
   const handleSaveToFile = async (newData: USDInvestmentDetail[]) => {
@@ -73,19 +64,11 @@ const FinancialPage: React.FC = () => {
     return success;
   };
 
-  const handleSave = async (updatedItem: USDInvestmentDetail) => {
-    const newData = editingItem 
-      ? data.map(item => 
-          item.name === updatedItem.name && item.app === updatedItem.app 
-            ? updatedItem 
-            : item
-        )
-      : [...data, updatedItem];
-    
+  const handleSave = async (newItem: USDInvestmentDetail) => {
+    const newData = [...data, newItem];
     const success = await handleSaveToFile(newData);
     if (success) {
       setData(newData);
-      setEditingItem(null);
       setIsAdding(false);
     }
   };
@@ -110,7 +93,6 @@ const FinancialPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setEditingItem(null);
     setIsAdding(false);
     if (hasChanges) {
       setEditedData(dataWithDates);
@@ -138,7 +120,6 @@ const FinancialPage: React.FC = () => {
     }
   };
 
-  // Determine which data to display - edited data if there are changes, otherwise the current data with dates
   const displayData = hasChanges ? editedData : dataWithDates;
 
   return (
@@ -175,13 +156,7 @@ const FinancialPage: React.FC = () => {
         title="美元理财产品详情" 
         description="展示所有美元理财产品的详细信息。"
       >
-        {editingItem ? (
-          <EditForm 
-            item={editingItem} 
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        ) : isAdding ? (
+        {isAdding ? (
           <AddForm 
             currentDate={currentDate}
             onSave={handleSave}
@@ -190,7 +165,6 @@ const FinancialPage: React.FC = () => {
         ) : (
           <USDInvestmentTable 
             data={displayData}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateItem}
             onSaveAll={hasChanges ? handleSaveAll : undefined}

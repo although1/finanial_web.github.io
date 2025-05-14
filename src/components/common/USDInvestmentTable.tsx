@@ -2,7 +2,6 @@ import React from 'react';
 import { USDInvestmentDetailWithDates } from '../../data/dataTypes'; 
 interface USDInvestmentTableProps {
   data: USDInvestmentDetailWithDates[];
-  onEdit?: (item: USDInvestmentDetailWithDates) => void;
   onDelete?: (item: USDInvestmentDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<USDInvestmentDetailWithDates>) => void;
   onSaveAll?: () => void;
@@ -10,7 +9,6 @@ interface USDInvestmentTableProps {
 
 export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ 
   data, 
-  onEdit, 
   onDelete,
   onUpdateItem,
   onSaveAll
@@ -72,7 +70,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
             <th className="px-4 py-2 text-right text-sm font-semibold">实际收益</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
-            {(onEdit || onDelete) && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
+            {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">          {data.map((item: USDInvestmentDetailWithDates, index: number) => (
@@ -123,24 +121,14 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
               }`}>
                 {item.annualizedReturn.toFixed(2)}
               </td>
-              {(onEdit || onDelete) && (
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(item)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      编辑
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(item)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      删除
-                    </button>
-                  )}
+              {onDelete && (
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button
+                    onClick={() => onDelete(item)}
+                    className="text-red-600 hover:text-red-900"
+                  >
+                    删除
+                  </button>
                 </td>
               )}
             </tr>
@@ -174,7 +162,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
             }`}>
               {totalAnnualizedReturn.toFixed(2)}
             </td>
-            {(onEdit || onDelete) && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
+            {onDelete && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
         </tbody>
       </table>
