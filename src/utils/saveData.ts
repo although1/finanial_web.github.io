@@ -2,7 +2,7 @@ import {
   USDInvestmentDetail, 
   USDRedeemedInvestment,
   RMBInvestmentDetail,
-  RedeemedRMBInvestment,
+  RMBRedeemedInvestment,
   DepositDetail,
   RedeemedDeposit
 } from '../data/dataTypes';
@@ -12,7 +12,7 @@ export const saveToFile = async (
   currentRMBData?: RMBInvestmentDetail[],
   currentDepositData?: DepositDetail[],
   redeemedUSDData?: USDRedeemedInvestment[],
-  redeemedRMBData?: RedeemedRMBInvestment[],
+  redeemedRMBData?: RMBRedeemedInvestment[],
   redeemedDepositData?: RedeemedDeposit[]
 ): Promise<boolean> => {
   try {
@@ -89,7 +89,7 @@ export const saveToFile = async (
     // Save redeemed USD data if provided
     if (redeemedUSDData) {
       const redeemedUSDDataStr = 'import { USDRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const redeemedInvestmentData: USDRedeemedInvestment[] = ' + 
+        'export const USDRedeemedInvestmentData: USDRedeemedInvestment[] = ' + 
         JSON.stringify(redeemedUSDData, null, 2) + ';\n';
 
       const redeemedUSDResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -98,7 +98,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'redeemedInvestments.ts',
+          filename: 'USDRedeemedInvestments.ts',
           content: redeemedUSDDataStr
         })
       });
@@ -110,8 +110,8 @@ export const saveToFile = async (
 
     // Save redeemed RMB data if provided
     if (redeemedRMBData) {
-      const redeemedRMBDataStr = 'import { RedeemedRMBInvestment } from \'./dataTypes\';\n\n' +
-        'export const redeemedRmbInvestmentData: RedeemedRMBInvestment[] = ' + 
+      const redeemedRMBDataStr = 'import { RMBRedeemedInvestment } from \'./dataTypes\';\n\n' +
+        'export const redeemedRmbInvestmentData: RMBRedeemedInvestment[] = ' + 
         JSON.stringify(redeemedRMBData, null, 2) + ';\n';
 
       const redeemedRMBResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -163,11 +163,11 @@ export const loadData = (): {
   currentData: USDInvestmentDetail[], 
   redeemedData: USDRedeemedInvestment[], 
   rmbData: RMBInvestmentDetail[], 
-  redeemedRmbData: RedeemedRMBInvestment[] 
+  redeemedRmbData: RMBRedeemedInvestment[] 
 } => {
   try {
     const currentDataStr = localStorage.getItem('usdInvestmentData');
-    const redeemedDataStr = localStorage.getItem('redeemedInvestments');
+    const redeemedDataStr = localStorage.getItem('USDRedeemedInvestmentData');
     const rmbDataStr = localStorage.getItem('rmbInvestmentData');
     const redeemedRmbDataStr = localStorage.getItem('redeemedRmbInvestments');
     

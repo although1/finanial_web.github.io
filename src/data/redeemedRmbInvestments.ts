@@ -1,3 +1,3 @@
-import { RedeemedRMBInvestment } from './dataTypes';
+import { RMBRedeemedInvestment } from './dataTypes';
 
-export const redeemedRmbInvestmentData: RedeemedRMBInvestment[] = [];
+export const redeemedRmbInvestmentData: RMBRedeemedInvestment[] = [];

@@ -4,7 +4,7 @@ import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
 import { USDRedeemedInvestmentsTable } from './common/USDRedeemedInvestmentsTable';
 import { RMBInvestmentTable } from './common/RMBInvestmentTable';
-import { RedeemedRMBInvestmentsTable } from './common/RedeemedRMBInvestmentsTable';
+import { RMBRedeemedInvestmentsTable } from './common/RMBRedeemedInvestmentsTable';
 import { DepositTable } from './common/DepositTable';
 import { RedeemedDepositsTable } from './common/RedeemedDepositsTable';
 import { 
@@ -13,13 +13,13 @@ import {
   USDRedeemedInvestment,
   RMBInvestmentDetail,
   RMBInvestmentDetailWithDates,
-  RedeemedRMBInvestment,
+  RMBRedeemedInvestment,
   DepositDetail,
   DepositDetailWithDates,
   RedeemedDeposit
 } from '../data/dataTypes';
 import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
-import { redeemedInvestmentData } from '../data/redeemedInvestments';
+import { USDRedeemedInvestmentData } from '../data/USDredeemedInvestments';
 import { redeemedRmbInvestmentData } from '../data/redeemedRmbInvestments';
 import { rmbInvestmentData } from '../data/rmbInvestmentData';
 import { depositInvestmentData } from '../data/depositData';
@@ -48,7 +48,7 @@ const FinancialPage: React.FC = () => {
   const [rmbData, setRmbData] = useState(rmbInvestmentData);
   const [depositData, setDepositData] = useState(depositInvestmentData);
   const [redeemedData, setRedeemedData] = useState<USDRedeemedInvestment[]>([]);
-  const [redeemedRmbData, setRedeemedRmbData] = useState<RedeemedRMBInvestment[]>([]);
+  const [redeemedRmbData, setRedeemedRmbData] = useState<RMBRedeemedInvestment[]>([]);
   const [redeemedDepositData, setRedeemedDepositData] = useState<RedeemedDeposit[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isAddingRmb, setIsAddingRmb] = useState(false);
@@ -64,7 +64,7 @@ const FinancialPage: React.FC = () => {
   useEffect(() => {
     setData(usdInvestmentData);
     setRmbData(rmbInvestmentData);
-    setRedeemedData(redeemedInvestmentData);
+    setRedeemedData(USDRedeemedInvestmentData);
     setRedeemedRmbData(redeemedRmbInvestmentData);
   }, []);
 
@@ -136,7 +136,7 @@ const FinancialPage: React.FC = () => {
     newRmbData?: RMBInvestmentDetail[],
     newDepositData?: DepositDetail[],
     newRedeemedData?: USDRedeemedInvestment[], 
-    newRedeemedRmbData?: RedeemedRMBInvestment[],
+    newRedeemedRmbData?: RMBRedeemedInvestment[],
     newRedeemedDepositData?: RedeemedDeposit[]
   ) => {
     setIsSaving(true);
@@ -277,7 +277,7 @@ const FinancialPage: React.FC = () => {
       } else {
         // RMB investment
         const rmbItem = item as RMBInvestmentDetailWithDates;
-        const redeemedItem: RedeemedRMBInvestment = {
+        const redeemedItem: RMBRedeemedInvestment = {
           ...rmbItem,
           redeemDate: currentDate,
           finalRMB: rmbItem.currentRMB,
@@ -443,7 +443,7 @@ const FinancialPage: React.FC = () => {
           description="展示所有已赎回人民币产品的最终收益情况。"
           useFixedHeight={false}
         >
-          <RedeemedRMBInvestmentsTable data={redeemedRmbData} />
+          <RMBRedeemedInvestmentsTable data={redeemedRmbData} />
         </ChartContainer>
       )}
       {redeemedDepositData.length > 0 && (
