@@ -71,13 +71,14 @@ export interface USDInvestmentDetailWithDates extends USDInvestmentDetail {
   annualizedReturn: number;     // 对应的年化率
 }
 
-export interface RedeemedInvestment extends USDInvestmentDetailWithDates {
+export interface USDRedeemedInvestment extends USDInvestmentDetailWithDates {
   redeemDate: string;           // 赎回时间
   finalUSD: number;             // 赎回时的美元数额
   finalRate: number;            // 赎回时的汇率
   finalRMB: number;             // 赎回时的人民币数额
   finalProfit: number;          // 最终收益
 }
+export const redeemedInvestments: USDRedeemedInvestment[] = [];
 
 export interface RMBInvestmentDetail {
   app: string;
@@ -95,6 +96,27 @@ export interface RMBInvestmentDetailWithDates extends RMBInvestmentDetail {
 }
 
 export interface RedeemedRMBInvestment extends RMBInvestmentDetailWithDates {
+  redeemDate: string;
+  finalRMB: number;
+  finalProfit: number;
+}
+
+export interface DepositDetail {
+  app: string;
+  type: string;
+  name: string;
+  initialRMB: number;
+  purchaseDate: string;
+  currentRMB: number;
+  profit: number;
+}
+
+export interface DepositDetailWithDates extends DepositDetail {
+  holdingDays: number;
+  annualizedReturn: number;
+}
+
+export interface RedeemedDeposit extends DepositDetailWithDates {
   redeemDate: string;
   finalRMB: number;
   finalProfit: number;

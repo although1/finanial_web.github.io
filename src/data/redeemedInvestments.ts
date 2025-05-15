@@ -1,6 +1,6 @@
-import { RedeemedInvestment } from './dataTypes';
+import { USDRedeemedInvestment } from './dataTypes';
 
-export const redeemedInvestmentData: RedeemedInvestment[] = [
+export const redeemedInvestmentData: USDRedeemedInvestment[] = [
   // {
   //   "app": "工商银行",
   //   "name": "示例赎回产品",

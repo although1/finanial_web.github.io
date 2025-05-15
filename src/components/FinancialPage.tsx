@@ -2,21 +2,28 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDInvestmentTable } from './common/USDInvestmentTable';
-import { RedeemedInvestmentsTable } from './common/RedeemedInvestmentsTable';
+import { USDRedeemedInvestmentsTable } from './common/USDRedeemedInvestmentsTable';
 import { RMBInvestmentTable } from './common/RMBInvestmentTable';
 import { RedeemedRMBInvestmentsTable } from './common/RedeemedRMBInvestmentsTable';
+import { DepositTable } from './common/DepositTable';
+import { RedeemedDepositsTable } from './common/RedeemedDepositsTable';
 import { 
   USDInvestmentDetail, 
   USDInvestmentDetailWithDates, 
-  RedeemedInvestment,
+  USDRedeemedInvestment,
   RMBInvestmentDetail,
   RMBInvestmentDetailWithDates,
-  RedeemedRMBInvestment
+  RedeemedRMBInvestment,
+  DepositDetail,
+  DepositDetailWithDates,
+  RedeemedDeposit
 } from '../data/dataTypes';
 import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
 import { redeemedInvestmentData } from '../data/redeemedInvestments';
 import { redeemedRmbInvestmentData } from '../data/redeemedRmbInvestments';
 import { rmbInvestmentData } from '../data/rmbInvestmentData';
+import { depositInvestmentData } from '../data/depositData';
+import { redeemedDepositData } from '../data/redeemedDeposits';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
 import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
@@ -39,16 +46,21 @@ const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(usdInvestmentData);
   const [rmbData, setRmbData] = useState(rmbInvestmentData);
-  const [redeemedData, setRedeemedData] = useState<RedeemedInvestment[]>([]);
+  const [depositData, setDepositData] = useState(depositInvestmentData);
+  const [redeemedData, setRedeemedData] = useState<USDRedeemedInvestment[]>([]);
   const [redeemedRmbData, setRedeemedRmbData] = useState<RedeemedRMBInvestment[]>([]);
+  const [redeemedDepositData, setRedeemedDepositData] = useState<RedeemedDeposit[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isAddingRmb, setIsAddingRmb] = useState(false);
+  const [isAddingDeposit, setIsAddingDeposit] = useState(false);
   const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
   const [editedData, setEditedData] = useState<USDInvestmentDetailWithDates[]>([]);
   const [editedRmbData, setEditedRmbData] = useState<RMBInvestmentDetailWithDates[]>([]);
+  const [editedDepositData, setEditedDepositData] = useState<DepositDetailWithDates[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
-  const [hasRmbChanges, setHasRmbChanges] = useState(false);  // 初始化数据
+  const [hasRmbChanges, setHasRmbChanges] = useState(false);
+  const [hasDepositChanges, setHasDepositChanges] = useState(false);  // 初始化数据
   useEffect(() => {
     setData(usdInvestmentData);
     setRmbData(rmbInvestmentData);
@@ -82,6 +94,19 @@ const FinancialPage: React.FC = () => {
     });
   }, [rmbData, currentDate]);
 
+  const depositWithDates = useMemo(() => {
+    return depositData.map(item => {
+      const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
+      const annualizedReturn = calculateAnnualizedReturn(item.profit, item.initialRMB, holdingDays);
+      
+      return {
+        ...item,
+        holdingDays,
+        annualizedReturn
+      } as DepositDetailWithDates;
+    });
+  }, [depositData, currentDate]);
+
   useEffect(() => {
     if (!hasChanges) {
       setEditedData(dataWithDates);
@@ -89,7 +114,10 @@ const FinancialPage: React.FC = () => {
     if (!hasRmbChanges) {
       setEditedRmbData(rmbDataWithDates);
     }
-  }, [dataWithDates, hasChanges, rmbDataWithDates, hasRmbChanges]);
+    if (!hasDepositChanges) {
+      setEditedDepositData(depositWithDates);
+    }
+  }, [dataWithDates, hasChanges, rmbDataWithDates, hasRmbChanges, depositWithDates, hasDepositChanges]);
 
   const handleAdd = () => {
     setIsAdding(true);
@@ -99,18 +127,26 @@ const FinancialPage: React.FC = () => {
     setIsAddingRmb(true);
   };
 
+  const handleAddDeposit = () => {
+    setIsAddingDeposit(true);
+  };
+
   const handleSaveToFile = async (
     newData: USDInvestmentDetail[], 
     newRmbData?: RMBInvestmentDetail[],
-    newRedeemedData?: RedeemedInvestment[], 
-    newRedeemedRmbData?: RedeemedRMBInvestment[]
+    newDepositData?: DepositDetail[],
+    newRedeemedData?: USDRedeemedInvestment[], 
+    newRedeemedRmbData?: RedeemedRMBInvestment[],
+    newRedeemedDepositData?: RedeemedDeposit[]
   ) => {
     setIsSaving(true);
     const success = await saveToFile(
       newData, 
       newRedeemedData || redeemedData, 
       newRmbData || rmbData,
-      newRedeemedRmbData || redeemedRmbData
+      newRedeemedRmbData || redeemedRmbData,
+      newDepositData || depositData,
+      newRedeemedDepositData || redeemedDepositData
     );
     setIsSaving(false);
     if (!success) {
@@ -119,7 +155,7 @@ const FinancialPage: React.FC = () => {
     return success;
   };
 
-  const handleSave = async (newItem: USDInvestmentDetail | RMBInvestmentDetail) => {
+  const handleSave = async (newItem: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail) => {
     if ('initialUSD' in newItem) {
       // USD investment
       const newData = [...data, newItem as USDInvestmentDetail];
@@ -127,6 +163,14 @@ const FinancialPage: React.FC = () => {
       if (success) {
         setData(newData);
         setIsAdding(false);
+      }
+    } else if ('type' in newItem && newItem.type === '存款') {
+      // Deposit
+      const newData = [...depositData, newItem as DepositDetail];
+      const success = await handleSaveToFile(data, rmbData, newData);
+      if (success) {
+        setDepositData(newData);
+        setIsAddingDeposit(false);
       }
     } else {
       // RMB investment
@@ -157,12 +201,22 @@ const FinancialPage: React.FC = () => {
     setHasRmbChanges(true);
   };
 
+  const handleUpdateDepositItem = (index: number, updates: Partial<DepositDetailWithDates>) => {
+    setEditedDepositData(prevData => {
+      const newData = [...prevData];
+      newData[index] = { ...newData[index], ...updates };
+      return newData;
+    });
+    setHasDepositChanges(true);
+  };
+
   const handleSaveAll = async () => {
-    if (!hasChanges && !hasRmbChanges) return;
+    if (!hasChanges && !hasRmbChanges && !hasDepositChanges) return;
     
     const success = await handleSaveToFile(
       hasChanges ? editedData : data,
-      hasRmbChanges ? editedRmbData : rmbData
+      hasRmbChanges ? editedRmbData : rmbData,
+      hasDepositChanges ? editedDepositData : depositData
     );
     if (success) {
       if (hasChanges) {
@@ -173,15 +227,19 @@ const FinancialPage: React.FC = () => {
         setRmbData(editedRmbData);
         setHasRmbChanges(false);
       }
+      if (hasDepositChanges) {
+        setDepositData(editedDepositData);
+        setHasDepositChanges(false);
+      }
     }
   };
 
-  const handleDelete = async (item: USDInvestmentDetailWithDates | RMBInvestmentDetailWithDates) => {
+  const handleDelete = async (item: USDInvestmentDetailWithDates | RMBInvestmentDetailWithDates | DepositDetailWithDates) => {
     if (window.confirm('确定要赎回该产品？赎回后将保存到历史记录中。')) {
       if ('initialUSD' in item) {
         // USD investment
         const usdItem = item as USDInvestmentDetailWithDates;
-        const redeemedItem: RedeemedInvestment = {
+        const redeemedItem: USDRedeemedInvestment = {
           ...usdItem,
           redeemDate: currentDate,
           finalUSD: usdItem.currentUSD,
@@ -193,10 +251,28 @@ const FinancialPage: React.FC = () => {
         const newRedeemedData = [...redeemedData, redeemedItem];
         const newData = data.filter(d => d.app !== item.app || d.name !== item.name);
         
-        const success = await handleSaveToFile(newData, undefined, newRedeemedData);
+        const success = await handleSaveToFile(newData, undefined, undefined, newRedeemedData);
         if (success) {
           setRedeemedData(newRedeemedData);
           setData(newData);
+        }
+      } else if ('type' in item && item.type === '存款') {
+        // Deposit
+        const depositItem = item as DepositDetailWithDates;
+        const redeemedItem: RedeemedDeposit = {
+          ...depositItem,
+          redeemDate: currentDate,
+          finalRMB: depositItem.currentRMB,
+          finalProfit: depositItem.profit
+        };
+
+        const newRedeemedDepositData = [...redeemedDepositData, redeemedItem];
+        const newData = depositData.filter(d => d.app !== item.app || d.name !== item.name);
+        
+        const success = await handleSaveToFile(data, rmbData, newData, undefined, undefined, newRedeemedDepositData);
+        if (success) {
+          setRedeemedDepositData(newRedeemedDepositData);
+          setDepositData(newData);
         }
       } else {
         // RMB investment
@@ -211,7 +287,7 @@ const FinancialPage: React.FC = () => {
         const newRedeemedRmbData = [...redeemedRmbData, redeemedItem];
         const newData = rmbData.filter(d => d.app !== item.app || d.name !== item.name);
         
-        const success = await handleSaveToFile(data, newData, undefined, newRedeemedRmbData);
+        const success = await handleSaveToFile(data, newData, undefined, undefined, newRedeemedRmbData);
         if (success) {
           setRedeemedRmbData(newRedeemedRmbData);
           setRmbData(newData);
@@ -223,6 +299,7 @@ const FinancialPage: React.FC = () => {
   const handleCancel = () => {
     setIsAdding(false);
     setIsAddingRmb(false);
+    setIsAddingDeposit(false);
     if (hasChanges) {
       setEditedData(dataWithDates);
       setHasChanges(false);
@@ -230,6 +307,10 @@ const FinancialPage: React.FC = () => {
     if (hasRmbChanges) {
       setEditedRmbData(rmbDataWithDates);
       setHasRmbChanges(false);
+    }
+    if (hasDepositChanges) {
+      setEditedDepositData(depositWithDates);
+      setHasDepositChanges(false);
     }
   };
 
@@ -243,6 +324,7 @@ const FinancialPage: React.FC = () => {
 
   const displayData = hasChanges ? editedData : dataWithDates;
   const displayRmbData = hasRmbChanges ? editedRmbData : rmbDataWithDates;
+  const displayDepositData = hasDepositChanges ? editedDepositData : depositWithDates;
 
   return (
     <div className="space-y-8">
@@ -265,6 +347,12 @@ const FinancialPage: React.FC = () => {
             className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md"
           >
             新增人民币理财产品
+          </button>
+          <button
+            onClick={handleAddDeposit}
+            className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-md"
+          >
+            新增存款
           </button>
         </div>
         <input
@@ -319,13 +407,35 @@ const FinancialPage: React.FC = () => {
         )}
       </ChartContainer>
 
+      <ChartContainer 
+        title="存款详情" 
+        description="展示所有存款的详细信息。"
+        useFixedHeight={false}
+      >
+        {isAddingDeposit ? (
+          <AddForm 
+            currentDate={currentDate}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            type="deposit"
+          />
+        ) : (
+          <DepositTable 
+            data={displayDepositData}
+            onDelete={handleDelete}
+            onUpdateItem={handleUpdateDepositItem}
+            onSaveAll={hasDepositChanges ? handleSaveAll : undefined}
+          />
+        )}
+      </ChartContainer>
+
       {redeemedData.length > 0 && (
         <ChartContainer 
           title="已赎回美元产品记录" 
           description="展示所有已赎回美元产品的最终收益情况。"
           useFixedHeight={false}
         >
-          <RedeemedInvestmentsTable data={redeemedData} />
+          <USDRedeemedInvestmentsTable data={redeemedData} />
         </ChartContainer>
       )}      {redeemedRmbData.length > 0 && (
         <ChartContainer 
@@ -334,6 +444,15 @@ const FinancialPage: React.FC = () => {
           useFixedHeight={false}
         >
           <RedeemedRMBInvestmentsTable data={redeemedRmbData} />
+        </ChartContainer>
+      )}
+      {redeemedDepositData.length > 0 && (
+        <ChartContainer 
+          title="已赎回存款记录" 
+          description="展示所有已赎回存款的最终收益情况。"
+          useFixedHeight={false}
+        >
+          <RedeemedDepositsTable data={redeemedDepositData} />
         </ChartContainer>
       )}
     </div>

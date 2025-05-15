@@ -1,71 +1,50 @@
 import { 
   USDInvestmentDetail, 
-  RedeemedInvestment,
+  USDRedeemedInvestment,
   RMBInvestmentDetail,
-  RedeemedRMBInvestment
+  RedeemedRMBInvestment,
+  DepositDetail,
+  RedeemedDeposit
 } from '../data/dataTypes';
 
 export const saveToFile = async (
-  currentData: USDInvestmentDetail[], 
-  redeemedData: RedeemedInvestment[] | undefined = undefined,
-  rmbData: RMBInvestmentDetail[] | undefined = undefined,
-  redeemedRmbData: RedeemedRMBInvestment[] | undefined = undefined
+  currentUSDData: USDInvestmentDetail[], 
+  currentRMBData?: RMBInvestmentDetail[],
+  currentDepositData?: DepositDetail[],
+  redeemedUSDData?: USDRedeemedInvestment[],
+  redeemedRMBData?: RedeemedRMBInvestment[],
+  redeemedDepositData?: RedeemedDeposit[]
 ): Promise<boolean> => {
   try {
-    // 将当前USD投资数据格式化为字符串
-    const currentDataStr = 'import { USDInvestmentDetail } from \'./dataTypes\';\n' +
+    // Save USD investment data
+    const usdDataStr = 'import { USDInvestmentDetail } from \'./dataTypes\';\n' +
       'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
       'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
       'export const usdInvestmentData: USDInvestmentDetail[] = ' + 
-      JSON.stringify(currentData, null, 2) + ';\n';
+      JSON.stringify(currentUSDData, null, 2) + ';\n';
 
-    // 保存USD投资数据
-    const currentResponse = await fetch('http://localhost:3000/api/save-data', {
+    const usdResponse = await fetch('http://localhost:3000/api/save-data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         filename: 'usdInvestmentData.ts',
-        content: currentDataStr
+        content: usdDataStr
       })
     });
 
-    if (!currentResponse.ok) {
-      const errorData = await currentResponse.json();
-      throw new Error(errorData.error || 'Failed to save USD investment data');
+    if (!usdResponse.ok) {
+      throw new Error('Failed to save USD investment data');
     }
 
-    // 如果有已赎回的USD数据，也保存它
-    if (redeemedData) {
-      const redeemedDataStr = 'import { RedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const redeemedInvestmentData: RedeemedInvestment[] = ' + 
-        JSON.stringify(redeemedData, null, 2) + ';\n';
-
-      const redeemedResponse = await fetch('http://localhost:3000/api/save-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filename: 'redeemedInvestments.ts',
-          content: redeemedDataStr
-        })
-      });
-
-      if (!redeemedResponse.ok) {
-        const errorData = await redeemedResponse.json();
-        throw new Error(errorData.error || 'Failed to save redeemed USD investment data');
-      }
-    }
-
-    // 如果有RMB投资数据，保存它
-    if (rmbData) {
+    // Save RMB investment data if provided
+    if (currentRMBData) {
       const rmbDataStr = 'import { RMBInvestmentDetail } from \'./dataTypes\';\n' +
         'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
         'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
         'export const rmbInvestmentData: RMBInvestmentDetail[] = ' + 
-        JSON.stringify(rmbData, null, 2) + ';\n';
+        JSON.stringify(currentRMBData, null, 2) + ';\n';
 
       const rmbResponse = await fetch('http://localhost:3000/api/save-data', {
         method: 'POST',
@@ -79,44 +58,110 @@ export const saveToFile = async (
       });
 
       if (!rmbResponse.ok) {
-        const errorData = await rmbResponse.json();
-        throw new Error(errorData.error || 'Failed to save RMB investment data');
+        throw new Error('Failed to save RMB investment data');
       }
     }
 
-    // 如果有已赎回的RMB数据，保存它
-    if (redeemedRmbData) {
-      const redeemedRmbDataStr = 'import { RedeemedRMBInvestment } from \'./dataTypes\';\n\n' +
-        'export const redeemedRmbInvestmentData: RedeemedRMBInvestment[] = ' + 
-        JSON.stringify(redeemedRmbData, null, 2) + ';\n';
+    // Save deposit data if provided
+    if (currentDepositData) {
+      const depositDataStr = 'import { DepositDetail } from \'./dataTypes\';\n' +
+        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
+        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+        'export const depositData: DepositDetail[] = ' + 
+        JSON.stringify(currentDepositData, null, 2) + ';\n';
 
-      const redeemedRmbResponse = await fetch('http://localhost:3000/api/save-data', {
+      const depositResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'depositData.ts',
+          content: depositDataStr
+        })
+      });
+
+      if (!depositResponse.ok) {
+        throw new Error('Failed to save deposit data');
+      }
+    }
+
+    // Save redeemed USD data if provided
+    if (redeemedUSDData) {
+      const redeemedUSDDataStr = 'import { USDRedeemedInvestment } from \'./dataTypes\';\n\n' +
+        'export const redeemedInvestmentData: USDRedeemedInvestment[] = ' + 
+        JSON.stringify(redeemedUSDData, null, 2) + ';\n';
+
+      const redeemedUSDResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'redeemedInvestments.ts',
+          content: redeemedUSDDataStr
+        })
+      });
+
+      if (!redeemedUSDResponse.ok) {
+        throw new Error('Failed to save redeemed USD investment data');
+      }
+    }
+
+    // Save redeemed RMB data if provided
+    if (redeemedRMBData) {
+      const redeemedRMBDataStr = 'import { RedeemedRMBInvestment } from \'./dataTypes\';\n\n' +
+        'export const redeemedRmbInvestmentData: RedeemedRMBInvestment[] = ' + 
+        JSON.stringify(redeemedRMBData, null, 2) + ';\n';
+
+      const redeemedRMBResponse = await fetch('http://localhost:3000/api/save-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           filename: 'redeemedRmbInvestments.ts',
-          content: redeemedRmbDataStr
+          content: redeemedRMBDataStr
         })
       });
 
-      if (!redeemedRmbResponse.ok) {
-        const errorData = await redeemedRmbResponse.json();
-        throw new Error(errorData.error || 'Failed to save redeemed RMB investment data');
+      if (!redeemedRMBResponse.ok) {
+        throw new Error('Failed to save redeemed RMB investment data');
+      }
+    }
+
+    // Save redeemed deposit data if provided
+    if (redeemedDepositData) {
+      const redeemedDepositDataStr = 'import { RedeemedDeposit } from \'./dataTypes\';\n\n' +
+        'export const redeemedDepositData: RedeemedDeposit[] = ' + 
+        JSON.stringify(redeemedDepositData, null, 2) + ';\n';
+
+      const redeemedDepositResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'redeemedDeposits.ts',
+          content: redeemedDepositDataStr
+        })
+      });
+
+      if (!redeemedDepositResponse.ok) {
+        throw new Error('Failed to save redeemed deposit data');
       }
     }
 
     return true;
   } catch (error) {
     console.error('Failed to save data:', error);
-    throw error; // 重新抛出错误，让调用者能够处理它
+    throw error;
   }
 };
 
 export const loadData = (): { 
   currentData: USDInvestmentDetail[], 
-  redeemedData: RedeemedInvestment[], 
+  redeemedData: USDRedeemedInvestment[], 
   rmbData: RMBInvestmentDetail[], 
   redeemedRmbData: RedeemedRMBInvestment[] 
 } => {

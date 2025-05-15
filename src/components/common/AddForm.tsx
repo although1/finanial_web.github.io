@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail, RMBInvestmentDetail } from '../../data/dataTypes';
+import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail } from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail) => void;
+  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail) => void;
   onCancel: () => void;
-  type?: 'usd' | 'rmb';
+  type?: 'usd' | 'rmb' | 'deposit';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];

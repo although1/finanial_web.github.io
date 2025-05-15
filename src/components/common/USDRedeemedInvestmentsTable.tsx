@@ -1,11 +1,11 @@
 import React from 'react';
-import { RedeemedInvestment } from '../data/redeemedData';
+import { USDRedeemedInvestment } from '../../data/dataTypes';
 
 interface RedeemedInvestmentsTableProps {
-  data: RedeemedInvestment[];
+  data: USDRedeemedInvestment[];
 }
 
-export const RedeemedInvestmentsTable: React.FC<RedeemedInvestmentsTableProps> = ({ data }) => {
+export const USDRedeemedInvestmentsTable: React.FC<RedeemedInvestmentsTableProps> = ({ data }) => {
   const totals = data.reduce((acc, curr) => ({
     finalProfit: acc.finalProfit + curr.finalProfit,
     finalRMB: acc.finalRMB + curr.finalRMB,
