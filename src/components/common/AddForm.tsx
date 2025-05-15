@@ -25,7 +25,6 @@ const defaultUSDForm: USDInvestmentDetail = {
 
 const defaultRMBForm: RMBInvestmentDetail = {
   app: appOptions[0],
-  type: '理财/人民币理财',
   name: '',
   initialRMB: 0,
   purchaseDate: '',
@@ -58,7 +57,6 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
     }
 
     if (type === 'usd') {
-      const usdForm = formData as USDInvestmentDetail;
       setFormData(prev => {
         const prevUSD = prev as USDInvestmentDetail;
         const updates: Partial<USDInvestmentDetail> = { [name]: numValue };
@@ -68,7 +66,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
           const initialUSD = name === 'initialUSD' ? (numValue as number) : prevUSD.initialUSD;
           const buyRate = name === 'buyRate' ? (numValue as number) : prevUSD.buyRate;
           
-          updates.initialRMB = parseFloat((initialUSD * buyRate).toFixed(2));
+          updates.initialRMB = parseFloat((initialUSD * buyRate/100).toFixed(2));
           updates.currentUSD = initialUSD;
           updates.currentRate = buyRate;
           updates.currentRMB = updates.initialRMB;
@@ -86,7 +84,6 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
         return { ...prevUSD, ...updates };
       });
     } else {
-      const rmbForm = formData as RMBInvestmentDetail;
       setFormData(prev => {
         const prevRMB = prev as RMBInvestmentDetail;
         const updates: Partial<RMBInvestmentDetail> = { [name]: numValue };

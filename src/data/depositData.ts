@@ -6,7 +6,6 @@ export const DEFAULT_DATE = SYSTEM_DATE;
 export const depositInvestmentData: DepositDetail[] = [
   {
     app: "支付宝",
-    type: "存款",
     name: "余额",
     initialRMB: 97.50,
     purchaseDate: "2025/05/15",
@@ -15,7 +14,6 @@ export const depositInvestmentData: DepositDetail[] = [
   },
   {
     app: "支付宝",
-    type: "存款",
     name: "余利宝",
     initialRMB: 5000.00,
     purchaseDate: "2025/05/15",
@@ -24,7 +22,6 @@ export const depositInvestmentData: DepositDetail[] = [
   },
   {
     app: "工商银行",
-    type: "存款",
     name: "存款",
     initialRMB: 3200.00,
     purchaseDate: "2025/05/15",

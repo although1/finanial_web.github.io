@@ -1,41 +1,49 @@
-// Define types for the financial data structure
+// 基础数据结构定义
 
+/** 详细分类数据接口 */
 export interface DetailData {
-  [category: string]: number;
+  [category: string]: number;  // 每个分类对应的金额
 }
 
+/** 机构数据接口 */
 export interface InstitutionData {
-  detail: DetailData;
-  total: number;
-  total_profit?: number;
+  detail: DetailData;         // 该机构下的详细分类数据
+  total: number;             // 该机构的总金额
+  total_profit?: number;     // 该机构的总收益(可选)
 }
 
+/** 机构名称类型 */
 type InstitutionKeys = string;
 
+/** 完整的财务数据结构 */
 export type FinancialData = Record<InstitutionKeys, InstitutionData> & {
-  grand_total: number;
-  grand_total_profit?: number;
+  grand_total: number;         // 所有机构的总金额
+  grand_total_profit?: number; // 所有机构的总收益(可选)
 }
 
+/** 时间序列数据点 */
 export interface TimeSeriesPoint {
-  date: string;
-  value: number;
-  profit: number;
+  date: string;              // 日期
+  value: number;            // 数值
+  profit: number;           // 收益
 }
 
+/** 分类数据结构 */
 export interface CategoryData {
-  name: string;
-  value: number;
+  name: string;             // 分类名称
+  value: number;            // 分类金额
 }
 
+/** 详细分类数据结构 */
 export interface DetailedCategoryData {
-  institution: string;
-  categories: {
-    name: string;
-    value: number;
+  institution: string;      // 机构名称
+  categories: {             // 该机构下的分类数据
+    name: string;          // 分类名称
+    value: number;         // 分类金额
   }[];
 }
 
+/** 储蓄数据接口 */
 interface SavingsData {
   yearToDateSavings: number;     // 当年已攒钱数
   yearSavingsTarget: number;     // 年度目标攒钱数
@@ -43,81 +51,94 @@ interface SavingsData {
   monthsPassed: number;          // 已过去的月份数
 }
 
+/** 处理后的完整数据结构 */
 export interface ProcessedData {
-  rawData: Array<{ data: FinancialData; date: string }>;
-  timeSeriesData: TimeSeriesPoint[];
-  latestData: FinancialData;
-  dates: string[];
-  yearToDateProfit: number;
-  annualizedReturn: number;
-  savingsData: SavingsData;
+  rawData: Array<{ data: FinancialData; date: string }>;  // 原始数据数组
+  timeSeriesData: TimeSeriesPoint[];                      // 时间序列数据
+  latestData: FinancialData;                             // 最新数据
+  dates: string[];                                       // 日期列表
+  yearToDateProfit: number;                             // 年至今收益
+  annualizedReturn: number;                             // 年化收益率
+  savingsData: SavingsData;                            // 储蓄数据
 }
 
+/**
+ * 美元投资基本信息接口
+ */
 export interface USDInvestmentDetail {
-  app: string;                   // 对应APP
-  name: string;                  // 产品名称
-  initialUSD: number;           // 美元本金
+  app: string;                 // 对应APP
+  name: string;                // 产品名称
+  initialUSD: number;          // 美元本金
   buyRate: number;              // 购汇价
-  initialRMB: number;           // 购汇RMB价格
-  purchaseDate: string;         // 购买时间
-  currentUSD: number;           // 当前美元数额
+  initialRMB: number;          // 初始投资金额（人民币）
+  purchaseDate: string;        // 购买日期
+  currentUSD: number;          // 当前市值（美元）
   currentRate: number;          // 结汇价
-  currentRMB: number;           // 当前RMB数额
-  profit: number;               // 实际收益
+  currentRMB: number;          // 当前市值（人民币）
+  profit: number;              // 当前收益（人民币）
 }
 
 export interface USDInvestmentDetailWithDates extends USDInvestmentDetail {
-  holdingDays: number;          // 持有天数
-  annualizedReturn: number;     // 对应的年化率
+  holdingDays: number;         // 持有天数
+  annualizedReturn: number;    // 年化收益率
 }
 
 export interface USDRedeemedInvestment extends USDInvestmentDetailWithDates {
-  redeemDate: string;           // 赎回时间
-  finalUSD: number;             // 赎回时的美元数额
-  finalRate: number;            // 赎回时的汇率
-  finalRMB: number;             // 赎回时的人民币数额
-  finalProfit: number;          // 最终收益
+  redeemDate: string;          // 赎回日期
+  finalUSD: number;            // 赎回时的金额（美元）
+  finalRate: number;           // 赎回时的汇率  
+  finalRMB: number;            // 赎回时的金额（人民币）
+  finalProfit: number;         // 最终收益（人民币）
 }
 // export const redeemedInvestments: USDRedeemedInvestment[] = [];
-
+/**
+ * 人民币投资基本信息接口
+ */
 export interface RMBInvestmentDetail {
-  app: string;
-  type: string;
-  name: string;
-  initialRMB: number;
-  purchaseDate: string;
-  currentRMB: number;
-  profit: number;
+  app: string;                  // 对应APP
+  name: string;                 // 产品名称
+  initialRMB: number;          // 初始投资金额（人民币）
+  purchaseDate: string;        // 购买日期
+  currentRMB: number;          // 当前市值（人民币）
+  profit: number;              // 当前收益
 }
 
+/**
+ * 包含持有时间信息的人民币投资接口
+ */
 export interface RMBInvestmentDetailWithDates extends RMBInvestmentDetail {
-  holdingDays: number;
-  annualizedReturn: number;
+  holdingDays: number;         // 持有天数
+  annualizedReturn: number;    // 年化收益率
 }
 
+/**
+ * 已赎回的人民币投资接口
+ */
 export interface RMBRedeemedInvestment extends RMBInvestmentDetailWithDates {
-  redeemDate: string;
-  finalRMB: number;
-  finalProfit: number;
+  redeemDate: string;          // 赎回日期
+  finalRMB: number;            // 赎回时的金额（人民币）
+  finalProfit: number;         // 最终收益
 }
 
+/**
+ * 定期存款基本信息接口
+ */
 export interface DepositDetail {
-  app: string;
-  type: string;
-  name: string;
-  initialRMB: number;
-  purchaseDate: string;
-  currentRMB: number;
-  profit: number;
+  app: string;                 // 存款银行/平台名称
+  name: string;                // 存款产品名称
+  initialRMB: number;          // 存入金额（人民币）
+  purchaseDate: string;        // 存入日期
+  currentRMB: number;          // 当前金额（人民币）
+  profit: number;              // 当前收益（人民币）
 }
 
 export interface DepositDetailWithDates extends DepositDetail {
-  holdingDays: number;
-  annualizedReturn: number;
+  holdingDays: number;         // 持有天数
+  annualizedReturn: number;    // 年化收益率
 }
 
 export interface RedeemedDeposit extends DepositDetailWithDates {
-  redeemDate: string;
-  finalRMB: number;
-  finalProfit: number;
+  redeemDate: string;          // 赎回日期
+  finalRMB: number;            // 赎回时的金额（人民币）
+  finalProfit: number;         // 最终收益（人民币）
 }

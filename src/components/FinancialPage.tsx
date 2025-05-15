@@ -19,7 +19,7 @@ import {
   RedeemedDeposit
 } from '../data/dataTypes';
 import { usdInvestmentData, DEFAULT_DATE } from '../data/usdInvestmentData';
-import { USDRedeemedInvestmentData } from '../data/USDredeemedInvestments';
+import { USDRedeemedInvestmentData } from '../data/USDRedeemedInvestments';
 import { redeemedRmbInvestmentData } from '../data/redeemedRmbInvestments';
 import { rmbInvestmentData } from '../data/rmbInvestmentData';
 import { depositInvestmentData } from '../data/depositData';
@@ -47,7 +47,7 @@ const FinancialPage: React.FC = () => {
   const [data, setData] = useState(usdInvestmentData);
   const [rmbData, setRmbData] = useState(rmbInvestmentData);
   const [depositData, setDepositData] = useState(depositInvestmentData);
-  const [redeemedData, setRedeemedData] = useState<USDRedeemedInvestment[]>([]);
+  const [USDRedeemedData, setRedeemedData] = useState<USDRedeemedInvestment[]>([]);
   const [redeemedRmbData, setRedeemedRmbData] = useState<RMBRedeemedInvestment[]>([]);
   const [redeemedDepositData, setRedeemedDepositData] = useState<RedeemedDeposit[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -135,14 +135,14 @@ const FinancialPage: React.FC = () => {
     newData: USDInvestmentDetail[], 
     newRmbData?: RMBInvestmentDetail[],
     newDepositData?: DepositDetail[],
-    newRedeemedData?: USDRedeemedInvestment[], 
+    newUSDRedeemedData?: USDRedeemedInvestment[], 
     newRedeemedRmbData?: RMBRedeemedInvestment[],
     newRedeemedDepositData?: RedeemedDeposit[]
   ) => {
     setIsSaving(true);
     const success = await saveToFile(
       newData, 
-      newRedeemedData || redeemedData, 
+      newUSDRedeemedData || USDRedeemedData, 
       newRmbData || rmbData,
       newRedeemedRmbData || redeemedRmbData,
       newDepositData || depositData,
@@ -248,12 +248,12 @@ const FinancialPage: React.FC = () => {
           finalProfit: usdItem.profit
         };
 
-        const newRedeemedData = [...redeemedData, redeemedItem];
+        const newUSDRedeemedData = [...USDRedeemedData, redeemedItem];
         const newData = data.filter(d => d.app !== item.app || d.name !== item.name);
         
-        const success = await handleSaveToFile(newData, undefined, undefined, newRedeemedData);
+        const success = await handleSaveToFile(newData, undefined, undefined, newUSDRedeemedData);
         if (success) {
-          setRedeemedData(newRedeemedData);
+          setRedeemedData(newUSDRedeemedData);
           setData(newData);
         }
       } else if ('type' in item && item.type === '存款') {
@@ -429,13 +429,13 @@ const FinancialPage: React.FC = () => {
         )}
       </ChartContainer>
 
-      {redeemedData.length > 0 && (
+      {USDRedeemedData.length > 0 && (
         <ChartContainer 
           title="已赎回美元产品记录" 
           description="展示所有已赎回美元产品的最终收益情况。"
           useFixedHeight={false}
         >
-          <USDRedeemedInvestmentsTable data={redeemedData} />
+          <USDRedeemedInvestmentsTable data={USDRedeemedData} />
         </ChartContainer>
       )}      {redeemedRmbData.length > 0 && (
         <ChartContainer 
