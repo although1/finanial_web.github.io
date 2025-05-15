@@ -78,3 +78,24 @@ export interface RedeemedInvestment extends USDInvestmentDetailWithDates {
   finalRMB: number;             // 赎回时的人民币数额
   finalProfit: number;          // 最终收益
 }
+
+export interface RMBInvestmentDetail {
+  app: string;
+  type: string;
+  name: string;
+  initialRMB: number;
+  purchaseDate: string;
+  currentRMB: number;
+  profit: number;
+}
+
+export interface RMBInvestmentDetailWithDates extends RMBInvestmentDetail {
+  holdingDays: number;
+  annualizedReturn: number;
+}
+
+export interface RedeemedRMBInvestment extends RMBInvestmentDetailWithDates {
+  redeemDate: string;
+  finalRMB: number;
+  finalProfit: number;
+}
