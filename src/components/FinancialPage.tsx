@@ -98,13 +98,11 @@ const FinancialPage: React.FC = () => {
 
   const depositWithDates = useMemo(() => {
     return depositData.map(item => {
-      const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
-      const annualizedReturn = calculateAnnualizedReturn(item.profit, item.initialRMB, holdingDays);
+      const holdingDays = calculateDaysBetween(currentDate, currentDate);
       
       return {
         ...item,
-        holdingDays,
-        annualizedReturn
+        holdingDays
       } as DepositDetailWithDates;
     });
   }, [depositData, currentDate]);
@@ -267,8 +265,7 @@ const FinancialPage: React.FC = () => {
         const redeemedItem: DepositRedeemed = {
           ...depositItem,
           redeemDate: currentDate,
-          finalRMB: depositItem.currentRMB,
-          finalProfit: depositItem.profit
+          finalRMB: depositItem.currentRMB
         };
 
         const newRedeemedDepositData = [...DepositRedeemedData, redeemedItem];

@@ -126,19 +126,13 @@ export interface RMBRedeemedInvestment extends RMBInvestmentDetailWithDates {
 export interface DepositDetail {
   app: string;                 // 存款银行/平台名称
   name: string;                // 存款产品名称
-  initialRMB: number;          // 存入金额（人民币）
-  purchaseDate: string;        // 存入日期
   currentRMB: number;          // 当前金额（人民币）
-  profit: number;              // 当前收益（人民币）
 }
 
 export interface DepositDetailWithDates extends DepositDetail {
   holdingDays: number;         // 持有天数
-  annualizedReturn: number;    // 年化收益率
 }
-
 export interface DepositRedeemed extends DepositDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
-  finalProfit: number;         // 最终收益（人民币）
 }

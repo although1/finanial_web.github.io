@@ -19,33 +19,19 @@ export const DepositTable: React.FC<DepositTableProps> = ({
 
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return;
-
-    const item = depositData[index];
     const currentRMB = numValue;
-    const profit = parseFloat((currentRMB - item.initialRMB).toFixed(2));
-    const annualizedReturn = parseFloat((profit / item.initialRMB / item.holdingDays * 365 * 100).toFixed(2));
     
     onUpdateItem(index, {
       currentRMB,
-      profit,
-      annualizedReturn
     });
   };
 
   // 计算总计数据
   const totals = depositData.reduce((acc, curr) => ({
-    initialRMB: acc.initialRMB + curr.initialRMB,
     currentRMB: acc.currentRMB + curr.currentRMB,
-    profit: acc.profit + curr.profit,
   }), {
-    initialRMB: 0,
     currentRMB: 0,
-    profit: 0,
   });
-
-  // 计算总体年化收益率
-  const totalAnnualizedReturn = depositData.length > 0 ?
-    parseFloat((totals.profit / totals.initialRMB * 365 / depositData[0].holdingDays * 100).toFixed(2)) : 0;
 
   return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
@@ -55,12 +41,8 @@ export const DepositTable: React.FC<DepositTableProps> = ({
             <tr>
               <th className="px-4 py-2 text-left text-sm font-semibold sticky left-0 bg-green-500">对应APP</th>
               <th className="px-4 py-2 text-left text-sm font-semibold">存款名称</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">初始金额</th>
-              <th className="px-4 py-2 text-center text-sm font-semibold">开始日期</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">当前金额</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">收益</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
@@ -68,8 +50,6 @@ export const DepositTable: React.FC<DepositTableProps> = ({
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-900">¥{item.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
-              <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>
               <td className="px-4 py-2 text-base text-right text-gray-900">
                 <div className="relative group">
                   <input
@@ -82,9 +62,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-blue-600 font-medium">¥</span>
                 </div>
               </td>
-              <td className={`px-4 py-2 text-sm text-right ${item.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>¥{item.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
               <td className="px-4 py-2 text-sm text-right text-gray-900">{item.holdingDays}</td>
-              <td className={`px-4 py-2 text-sm text-right font-medium ${item.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{item.annualizedReturn.toFixed(2)}</td>
               {onDelete && (
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button onClick={() => onDelete(item)} className="px-2 py-1 text-white bg-green-600 hover:bg-green-700 rounded">
@@ -97,12 +75,9 @@ export const DepositTable: React.FC<DepositTableProps> = ({
           <tr className="bg-green-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-green-50">总计</td>
             <td className="px-4 py-2 text-sm text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
             <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.currentRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
-            <td className={`px-4 py-2 text-sm text-right font-medium ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>¥{totals.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
-            <td className={`px-4 py-2 text-sm text-right font-medium ${totalAnnualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{totalAnnualizedReturn.toFixed(2)}</td>
             {onDelete && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
           </tbody>
