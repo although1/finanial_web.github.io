@@ -1,14 +1,14 @@
 import React from 'react';
 import { USDInvestmentDetailWithDates } from '../../data/dataTypes'; 
 interface USDInvestmentTableProps {
-  data: USDInvestmentDetailWithDates[];
+  usdData: USDInvestmentDetailWithDates[];
   onDelete?: (item: USDInvestmentDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<USDInvestmentDetailWithDates>) => void;
   onSaveAll?: () => void;
 }
 
 export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ 
-  data, 
+  usdData, 
   onDelete,
   onUpdateItem,
   onSaveAll
@@ -24,7 +24,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return;
 
-    const item = data[index];
+    const item = usdData[index];
 
     // 如果修改了当前美元数额，只更新当前项
     if (field === 'currentUSD') {
@@ -40,7 +40,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
     // 如果修改了结汇价，更新同一个app的所有产品
     else if (field === 'currentRate') {
       // 找出所有同app的产品索引
-      const sameAppIndexes = data.reduce((indexes: number[], curr, currIndex) => {
+      const sameAppIndexes = usdData.reduce((indexes: number[], curr, currIndex) => {
         if (curr.app === item.app) {
           indexes.push(currIndex);
         }
@@ -49,7 +49,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
 
       // 更新所有同app产品的结汇价和相关计算
       sameAppIndexes.forEach(idx => {
-        const currentItem = data[idx];
+        const currentItem = usdData[idx];
         const currentRMB = parseFloat((currentItem.currentUSD * numValue / 100).toFixed(2));
         const profit = parseFloat((currentRMB - currentItem.initialRMB).toFixed(2));
         onUpdateItem(idx, {
@@ -62,7 +62,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
     }
   };
   // 计算总计数据
-  const totals = data.reduce((acc, curr) => ({
+  const totals = usdData.reduce((acc, curr) => ({
     initialUSD: acc.initialUSD + curr.initialUSD,
     initialRMB: acc.initialRMB + curr.initialRMB,
     currentUSD: acc.currentUSD + curr.currentUSD,
@@ -77,8 +77,8 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
   });
 
   // 计算总体年化收益率
-  const totalAnnualizedReturn = data.length > 0 ? 
-    (totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100) : 0;  return (
+  const totalAnnualizedReturn = usdData.length > 0 ? 
+    (totals.profit / totals.initialRMB * 365 / usdData[0].holdingDays * 100) : 0;  return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
       <div className="overflow-x-auto">
         <table className="min-w-full">
@@ -99,7 +99,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{data.map((item: USDInvestmentDetailWithDates, index: number) => (
+          <tbody className="divide-y divide-gray-200">{usdData.map((item: USDInvestmentDetailWithDates, index: number) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>

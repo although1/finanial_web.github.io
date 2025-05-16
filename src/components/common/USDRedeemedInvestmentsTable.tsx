@@ -2,11 +2,11 @@ import React from 'react';
 import { USDRedeemedInvestment } from '../../data/dataTypes';
 
 interface RedeemedInvestmentsTableProps {
-  data: USDRedeemedInvestment[];
+  usdData: USDRedeemedInvestment[];
 }
 
-export const USDRedeemedInvestmentsTable: React.FC<RedeemedInvestmentsTableProps> = ({ data }) => {
-  const totals = data.reduce((acc, curr) => ({
+export const USDRedeemedInvestmentsTable: React.FC<RedeemedInvestmentsTableProps> = ({ usdData }) => {
+  const totals = usdData.reduce((acc, curr) => ({
     finalProfit: acc.finalProfit + curr.finalProfit,
     finalRMB: acc.finalRMB + curr.finalRMB,
     initialRMB: acc.initialRMB + curr.initialRMB,
@@ -37,7 +37,7 @@ export const USDRedeemedInvestmentsTable: React.FC<RedeemedInvestmentsTableProps
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {data.map((item, index) => (
+          {usdData.map((item, index) => (
             <tr 
               key={`${item.app}-${item.name}-${index}`}
               className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}

@@ -1,13 +1,13 @@
 import React from 'react';
-import { RedeemedDeposit } from '../../data/dataTypes';
+import { DepositRedeemed } from '../../data/dataTypes';
 
 interface RedeemedDepositsTableProps {
-  data: RedeemedDeposit[];
+  depositData: DepositRedeemed[];
 }
 
-export const RedeemedDepositsTable: React.FC<RedeemedDepositsTableProps> = ({ data }) => {
+export const DepositsRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ depositData }) => {
   // 计算总计数据
-  const totals = data.reduce((acc, curr) => ({
+  const totals = depositData.reduce((acc, curr) => ({
     initialRMB: acc.initialRMB + curr.initialRMB,
     finalRMB: acc.finalRMB + curr.finalRMB,
     finalProfit: acc.finalProfit + curr.finalProfit,
@@ -33,7 +33,7 @@ export const RedeemedDepositsTable: React.FC<RedeemedDepositsTableProps> = ({ da
             <th className="px-4 py-2 text-right text-sm font-semibold">年化收益(%)</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">{data.map((item, index) => (
+        <tbody className="divide-y divide-gray-200">{depositData.map((item, index) => (
           <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-inherit">{item.app}</td>
             <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>

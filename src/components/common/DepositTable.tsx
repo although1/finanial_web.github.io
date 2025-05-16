@@ -2,14 +2,14 @@ import React from 'react';
 import { DepositDetailWithDates } from '../../data/dataTypes';
 
 interface DepositTableProps {
-  data: DepositDetailWithDates[];
+  depositData: DepositDetailWithDates[];
   onDelete?: (item: DepositDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<DepositDetailWithDates>) => void;
   onSaveAll?: () => void;
 }
 
 export const DepositTable: React.FC<DepositTableProps> = ({
-  data,
+  depositData,
   onDelete,
   onUpdateItem,
   onSaveAll
@@ -20,7 +20,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return;
 
-    const item = data[index];
+    const item = depositData[index];
     const currentRMB = numValue;
     const profit = parseFloat((currentRMB - item.initialRMB).toFixed(2));
     const annualizedReturn = parseFloat((profit / item.initialRMB / item.holdingDays * 365 * 100).toFixed(2));
@@ -33,7 +33,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
   };
 
   // 计算总计数据
-  const totals = data.reduce((acc, curr) => ({
+  const totals = depositData.reduce((acc, curr) => ({
     initialRMB: acc.initialRMB + curr.initialRMB,
     currentRMB: acc.currentRMB + curr.currentRMB,
     profit: acc.profit + curr.profit,
@@ -44,8 +44,8 @@ export const DepositTable: React.FC<DepositTableProps> = ({
   });
 
   // 计算总体年化收益率
-  const totalAnnualizedReturn = data.length > 0 ?
-    parseFloat((totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100).toFixed(2)) : 0;
+  const totalAnnualizedReturn = depositData.length > 0 ?
+    parseFloat((totals.profit / totals.initialRMB * 365 / depositData[0].holdingDays * 100).toFixed(2)) : 0;
 
   return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
@@ -64,7 +64,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{data.map((item, index) => (
+          <tbody className="divide-y divide-gray-200">{depositData.map((item, index) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>

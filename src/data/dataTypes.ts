@@ -137,7 +137,7 @@ export interface DepositDetailWithDates extends DepositDetail {
   annualizedReturn: number;    // 年化收益率
 }
 
-export interface RedeemedDeposit extends DepositDetailWithDates {
+export interface DepositRedeemed extends DepositDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益（人民币）

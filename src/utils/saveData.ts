@@ -4,23 +4,23 @@ import {
   RMBInvestmentDetail,
   RMBRedeemedInvestment,
   DepositDetail,
-  RedeemedDeposit
+  DepositRedeemed
 } from '../data/dataTypes';
 
 export const saveToFile = async (
   currentUSDData: USDInvestmentDetail[], 
-  currentRMBData?: RMBInvestmentDetail[],
-  currentDepositData?: DepositDetail[],
   redeemedUSDData?: USDRedeemedInvestment[],
+  currentRMBData?: RMBInvestmentDetail[],
   redeemedRMBData?: RMBRedeemedInvestment[],
-  redeemedDepositData?: RedeemedDeposit[]
+  currentDepositData?: DepositDetail[],
+  DepositRedeemedData?: DepositRedeemed[]
 ): Promise<boolean> => {
   try {
     // Save USD investment data
     const usdDataStr = 'import { USDInvestmentDetail } from \'./dataTypes\';\n' +
       'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
       'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-      'export const usdInvestmentData: USDInvestmentDetail[] = ' + 
+      'export const USDInvestmentData: USDInvestmentDetail[] = ' + 
       JSON.stringify(currentUSDData, null, 2) + ';\n';
 
     const usdResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -29,7 +29,7 @@ export const saveToFile = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        filename: 'usdInvestmentData.ts',
+        filename: 'USDInvestmentData.ts',
         content: usdDataStr
       })
     });
@@ -43,7 +43,7 @@ export const saveToFile = async (
       const rmbDataStr = 'import { RMBInvestmentDetail } from \'./dataTypes\';\n' +
         'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
         'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-        'export const rmbInvestmentData: RMBInvestmentDetail[] = ' + 
+        'export const RMBInvestmentData: RMBInvestmentDetail[] = ' + 
         JSON.stringify(currentRMBData, null, 2) + ';\n';
 
       const rmbResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -52,7 +52,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'rmbInvestmentData.ts',
+          filename: 'RMBInvestmentData.ts',
           content: rmbDataStr
         })
       });
@@ -111,7 +111,7 @@ export const saveToFile = async (
     // Save redeemed RMB data if provided
     if (redeemedRMBData) {
       const redeemedRMBDataStr = 'import { RMBRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const redeemedRmbInvestmentData: RMBRedeemedInvestment[] = ' + 
+        'export const RMBRedeemedInvestmentData: RMBRedeemedInvestment[] = ' + 
         JSON.stringify(redeemedRMBData, null, 2) + ';\n';
 
       const redeemedRMBResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -120,7 +120,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'redeemedRmbInvestments.ts',
+          filename: 'RMBRedeemedInvestments.ts',
           content: redeemedRMBDataStr
         })
       });
@@ -131,10 +131,10 @@ export const saveToFile = async (
     }
 
     // Save redeemed deposit data if provided
-    if (redeemedDepositData) {
-      const redeemedDepositDataStr = 'import { RedeemedDeposit } from \'./dataTypes\';\n\n' +
-        'export const redeemedDepositData: RedeemedDeposit[] = ' + 
-        JSON.stringify(redeemedDepositData, null, 2) + ';\n';
+    if (DepositRedeemedData) {
+      const redeemedDepositDataStr = 'import { DepositRedeemed } from \'./dataTypes\';\n\n' +
+        'export const DepositRedeemedData: DepositRedeemed[] = ' + 
+        JSON.stringify(DepositRedeemedData, null, 2) + ';\n';
 
       const redeemedDepositResponse = await fetch('http://localhost:3000/api/save-data', {
         method: 'POST',
@@ -142,7 +142,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'redeemedDeposits.ts',
+          filename: 'DepositsRedeemed.ts',
           content: redeemedDepositDataStr
         })
       });
@@ -163,22 +163,22 @@ export const loadData = (): {
   currentData: USDInvestmentDetail[], 
   redeemedData: USDRedeemedInvestment[], 
   rmbData: RMBInvestmentDetail[], 
-  redeemedRmbData: RMBRedeemedInvestment[] 
+  RMBRedeemedData: RMBRedeemedInvestment[] 
 } => {
   try {
-    const currentDataStr = localStorage.getItem('usdInvestmentData');
+    const currentDataStr = localStorage.getItem('USDInvestmentData');
     const redeemedDataStr = localStorage.getItem('USDRedeemedInvestmentData');
-    const rmbDataStr = localStorage.getItem('rmbInvestmentData');
-    const redeemedRmbDataStr = localStorage.getItem('redeemedRmbInvestments');
+    const rmbDataStr = localStorage.getItem('RMBInvestmentData');
+    const redeemedRmbDataStr = localStorage.getItem('RMBRedeemedInvestments');
     
     return {
       currentData: currentDataStr ? JSON.parse(currentDataStr) : [],
       redeemedData: redeemedDataStr ? JSON.parse(redeemedDataStr) : [],
       rmbData: rmbDataStr ? JSON.parse(rmbDataStr) : [],
-      redeemedRmbData: redeemedRmbDataStr ? JSON.parse(redeemedRmbDataStr) : []
+      RMBRedeemedData: redeemedRmbDataStr ? JSON.parse(redeemedRmbDataStr) : []
     };
   } catch (error) {
     console.error('Failed to load data:', error);
-    return { currentData: [], redeemedData: [], rmbData: [], redeemedRmbData: [] };
+    return { currentData: [], redeemedData: [], rmbData: [], RMBRedeemedData: [] };
   }
 };

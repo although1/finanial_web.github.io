@@ -2,14 +2,14 @@ import React from 'react';
 import { RMBInvestmentDetailWithDates } from '../../data/dataTypes';
 
 interface RMBInvestmentTableProps {
-  data: RMBInvestmentDetailWithDates[];
+  rmbData: RMBInvestmentDetailWithDates[];
   onDelete?: (item: RMBInvestmentDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<RMBInvestmentDetailWithDates>) => void;
   onSaveAll?: () => void;
 }
 
 export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
-  data,
+  rmbData,
   onDelete,
   onUpdateItem,
   onSaveAll
@@ -25,7 +25,7 @@ export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return;
 
-    const item = data[index];
+    const item = rmbData[index];
 
     const currentRMB = numValue;
     const profit = parseFloat((currentRMB - item.initialRMB).toFixed(2));
@@ -37,7 +37,7 @@ export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
   };
 
   // 计算总计数据
-  const totals = data.reduce((acc, curr) => ({
+  const totals = rmbData.reduce((acc, curr) => ({
     initialRMB: acc.initialRMB + curr.initialRMB,
     currentRMB: acc.currentRMB + curr.currentRMB,
     profit: acc.profit + curr.profit,
@@ -48,8 +48,8 @@ export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
   });
 
   // 计算总体年化收益率
-  const totalAnnualizedReturn = data.length > 0 ?
-    (totals.profit / totals.initialRMB * 365 / data[0].holdingDays * 100) : 0;
+  const totalAnnualizedReturn = rmbData.length > 0 ?
+    (totals.profit / totals.initialRMB * 365 / rmbData[0].holdingDays * 100) : 0;
 
   return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
@@ -68,7 +68,7 @@ export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{data.map((item: RMBInvestmentDetailWithDates, index: number) => (
+          <tbody className="divide-y divide-gray-200">{rmbData.map((item: RMBInvestmentDetailWithDates, index: number) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
