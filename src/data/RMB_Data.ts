@@ -3,7 +3,7 @@ import { SYSTEM_DATE } from '../utils/dateUtils';
 
 export const DEFAULT_DATE = SYSTEM_DATE;
 
-export const RMBInvestmentData: RMBInvestmentDetail[] = [
+export const RMBData: RMBInvestmentDetail[] = [
   {
     "app": "招商银行",
     "name": "季季宝",

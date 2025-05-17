@@ -3,7 +3,7 @@ import { SYSTEM_DATE } from '../utils/dateUtils';
 
 export const DEFAULT_DATE = SYSTEM_DATE;
 
-export const DepositInvestmentData: DepositDetail[] = [
+export const DepositData: DepositDetail[] = [
   {
     "app": "支付宝",
     "name": "余额",
