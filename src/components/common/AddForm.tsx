@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail } from '../../data/dataTypes';
+import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail,PensionDetail } from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail) => void;
+  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail) => void;
   onCancel: () => void;
-  type?: 'usd' | 'rmb' | 'deposit' | 'fund';
+  type?: 'usd' | 'rmb' | 'deposit' | 'fund' | 'pension';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];
@@ -38,6 +38,12 @@ const defaultDepositForm: DepositDetail = {
   currentRMB: 0
 };
 
+const defaultPensionForm: PensionDetail = {
+  app: appOptions[0],
+  name: '',
+  currentRMB: 0
+};
+
 const defaultFundForm: FundInvestmentDetail = {
   app: appOptions[0],
   name: '',
@@ -48,13 +54,15 @@ const defaultFundForm: FundInvestmentDetail = {
 }
 
 export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel, type = 'usd' }) => {
-  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail>(
+  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail>(
     type === 'usd' 
       ? { ...defaultUSDForm, purchaseDate: currentDate }
       : type === 'rmb'
       ? { ...defaultRMBForm, purchaseDate: currentDate }
       : type === 'deposit'
       ? { ...defaultDepositForm }
+      : type === 'pension'
+      ? { ...defaultPensionForm }
       : { ...defaultFundForm, purchaseDate: currentDate }
   );
 
@@ -75,10 +83,10 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
       numValue = parseFloat(value) || 0;
     }
 
-    if (type === 'deposit') {
+    if (type === 'deposit' || type === 'pension') {
       setFormData(prev => {
-        const prevDeposit = prev as DepositDetail;
-        return { ...prevDeposit, [name]: numValue };
+        const prevData = prev as DepositDetail | PensionDetail;
+        return { ...prevData, [name]: numValue };
       });
     } else if (type === 'usd') {
       setFormData(prev => {

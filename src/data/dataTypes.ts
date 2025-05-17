@@ -165,3 +165,20 @@ export interface DepositRedeemed extends DepositDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
 }
+
+/**
+ * 养老金基本信息接口
+ */
+export interface PensionDetail {
+  app: string;                 // 平台名称
+  name: string;                // 养老金产品名称
+  currentRMB: number;          // 当前金额（人民币）
+}
+
+export interface PensionDetailWithDates extends PensionDetail {
+  holdingDays: number;         // 持有天数
+}
+export interface PensionRedeemed extends PensionDetailWithDates {
+  redeemDate: string;          // 赎回日期
+  finalRMB: number;            // 赎回时的金额（人民币）
+}

@@ -6,7 +6,9 @@ import {
   DepositDetail,
   DepositRedeemed,
   FundInvestmentDetail,
-  FundRedeemedInvestment
+  FundRedeemedInvestment,
+  PensionDetail,
+  PensionRedeemed
 } from '../data/dataTypes';
 
 export const saveToFile = async (
@@ -18,7 +20,8 @@ export const saveToFile = async (
   DepositRedeemedData?: DepositRedeemed[],
   currentFundData?: FundInvestmentDetail[],
   FundRedeemedData?: FundRedeemedInvestment[],
-
+  currentPensionData?: PensionDetail[],
+  PensionRedeemedData?: PensionRedeemed[]
 ): Promise<boolean> => {
   try {
     // Save USD investment data
@@ -152,35 +155,56 @@ export const saveToFile = async (
         })
       });
       
-
       if (!redeemedDepositResponse.ok) {
         throw new Error('Failed to save redeemed deposit data');
       }
+    }
 
-      if (currentFundData) {
-        const fundDataStr = 'import { FundInvestmentDetail } from \'./dataTypes\';\n' +
-          'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-          'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-          'export const FundInvestmentData: FundInvestmentDetail[] = ' + 
-          JSON.stringify(currentFundData, null, 2) + ';\n';
+    // 将基金数据保存逻辑移到外面，作为独立的条件判断
+    if (currentFundData) {
+      const fundDataStr = 'import { FundInvestmentDetail } from \'./dataTypes\';\n' +
+        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
+        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+        'export const FundInvestmentData: FundInvestmentDetail[] = ' + 
+        JSON.stringify(currentFundData, null, 2) + ';\n';
 
-        const fundResponse = await fetch('http://localhost:3000/api/save-data', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            filename: 'FundInvestmentData.ts',
-            content: fundDataStr
-          })
-        });
+      const fundResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'FundInvestmentData.ts',
+          content: fundDataStr
+        })
+      });
 
-        if (!fundResponse.ok) {
-          throw new Error('Failed to save fund investment data');
-        }
+      if (!fundResponse.ok) {
+        throw new Error('Failed to save fund investment data');
       }
     }
 
+    // 添加赎回基金数据的保存逻辑
+    if (FundRedeemedData) {
+      const fundRedeemedDataStr = 'import { FundRedeemedInvestment } from \'./dataTypes\';\n\n' +
+        'export const FundRedeemedInvestmentData: FundRedeemedInvestment[] = ' + 
+        JSON.stringify(FundRedeemedData, null, 2) + ';\n';
+
+      const fundRedeemedResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'FundRedeemedInvestments.ts',
+          content: fundRedeemedDataStr
+        })
+      });
+
+      if (!fundRedeemedResponse.ok) {
+        throw new Error('Failed to save redeemed fund data');
+      }
+    }
     return true;
   } catch (error) {
     console.error('Failed to save data:', error);

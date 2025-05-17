@@ -9,6 +9,8 @@ import { DepositTable } from './common/DepositTable';
 import { DepositsRedeemedTable } from './common/DepositsRedeemedTable';
 import { FundInvestmentTable } from './common/FundInvestmentTable';
 import { FundRedeemedInvestmentsTable } from './common/FundRedeemedInvestmentsTable';
+import { PensionTable } from './common/PensionTable';
+import { PensionRedeemedTable } from './common/PensionRedeemedTable';
 import { 
   USDInvestmentDetail, 
   USDInvestmentDetailWithDates, 
@@ -21,7 +23,10 @@ import {
   DepositRedeemed,
   FundInvestmentDetail,
   FundInvestmentDetailWithDates,
-  FundRedeemedInvestment
+  FundRedeemedInvestment,
+  PensionDetail,
+  PensionDetailWithDates,
+  PensionRedeemed
 } from '../data/dataTypes';
 import { USDInvestmentData, DEFAULT_DATE } from '../data/USDInvestmentData';
 import { USDRedeemedInvestmentData } from '../data/USDRedeemedInvestments';
@@ -31,6 +36,8 @@ import { depositInvestmentData } from '../data/depositData';
 import { DepositRedeemedData } from '../data/DepositsRedeemed';
 import { FundInvestmentData } from '../data/FundInvestmentData';
 import { FundRedeemedInvestmentData } from '../data/FundRedeemedInvestments';
+import { PensionInvestmentData } from '../data/PensionData';
+import { PensionRedeemedData } from '../data/PensionRedeemed';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
 import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
@@ -54,25 +61,30 @@ const FinancialPage: React.FC = () => {
   const [usdData, setUsdData] = useState(USDInvestmentData);
   const [rmbData, setRmbData] = useState(RMBInvestmentData);
   const [fundData, setFundData] = useState(FundInvestmentData);
+  const [pensionData, setPensionData] = useState(PensionInvestmentData);
   const [depositData, setDepositData] = useState(depositInvestmentData);
   const [USDRedeemedData, setRedeemedUsdData] = useState<USDRedeemedInvestment[]>([]);
   const [RMBRedeemedData, setRedeemedRmbData] = useState<RMBRedeemedInvestment[]>([]);
   const [FundRedeemedData, setRedeemedFundData] = useState<FundRedeemedInvestment[]>([]);
   const [DepositRedeemedData, setRedeemedDepositData] = useState<DepositRedeemed[]>([]);
+  const [PensionRedeemedData, setRedeemedPensionData] = useState<PensionRedeemed[]>([]);
   const [isAddingUsd, setIsAddingUsd] = useState(false);
   const [isAddingRmb, setIsAddingRmb] = useState(false);
   const [isAddingFund, setIsAddingFund] = useState(false);
   const [isAddingDeposit, setIsAddingDeposit] = useState(false);
+  const [isAddingPension, setIsAddingPension] = useState(false);
   const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
   const [isSaving, setIsSaving] = useState(false);
   const [editedUsdData, setEditedUsdData] = useState<USDInvestmentDetailWithDates[]>([]);
   const [editedRmbData, setEditedRmbData] = useState<RMBInvestmentDetailWithDates[]>([]);
   const [editedFundData, setEditedFundData] = useState<FundInvestmentDetailWithDates[]>([]);
   const [editedDepositData, setEditedDepositData] = useState<DepositDetailWithDates[]>([]);
+  const [editedPensionData, setEditedPensionData] = useState<PensionDetailWithDates[]>([]);
   const [hasUsdChanges, setHasUsdChanges] = useState(false);
   const [hasRmbChanges, setHasRmbChanges] = useState(false);
   const [hasFundChanges, setHasFundChanges] = useState(false);
-  const [hasDepositChanges, setHasDepositChanges] = useState(false);  // 初始化数据
+  const [hasDepositChanges, setHasDepositChanges] = useState(false);
+  const [hasPensionChanges, setHasPensionChanges] = useState(false);
   useEffect(() => {
     setUsdData(USDInvestmentData);
     setRmbData(RMBInvestmentData);
@@ -82,6 +94,8 @@ const FinancialPage: React.FC = () => {
     setRedeemedRmbData(RMBRedeemedInvestmentData);
     setRedeemedDepositData(DepositRedeemedData);
     setRedeemedFundData(FundRedeemedInvestmentData);
+    setPensionData(PensionInvestmentData);
+    setRedeemedPensionData(PensionRedeemedData);
   }, []);
 
   const usdDataWithDates = useMemo(() => {
@@ -110,7 +124,7 @@ const FinancialPage: React.FC = () => {
     });
   }, [rmbData, currentDate]);
 
-    const fundDataWithDates = useMemo(() => {
+  const fundDataWithDates = useMemo(() => {
     return fundData.map(item => {
       const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
       const annualizedReturn = calculateAnnualizedReturn(item.profit, item.initialFund, holdingDays);
@@ -131,6 +145,14 @@ const FinancialPage: React.FC = () => {
     });
   }, [depositData]);
 
+  const pensionWithDates = useMemo(() => {
+    return pensionData.map(item => {
+      return {
+       ...item
+      } as PensionDetailWithDates;
+    });
+  }, [pensionData]);
+
   useEffect(() => {
     if (!hasUsdChanges) {
       setEditedUsdData(usdDataWithDates);
@@ -144,7 +166,15 @@ const FinancialPage: React.FC = () => {
     if (!hasDepositChanges) {
       setEditedDepositData(depositWithDates);
     }
-  }, [usdDataWithDates, hasUsdChanges, rmbDataWithDates, hasRmbChanges, fundDataWithDates, hasFundChanges, depositWithDates, hasDepositChanges]);
+    if (!hasPensionChanges) {
+      setEditedPensionData(pensionWithDates);
+    }
+  }, [usdDataWithDates, hasUsdChanges, 
+    rmbDataWithDates, hasRmbChanges, 
+    fundDataWithDates, hasFundChanges, 
+    depositWithDates, hasDepositChanges, 
+    pensionWithDates, hasPensionChanges 
+  ]);
 
   const handleAdd = () => {
     setIsAddingUsd(true);
@@ -161,6 +191,9 @@ const FinancialPage: React.FC = () => {
   const handleAddDeposit = () => {
     setIsAddingDeposit(true);
   };
+  const handleAddPension = () => {
+    setIsAddingPension(true);
+  }
 
   const handleSaveToFile = async (
     newUsdData: USDInvestmentDetail[], 
@@ -170,7 +203,9 @@ const FinancialPage: React.FC = () => {
     newDepositData?: DepositDetail[],
     newRedeemedDepositData?: DepositRedeemed[],
     newFundData?: FundInvestmentDetail[],
-    newRedeemedFundData?: FundRedeemedInvestment[]
+    newRedeemedFundData?: FundRedeemedInvestment[],
+    newPensionData?: PensionDetail[],
+    newRedeemedPensionData?: PensionRedeemed[]
   ) => {
     setIsSaving(true);
     const success = await saveToFile(
@@ -181,7 +216,9 @@ const FinancialPage: React.FC = () => {
       newDepositData || depositData,
       newRedeemedDepositData || DepositRedeemedData,
       newFundData || fundData,
-      newRedeemedFundData || FundRedeemedData
+      newRedeemedFundData || FundRedeemedData,
+      newPensionData || pensionData,
+      newRedeemedPensionData || PensionRedeemedData
     );
     setIsSaving(false);
     if (!success) {
@@ -190,7 +227,7 @@ const FinancialPage: React.FC = () => {
     return success;
   };
 
-  const handleSave = async (newItem: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail) => {
+  const handleSave = async (newItem: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail) => {
     if ('initialUSD' in newItem) {
       // USD investment
       const newUsdDataSave = [...usdData, newItem as USDInvestmentDetail];
@@ -216,7 +253,15 @@ const FinancialPage: React.FC = () => {
         setFundData(newFundData);
         setIsAddingFund(false);
       }
-    }  else {
+    } else if (newItem.app.includes('养老') || newItem.name.includes('养老')) {
+      // Pension
+      const newPensionData = [...pensionData, newItem as PensionDetail];
+      const success = await handleSaveToFile(usdData,undefined,undefined,undefined, undefined,undefined, undefined, undefined, newPensionData);
+      if (success) {
+        setPensionData(newPensionData);
+        setIsAddingPension(false);
+      }
+    } else {
       // Deposit
       const newDepositData = [...depositData, newItem as DepositDetail];
       const success = await handleSaveToFile(usdData,undefined,undefined,undefined, newDepositData);
@@ -262,9 +307,17 @@ const FinancialPage: React.FC = () => {
     });
     setHasFundChanges(true);
   };
+  const handleUpdatePensionItem = (index: number, updates: Partial<PensionDetailWithDates>) => {
+    setEditedPensionData(prevData => {
+      const newData = [...prevData];
+      newData[index] = {...newData[index],...updates };
+      return newData;
+    });
+    setHasPensionChanges(true);
+  }
 
   const handleSaveAll = async () => {
-    if (!hasUsdChanges && !hasRmbChanges && !hasDepositChanges && !hasFundChanges) return;
+    if (!hasUsdChanges && !hasRmbChanges && !hasDepositChanges && !hasFundChanges && !hasPensionChanges) return;
 
     const success = await handleSaveToFile(
       hasUsdChanges ? editedUsdData : usdData,
@@ -274,6 +327,8 @@ const FinancialPage: React.FC = () => {
       hasDepositChanges ? editedDepositData : depositData,
       undefined,
       hasFundChanges ? editedFundData : fundData,
+      undefined,
+      hasPensionChanges? editedPensionData : pensionData,
       undefined
     );
     if (success) {
@@ -293,10 +348,14 @@ const FinancialPage: React.FC = () => {
         setFundData(editedFundData);
         setHasFundChanges(false);
       }
+      if (hasPensionChanges) {
+        setPensionData(editedPensionData);
+        setHasPensionChanges(false);
+      }
     }
   };
 
-  const handleDelete = async (item: USDInvestmentDetailWithDates | RMBInvestmentDetailWithDates | DepositDetailWithDates | FundInvestmentDetailWithDates) => {
+  const handleDelete = async (item: USDInvestmentDetailWithDates | RMBInvestmentDetailWithDates | DepositDetailWithDates | FundInvestmentDetailWithDates | PensionDetailWithDates) => {
     if (window.confirm('确定要赎回该产品？赎回后将保存到历史记录中。')) {
       if ('initialUSD' in item) {
         // USD investment
@@ -354,7 +413,24 @@ const FinancialPage: React.FC = () => {
           setRedeemedFundData(newRedeemedFundData);
           setFundData(newData);
         }
-      } else {
+      } else if (item.app.includes('养老') || item.name.includes('养老')){
+        // Pension
+        const pensionItem = item as PensionDetailWithDates;
+        const redeemedItem: PensionRedeemed = {
+         ...pensionItem,
+          redeemDate: currentDate,
+          finalRMB: pensionItem.currentRMB
+        };
+
+        const newRedeemedPensionData = [...PensionRedeemedData, redeemedItem];
+        const newPensionData = pensionData.filter(d => d.app!== pensionItem.app || d.name!== pensionItem.name);
+
+        const success = await handleSaveToFile(usdData,undefined, undefined, undefined, undefined, undefined, undefined, undefined, newPensionData, newRedeemedPensionData);
+        if (success) {
+          setRedeemedPensionData(newRedeemedPensionData);
+          setPensionData(newPensionData);
+        }
+      }else {
         // Deposit
         const depositItem = item as DepositDetailWithDates;
         const redeemedItem: DepositRedeemed = {
@@ -380,6 +456,7 @@ const FinancialPage: React.FC = () => {
     setIsAddingRmb(false);
     setIsAddingDeposit(false);
     setIsAddingFund(false);
+    setIsAddingPension(false);
     if (hasUsdChanges) {
       setEditedUsdData(usdDataWithDates);
       setHasUsdChanges(false);
@@ -396,6 +473,10 @@ const FinancialPage: React.FC = () => {
       setEditedFundData(fundDataWithDates);
       setHasFundChanges(false);
     }
+    if (hasPensionChanges) {
+      setEditedPensionData(pensionWithDates);
+      setHasPensionChanges(false);
+    }
   };
 
   const handleDateChange = (newDate: string) => {
@@ -410,6 +491,7 @@ const FinancialPage: React.FC = () => {
   const displayRmbData = hasRmbChanges ? editedRmbData : rmbDataWithDates;
   const displayDepositData = hasDepositChanges ? editedDepositData : depositWithDates;
   const displayFundData = hasFundChanges ? editedFundData : fundDataWithDates;
+  const displayPensionData = hasPensionChanges? editedPensionData : pensionWithDates;
 
   return (
     <div className="space-y-8">
@@ -444,6 +526,12 @@ const FinancialPage: React.FC = () => {
             className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-md"
           >
             新增基金
+          </button>
+          <button
+            onClick={handleAddPension}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
+          >
+            新增养老金
           </button>
         </div>
         <input
@@ -541,6 +629,27 @@ const FinancialPage: React.FC = () => {
           />
         )}
       </ChartContainer>
+      <ChartContainer
+        title="养老金详情"
+        description="展示所有养老金的详细信息。"
+        useFixedHeight={false}
+      >
+        {isAddingPension? (
+          <AddForm
+            currentDate={currentDate}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            type="pension"
+          />
+        ) : (
+          <PensionTable
+            pensionData={displayPensionData}
+            onDelete={handleDelete}
+            onUpdateItem={handleUpdatePensionItem}
+            onSaveAll={hasPensionChanges? handleSaveAll : undefined}
+          />
+        )}
+      </ChartContainer>
 
       {USDRedeemedData.length > 0 && (
         <ChartContainer 
@@ -576,6 +685,15 @@ const FinancialPage: React.FC = () => {
           useFixedHeight={false}
         >
           <FundRedeemedInvestmentsTable fundData={FundRedeemedData} />
+        </ChartContainer>
+      )}
+      {PensionRedeemedData.length > 0 && (
+        <ChartContainer
+          title="已赎回养老金记录"
+          description="展示所有已赎回养老金的最终收益情况。"
+          useFixedHeight={false}
+        >
+          <PensionRedeemedTable pensionData={PensionRedeemedData} />
         </ChartContainer>
       )}
     </div>
