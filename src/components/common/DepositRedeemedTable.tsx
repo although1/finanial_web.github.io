@@ -5,7 +5,7 @@ interface RedeemedDepositsTableProps {
   depositData: DepositRedeemed[];
 }
 
-export const DepositsRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ depositData }) => {
+export const DepositRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ depositData }) => {
   // 计算总计数据
   const totals = depositData.reduce((acc, curr) => ({
     finalRMB: acc.finalRMB + curr.finalRMB,
