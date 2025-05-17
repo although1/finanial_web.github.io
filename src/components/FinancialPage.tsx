@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
-import { USDInvestmentTable } from './common/USDInvestmentTable';
+import { USDInvestmentTable } from './common/USDTable';
 import { USDRedeemedInvestmentsTable } from './common/USDRedeemedInvestmentsTable';
-import { RMBInvestmentTable } from './common/RMBInvestmentTable';
+import { RMBInvestmentTable } from './common/RMBTable';
 import { RMBRedeemedInvestmentsTable } from './common/RMBRedeemedInvestmentsTable';
 import { DepositTable } from './common/DepositTable';
-import { DepositsRedeemedTable } from './common/DepositsRedeemedTable';
-import { FundInvestmentTable } from './common/FundInvestmentTable';
+import { DepositRedeemedTable } from './common/DepositRedeemedTable';
+import { FundInvestmentTable } from './common/FundTable';
 import { FundRedeemedInvestmentsTable } from './common/FundRedeemedInvestmentsTable';
 import { PensionTable } from './common/PensionTable';
 import { PensionRedeemedTable } from './common/PensionRedeemedTable';
-import { StockInvestmentTable } from './common/StockInvestmentTable';
+import { StockInvestmentTable } from './common/StockTable';
 import { StockRedeemedInvestmentsTable } from './common/StockRedeemedInvestmentsTable';
 import { 
   USDInvestmentDetail, 
@@ -33,18 +33,18 @@ import {
   StockInvestmentDetailWithDates,
   StockRedeemedInvestment
 } from '../data/dataTypes';
-import { USDInvestmentData, DEFAULT_DATE } from '../data/USDInvestmentData';
-import { USDRedeemedInvestmentData } from '../data/USDRedeemedInvestments';
-import { RMBInvestmentData } from '../data/RMBInvestmentData';
-import { RMBRedeemedInvestmentData } from '../data/RMBRedeemedInvestments';
-import { DepositInvestmentData } from '../data/DepositData';
-import { DepositRedeemedData } from '../data/DepositsRedeemed';
-import { FundInvestmentData } from '../data/FundInvestmentData';
-import { FundRedeemedInvestmentData } from '../data/FundRedeemedInvestments';
-import { PensionInvestmentData } from '../data/PensionData';
+import { USDData, DEFAULT_DATE } from '../data/USD_Data';
+import { USDRedeemedData } from '../data/USDRedeemed';
+import { RMBData } from '../data/RMB_Data';
+import { RMBRedeemedData } from '../data/RMBRedeemed';
+import { DepositData } from '../data/Deposit_Data';
+import { DepositRedeemedData } from '../data/DepositRedeemed';
+import { FundData } from '../data/Fund_Data';
+import { FundRedeemedData } from '../data/FundRedeemed';
+import { PensionData } from '../data/Pension_Data';
 import { PensionRedeemedData } from '../data/PensionRedeemed';
-import { StockInvestmentData } from '../data/StockInvestmentData';
-import { StockRedeemedInvestmentData } from '../data/StockRedeemedInvestments';
+import { StockData } from '../data/Stock_Data';
+import { StockRedeemedData } from '../data/StockRedeemed';
 import { AddForm } from './common/AddForm';
 import { saveToFile } from '../utils/saveData';
 import { isValidDate, SYSTEM_DATE } from '../utils/dateUtils';
@@ -65,12 +65,12 @@ const calculateAnnualizedReturn = (profit: number, initialRMB: number, holdingDa
 
 const FinancialPage: React.FC = () => {
   const navigate = useNavigate();
-  const [usdData, setUsdData] = useState(USDInvestmentData);
-  const [rmbData, setRmbData] = useState(RMBInvestmentData);
-  const [fundData, setFundData] = useState(FundInvestmentData);
-  const [pensionData, setPensionData] = useState(PensionInvestmentData);
-  const [depositData, setDepositData] = useState(DepositInvestmentData);
-  const [stockData, setStockData] = useState(StockInvestmentData);
+  const [usdData, setUsdData] = useState(USDData);
+  const [rmbData, setRmbData] = useState(RMBData);
+  const [fundData, setFundData] = useState(FundData);
+  const [pensionData, setPensionData] = useState(PensionData);
+  const [depositData, setDepositData] = useState(DepositData);
+  const [stockData, setStockData] = useState(StockData);
   const [USDRedeemedData, setRedeemedUsdData] = useState<USDRedeemedInvestment[]>([]);
   const [RMBRedeemedData, setRedeemedRmbData] = useState<RMBRedeemedInvestment[]>([]);
   const [FundRedeemedData, setRedeemedFundData] = useState<FundRedeemedInvestment[]>([]);
@@ -98,18 +98,18 @@ const FinancialPage: React.FC = () => {
   const [hasPensionChanges, setHasPensionChanges] = useState(false);
   const [hasStockChanges, setHasStockChanges] = useState(false);
   useEffect(() => {
-    setUsdData(USDInvestmentData);
-    setRmbData(RMBInvestmentData);
-    setDepositData(DepositInvestmentData);
-    setFundData(FundInvestmentData);
-    setPensionData(PensionInvestmentData);
-    setStockData(StockInvestmentData);
-    setRedeemedUsdData(USDRedeemedInvestmentData);
-    setRedeemedRmbData(RMBRedeemedInvestmentData);
+    setUsdData(USDData);
+    setRmbData(RMBData);
+    setDepositData(DepositData);
+    setFundData(FundData);
+    setPensionData(PensionData);
+    setStockData(StockData);
+    setRedeemedUsdData(USDRedeemedData);
+    setRedeemedRmbData(RMBRedeemedData);
     setRedeemedDepositData(DepositRedeemedData);
-    setRedeemedFundData(FundRedeemedInvestmentData);
+    setRedeemedFundData(FundRedeemedData);
     setRedeemedPensionData(PensionRedeemedData);
-    setRedeemedStockData(StockRedeemedInvestmentData);
+    setRedeemedStockData(StockRedeemedData);
   }, []);
 
   const usdDataWithDates = useMemo(() => {
@@ -273,7 +273,15 @@ const FinancialPage: React.FC = () => {
       const newUsdDataSave = [...usdData, newItem as USDInvestmentDetail];
       const success = await handleSaveToFile(newUsdDataSave);
       if (success) {
-        setUsdData(newUsdDataSave);
+        setUsdData(newUsdDataSave.map(item => ({
+          ...item,
+          holdingDays: calculateDaysBetween(item.purchaseDate, currentDate),
+          annualizedReturn: calculateAnnualizedReturn(
+            item.profit,
+            item.initialRMB,
+            calculateDaysBetween(item.purchaseDate, currentDate)
+          )
+        })));
         setIsAddingUsd(false);
       }
     } else if ('initialRMB' in newItem) {
@@ -581,8 +589,38 @@ const FinancialPage: React.FC = () => {
   const displayPensionData = hasPensionChanges? editedPensionData : pensionWithDates;
   const displayStockData = hasStockChanges ? editedStockData : stockWithDates;
 
+  // 检查是否有任何数据变更
+  const hasAnyChanges = hasUsdChanges || hasRmbChanges || hasDepositChanges || hasFundChanges || hasPensionChanges || hasStockChanges;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative pb-20"> {/* 添加相对定位和底部内边距，为固定按钮腾出空间 */}
+      {/* 全局保存按钮 */}
+      {hasAnyChanges && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md py-3 px-4 z-50 flex justify-center">
+          <button
+            onClick={handleSaveAll}
+            disabled={isSaving}
+            className="px-6 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center space-x-2 text-lg font-medium"
+          >
+            {isSaving ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>保存中...</span>
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <span>保存全部更改</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-4">
           <button
@@ -628,12 +666,33 @@ const FinancialPage: React.FC = () => {
             新增股票
           </button>
         </div>
-        <input
-          type="date"
-          value={currentDate.split('/').join('-')}
-          onChange={(e) => handleDateChange(e.target.value.split('-').join('/'))}
-          className="px-4 py-2 text-sm border rounded-md"
-        />
+        <div className="flex items-center space-x-4">
+          {hasAnyChanges && (
+            <button
+              onClick={handleSaveAll}
+              disabled={isSaving}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm flex items-center"
+            >
+              {isSaving ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  保存中...
+                </>
+              ) : (
+                '保存所有修改'
+              )}
+            </button>
+          )}
+          <input
+            type="date"
+            value={currentDate.split('/').join('-')}
+            onChange={(e) => handleDateChange(e.target.value.split('-').join('/'))}
+            className="px-4 py-2 text-sm border rounded-md"
+          />
+        </div>
       </div>
 
       <ChartContainer 
@@ -653,7 +712,6 @@ const FinancialPage: React.FC = () => {
             usdData={displayUsdData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateUsdItem}
-            onSaveAll={hasUsdChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -675,7 +733,6 @@ const FinancialPage: React.FC = () => {
             rmbData={displayRmbData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateRmbItem}
-            onSaveAll={hasRmbChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -697,7 +754,6 @@ const FinancialPage: React.FC = () => {
             depositData={displayDepositData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateDepositItem}
-            onSaveAll={hasDepositChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -719,7 +775,6 @@ const FinancialPage: React.FC = () => {
             fundData={displayFundData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateFundItem}
-            onSaveAll={hasFundChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -741,7 +796,6 @@ const FinancialPage: React.FC = () => {
             pensionData={displayPensionData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdatePensionItem}
-            onSaveAll={hasPensionChanges? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -764,7 +818,6 @@ const FinancialPage: React.FC = () => {
             stockData={displayStockData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateStockItem}
-            onSaveAll={hasStockChanges ? handleSaveAll : undefined}
           />
         )}
       </ChartContainer>
@@ -793,7 +846,7 @@ const FinancialPage: React.FC = () => {
           description="展示所有已赎回存款的最终收益情况。"
           useFixedHeight={false}
         >
-          <DepositsRedeemedTable depositData={DepositRedeemedData} />
+          <DepositRedeemedTable depositData={DepositRedeemedData} />
         </ChartContainer>
       )}
       {FundRedeemedData.length > 0 && (

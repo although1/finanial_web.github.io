@@ -1,55 +1,53 @@
 import React from 'react';
-import { StockInvestmentDetailWithDates } from '../../data/dataTypes';
+import { RMBInvestmentDetailWithDates } from '../../data/dataTypes';
 
-interface StockInvestmentTableProps {
-  stockData: StockInvestmentDetailWithDates[];
-  onDelete?: (item: StockInvestmentDetailWithDates) => void;
-  onUpdateItem?: (index: number, updates: Partial<StockInvestmentDetailWithDates>) => void;
-  onSaveAll?: () => void;
+interface RMBInvestmentTableProps {
+  rmbData: RMBInvestmentDetailWithDates[];
+  onDelete?: (item: RMBInvestmentDetailWithDates) => void;
+  onUpdateItem?: (index: number, updates: Partial<RMBInvestmentDetailWithDates>) => void;
 }
 
-export const StockInvestmentTable: React.FC<StockInvestmentTableProps> = ({
-  stockData,
+export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
+  rmbData,
   onDelete,
-  onUpdateItem,
-  onSaveAll
+  onUpdateItem
 }) => {
-  const calculateNewAnnualizedReturn = (profit: number, initialStock: number, holdingDays: number): number => {
-    if (holdingDays <= 0 || initialStock <= 0) return 0;
-    return parseFloat(((10000 / initialStock * profit / holdingDays * 365)).toFixed(2));
+  const calculateNewAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number): number => {
+    if (holdingDays <= 0 || initialRMB <= 0) return 0;
+    return parseFloat(((10000 / initialRMB * profit / holdingDays * 365)).toFixed(2));
   };
 
-  const handleValueChange = (index: number, field: keyof StockInvestmentDetailWithDates, value: string) => {
+  const handleValueChange = (index: number, field: keyof RMBInvestmentDetailWithDates, value: string) => {
     if (!onUpdateItem) return;
 
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return;
 
-    const item = stockData[index];
+    const item = rmbData[index];
 
-    const currentStock = numValue;
-    const profit = parseFloat((currentStock - item.initialStock).toFixed(2));
+    const currentRMB = numValue;
+    const profit = parseFloat((currentRMB - item.initialRMB).toFixed(2));
     onUpdateItem(index, {
-      currentStock: numValue,
+      currentRMB: numValue,
       profit: profit,
-      annualizedReturn: calculateNewAnnualizedReturn(profit, item.initialStock, item.holdingDays)
+      annualizedReturn: calculateNewAnnualizedReturn(profit, item.initialRMB, item.holdingDays)
     });
   };
 
   // 计算总计数据
-  const totals = stockData.reduce((acc, curr) => ({
-    initialStock: acc.initialStock + curr.initialStock,
-    currentStock: acc.currentStock + curr.currentStock,
+  const totals = rmbData.reduce((acc, curr) => ({
+    initialRMB: acc.initialRMB + curr.initialRMB,
+    currentRMB: acc.currentRMB + curr.currentRMB,
     profit: acc.profit + curr.profit,
   }), {
-    initialStock: 0,
-    currentStock: 0,
+    initialRMB: 0,
+    currentRMB: 0,
     profit: 0,
   });
 
   // 计算总体年化收益率
-  const totalAnnualizedReturn = stockData.length > 0 ?
-    (totals.profit / totals.initialStock * 365 / stockData[0].holdingDays * 100) : 0;
+  const totalAnnualizedReturn = rmbData.length > 0 ?
+    (totals.profit / totals.initialRMB * 365 / rmbData[0].holdingDays * 100) : 0;
 
   return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
@@ -58,28 +56,28 @@ export const StockInvestmentTable: React.FC<StockInvestmentTableProps> = ({
           <thead className="bg-blue-500 text-white">
             <tr>
               <th className="px-4 py-2 text-left text-sm font-semibold sticky left-0 bg-blue-500">对应APP</th>
-              <th className="px-4 py-2 text-left text-sm font-semibold">股票名称</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">购买价格</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold">理财名称</th>
+              <th className="px-4 py-2 text-right text-sm font-semibold">理财本金</th>
               <th className="px-4 py-2 text-center text-sm font-semibold">购买时间</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">当前RMB数额</th>
+              <th className="px-4 py-2 text-right text-sm font-semibold">当前金额</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">实际收益</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">年化率(%)</th>
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{stockData.map((item: StockInvestmentDetailWithDates, index: number) => (
+          <tbody className="divide-y divide-gray-200">{rmbData.map((item: RMBInvestmentDetailWithDates, index: number) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-900">¥{item.initialStock.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+              <td className="px-4 py-2 text-sm text-right text-gray-900">¥{item.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
               <td className="px-4 py-2 text-sm text-center text-gray-900">{item.purchaseDate}</td>
               <td className="px-4 py-2 text-base text-right text-gray-900">
                 <div className="relative group">
                   <input
                     type="number"
-                    value={item.currentStock}
-                    onChange={(e) => handleValueChange(index, 'currentStock', e.target.value)}
+                    value={item.currentRMB}
+                    onChange={(e) => handleValueChange(index, 'currentRMB', e.target.value)}
                     className="w-32 py-1 text-lg font-medium text-right bg-blue-50 border-2 border-blue-200 rounded-md hover:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
                     step="0.01"
                   />
@@ -101,9 +99,9 @@ export const StockInvestmentTable: React.FC<StockInvestmentTableProps> = ({
           <tr className="bg-blue-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-blue-50">总计</td>
             <td className="px-4 py-2 text-sm text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.initialStock.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+            <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.initialRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
             <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.currentStock.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+            <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.currentRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
             <td className={`px-4 py-2 text-sm text-right font-medium ${totals.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>¥{totals.profit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
             <td className={`px-4 py-2 text-sm text-right font-medium ${totalAnnualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>{totalAnnualizedReturn.toFixed(2)}</td>
@@ -112,18 +110,7 @@ export const StockInvestmentTable: React.FC<StockInvestmentTableProps> = ({
         </tbody>
       </table>
     </div>
-    {onSaveAll && (
-      <div className="sticky bottom-0 right-0 px-4 py-3 bg-white border-t">
-        <div className="flex justify-end">
-          <button
-            onClick={onSaveAll}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm"
-          >
-            保存修改
-          </button>
-        </div>
-      </div>
-    )}
+
   </div>
   );
 };

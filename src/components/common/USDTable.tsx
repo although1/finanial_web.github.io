@@ -4,14 +4,12 @@ interface USDInvestmentTableProps {
   usdData: USDInvestmentDetailWithDates[];
   onDelete?: (item: USDInvestmentDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<USDInvestmentDetailWithDates>) => void;
-  onSaveAll?: () => void;
 }
 
 export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ 
   usdData, 
   onDelete,
-  onUpdateItem,
-  onSaveAll
+  onUpdateItem
 }) => {
   const calculateNewAnnualizedReturn = (profit: number, initialRMB: number, holdingDays: number): number => {
     if (holdingDays <= 0 || initialRMB <= 0) return 0;
@@ -160,18 +158,7 @@ export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({
         </tbody>
         </table>
       </div>
-      {onSaveAll && (
-        <div className="sticky bottom-0 right-0 px-4 py-3 bg-white border-t">
-          <div className="flex justify-end">
-            <button
-              onClick={onSaveAll}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm"
-            >
-              保存修改
-            </button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

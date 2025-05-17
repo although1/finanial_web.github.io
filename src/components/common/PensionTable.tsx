@@ -5,14 +5,12 @@ interface PensionTableProps {
   pensionData: PensionDetailWithDates[];
   onDelete?: (item: PensionDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<PensionDetailWithDates>) => void;
-  onSaveAll?: () => void;
 }
 
 export const PensionTable: React.FC<PensionTableProps> = ({
   pensionData,
   onDelete,
-  onUpdateItem,
-  onSaveAll
+  onUpdateItem
 }) => {
   const handleValueChange = (index: number, value: string) => {
     if (!onUpdateItem) return;
@@ -79,18 +77,7 @@ export const PensionTable: React.FC<PensionTableProps> = ({
           </tbody>
         </table>
       </div>
-      {onSaveAll && (
-        <div className="sticky bottom-0 right-0 px-4 py-3 bg-white border-t">
-          <div className="flex justify-end">
-            <button
-              onClick={onSaveAll}
-              className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm"
-            >
-              保存修改
-            </button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

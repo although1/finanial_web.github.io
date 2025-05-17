@@ -5,14 +5,12 @@ interface FundInvestmentTableProps {
   fundData: FundInvestmentDetailWithDates[];
   onDelete?: (item: FundInvestmentDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<FundInvestmentDetailWithDates>) => void;
-  onSaveAll?: () => void;
 }
 
 export const FundInvestmentTable: React.FC<FundInvestmentTableProps> = ({
   fundData,
   onDelete,
-  onUpdateItem,
-  onSaveAll
+  onUpdateItem
 }) => {
   const calculateNewAnnualizedReturn = (profit: number, initialFund: number, holdingDays: number): number => {
     if (holdingDays <= 0 || initialFund <= 0) return 0;
@@ -110,20 +108,8 @@ export const FundInvestmentTable: React.FC<FundInvestmentTableProps> = ({
             {onDelete && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
         </tbody>
-      </table>
-    </div>
-    {onSaveAll && (
-      <div className="sticky bottom-0 right-0 px-4 py-3 bg-white border-t">
-        <div className="flex justify-end">
-          <button
-            onClick={onSaveAll}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm"
-          >
-            保存修改
-          </button>
-        </div>
+        </table>
       </div>
-    )}
-  </div>
+    </div>
   );
 };

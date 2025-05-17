@@ -5,14 +5,12 @@ interface DepositTableProps {
   depositData: DepositDetailWithDates[];
   onDelete?: (item: DepositDetailWithDates) => void;
   onUpdateItem?: (index: number, updates: Partial<DepositDetailWithDates>) => void;
-  onSaveAll?: () => void;
 }
 
 export const DepositTable: React.FC<DepositTableProps> = ({
   depositData,
   onDelete,
-  onUpdateItem,
-  onSaveAll
+  onUpdateItem
 }) => {
   const handleValueChange = (index: number, value: string) => {
     if (!onUpdateItem) return;
@@ -79,18 +77,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
           </tbody>
         </table>
       </div>
-      {onSaveAll && (
-        <div className="sticky bottom-0 right-0 px-4 py-3 bg-white border-t">
-          <div className="flex justify-end">
-            <button
-              onClick={onSaveAll}
-              className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm"
-            >
-              保存修改
-            </button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };
