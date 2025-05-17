@@ -29,10 +29,10 @@ export const saveToFile = async (
 ): Promise<boolean> => {
   try {
     // Save USD investment data
-    const usdDataStr = 'import { USDInvestmentDetail } from \'./dataTypes\';\n' +
+    const usdDataStr = 'import { USDInvestmentDetailWithDates } from \'./dataTypes\';\n' +
       'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
       'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-      'export const USDInvestmentData: USDInvestmentDetail[] = ' + 
+      'export const USDInvestmentData: USDInvestmentDetailWithDates[] = ' + 
       JSON.stringify(currentUSDData, null, 2) + ';\n';
 
     const usdResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -79,7 +79,7 @@ export const saveToFile = async (
       const depositDataStr = 'import { DepositDetail } from \'./dataTypes\';\n' +
         'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
         'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-        'export const depositData: DepositDetail[] = ' + 
+        'export const DepositInvestmentData: DepositDetail[] = ' + 
         JSON.stringify(currentDepositData, null, 2) + ';\n';
 
       const depositResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -88,7 +88,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'depositData.ts',
+          filename: 'DepositData.ts',
           content: depositDataStr
         })
       });
