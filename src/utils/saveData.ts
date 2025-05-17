@@ -4,7 +4,9 @@ import {
   RMBInvestmentDetail,
   RMBRedeemedInvestment,
   DepositDetail,
-  DepositRedeemed
+  DepositRedeemed,
+  FundInvestmentDetail,
+  FundRedeemedInvestment
 } from '../data/dataTypes';
 
 export const saveToFile = async (
@@ -13,7 +15,10 @@ export const saveToFile = async (
   currentRMBData?: RMBInvestmentDetail[],
   redeemedRMBData?: RMBRedeemedInvestment[],
   currentDepositData?: DepositDetail[],
-  DepositRedeemedData?: DepositRedeemed[]
+  DepositRedeemedData?: DepositRedeemed[],
+  currentFundData?: FundInvestmentDetail[],
+  FundRedeemedData?: FundRedeemedInvestment[],
+
 ): Promise<boolean> => {
   try {
     // Save USD investment data
@@ -146,9 +151,33 @@ export const saveToFile = async (
           content: redeemedDepositDataStr
         })
       });
+      
 
       if (!redeemedDepositResponse.ok) {
         throw new Error('Failed to save redeemed deposit data');
+      }
+
+      if (currentFundData) {
+        const fundDataStr = 'import { FundInvestmentDetail } from \'./dataTypes\';\n' +
+          'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
+          'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+          'export const FundInvestmentData: FundInvestmentDetail[] = ' + 
+          JSON.stringify(currentFundData, null, 2) + ';\n';
+
+        const fundResponse = await fetch('http://localhost:3000/api/save-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filename: 'FundInvestmentData.ts',
+            content: fundDataStr
+          })
+        });
+
+        if (!fundResponse.ok) {
+          throw new Error('Failed to save fund investment data');
+        }
       }
     }
 
@@ -163,22 +192,43 @@ export const loadData = (): {
   currentData: USDInvestmentDetail[], 
   redeemedData: USDRedeemedInvestment[], 
   rmbData: RMBInvestmentDetail[], 
-  RMBRedeemedData: RMBRedeemedInvestment[] 
+  RMBRedeemedData: RMBRedeemedInvestment[],
+  depositData: DepositDetail[],
+  depositRedeemedData: DepositRedeemed[],
+  fundData: FundInvestmentDetail[],
+  fundRedeemedData: FundRedeemedInvestment[]
 } => {
   try {
     const currentDataStr = localStorage.getItem('USDInvestmentData');
     const redeemedDataStr = localStorage.getItem('USDRedeemedInvestmentData');
     const rmbDataStr = localStorage.getItem('RMBInvestmentData');
     const redeemedRmbDataStr = localStorage.getItem('RMBRedeemedInvestments');
+    const depositDataStr = localStorage.getItem('depositData');
+    const depositRedeemedDataStr = localStorage.getItem('DepositsRedeemed');
+    const fundDataStr = localStorage.getItem('FundInvestmentData');
+    const fundRedeemedDataStr = localStorage.getItem('FundRedeemedInvestments');
     
     return {
       currentData: currentDataStr ? JSON.parse(currentDataStr) : [],
       redeemedData: redeemedDataStr ? JSON.parse(redeemedDataStr) : [],
       rmbData: rmbDataStr ? JSON.parse(rmbDataStr) : [],
-      RMBRedeemedData: redeemedRmbDataStr ? JSON.parse(redeemedRmbDataStr) : []
+      RMBRedeemedData: redeemedRmbDataStr ? JSON.parse(redeemedRmbDataStr) : [],
+      depositData: depositDataStr ? JSON.parse(depositDataStr) : [],
+      depositRedeemedData: depositRedeemedDataStr ? JSON.parse(depositRedeemedDataStr) : [],
+      fundData: fundDataStr ? JSON.parse(fundDataStr) : [],
+      fundRedeemedData: fundRedeemedDataStr ? JSON.parse(fundRedeemedDataStr) : []
     };
   } catch (error) {
     console.error('Failed to load data:', error);
-    return { currentData: [], redeemedData: [], rmbData: [], RMBRedeemedData: [] };
+    return { 
+      currentData: [], 
+      redeemedData: [], 
+      rmbData: [], 
+      RMBRedeemedData: [],
+      depositData: [],
+      depositRedeemedData: [],
+      fundData: [],
+      fundRedeemedData: []
+    };
   }
 };

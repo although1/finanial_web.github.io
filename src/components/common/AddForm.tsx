@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail } from '../../data/dataTypes';
+import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail } from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail) => void;
+  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail) => void;
   onCancel: () => void;
-  type?: 'usd' | 'rmb' | 'deposit';
+  type?: 'usd' | 'rmb' | 'deposit' | 'fund';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];
@@ -32,11 +32,30 @@ const defaultRMBForm: RMBInvestmentDetail = {
   profit: 0,
 };
 
+const defaultDepositForm: DepositDetail = {
+  app: appOptions[0],
+  name: '',
+  currentRMB: 0
+};
+
+const defaultFundForm: FundInvestmentDetail = {
+  app: appOptions[0],
+  name: '',
+  initialFund: 0,
+  purchaseDate: '',
+  currentFund: 0,
+  profit: 0
+}
+
 export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel, type = 'usd' }) => {
-  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail>(
+  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail>(
     type === 'usd' 
       ? { ...defaultUSDForm, purchaseDate: currentDate }
-      : { ...defaultRMBForm, purchaseDate: currentDate }
+      : type === 'rmb'
+      ? { ...defaultRMBForm, purchaseDate: currentDate }
+      : type === 'deposit'
+      ? { ...defaultDepositForm }
+      : { ...defaultFundForm, purchaseDate: currentDate }
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -52,11 +71,16 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
     
     let numValue: string | number = value;
     
-    if (name.includes('USD') || name.includes('Rate') || name.includes('RMB')) {
+    if (name.includes('USD') || name.includes('Rate') || name.includes('RMB') || name.includes('Fund')) {
       numValue = parseFloat(value) || 0;
     }
 
-    if (type === 'usd') {
+    if (type === 'deposit') {
+      setFormData(prev => {
+        const prevDeposit = prev as DepositDetail;
+        return { ...prevDeposit, [name]: numValue };
+      });
+    } else if (type === 'usd') {
       setFormData(prev => {
         const prevUSD = prev as USDInvestmentDetail;
         const updates: Partial<USDInvestmentDetail> = { [name]: numValue };
@@ -105,7 +129,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.app || !formData.name || !formData.purchaseDate) {
+    if (!formData.app || !formData.name || (type !== 'deposit' && !(formData as USDInvestmentDetail | RMBInvestmentDetail | FundInvestmentDetail).purchaseDate)) {
       alert('请填写所有必填字段');
       return;
     }
@@ -175,7 +199,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
             <input
               type="number"
               name="initialRMB"
-              value={formData.initialRMB}
+              value={type === 'deposit' ? (formData as DepositDetail).currentRMB : (formData as RMBInvestmentDetail).initialRMB}
               onChange={handleChange}
               step="0.01"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
@@ -188,7 +212,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
           <input
             type="date"
             name="purchaseDate"
-            value={formData.purchaseDate.split('/').join('-')}
+            value={type !== 'deposit' ? (formData as USDInvestmentDetail | RMBInvestmentDetail | FundInvestmentDetail).purchaseDate.split('/').join('-') : ''}
             onChange={(e) => handleChange({
               ...e,
               target: { ...e.target, value: e.target.value.split('-').join('/') }
