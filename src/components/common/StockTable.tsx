@@ -63,7 +63,7 @@ export const StockTable_A: React.FC<StockInvestmentTableProps> = ({
                   <input
                     type="number"
                     value={item.currentStock}
-                    onChange={(e) => handleValueChange(index, 'currentStock', e.target.value)}
+                    onChange={(e) => handleValueChange(index, e.target.value)}
                     className="w-32 py-1 text-lg font-medium text-right bg-pink-50 border-2 border-pink-200 rounded-md hover:border-pink-300 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200 transition-colors"
                     step="0.01"
                   />
