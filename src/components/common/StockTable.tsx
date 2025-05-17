@@ -7,7 +7,7 @@ interface StockInvestmentTableProps {
   onUpdateItem?: (index: number, updates: Partial<StockInvestmentDetailWithDates>) => void;
 }
 
-export const StockInvestmentTable: React.FC<StockInvestmentTableProps> = ({
+export const StockTable_A: React.FC<StockInvestmentTableProps> = ({
   stockData,
   onDelete,
   onUpdateItem

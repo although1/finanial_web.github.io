@@ -6,7 +6,7 @@ interface USDInvestmentTableProps {
   onUpdateItem?: (index: number, updates: Partial<USDInvestmentDetailWithDates>) => void;
 }
 
-export const USDInvestmentTable: React.FC<USDInvestmentTableProps> = ({ 
+export const USDTable_A: React.FC<USDInvestmentTableProps> = ({ 
   usdData, 
   onDelete,
   onUpdateItem

@@ -7,7 +7,7 @@ interface PensionTableProps {
   onUpdateItem?: (index: number, updates: Partial<PensionDetailWithDates>) => void;
 }
 
-export const PensionTable: React.FC<PensionTableProps> = ({
+export const PensionTable_A: React.FC<PensionTableProps> = ({
   pensionData,
   onDelete,
   onUpdateItem

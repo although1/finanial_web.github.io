@@ -7,7 +7,7 @@ interface RMBInvestmentTableProps {
   onUpdateItem?: (index: number, updates: Partial<RMBInvestmentDetailWithDates>) => void;
 }
 
-export const RMBInvestmentTable: React.FC<RMBInvestmentTableProps> = ({
+export const RMBTable_A: React.FC<RMBInvestmentTableProps> = ({
   rmbData,
   onDelete,
   onUpdateItem

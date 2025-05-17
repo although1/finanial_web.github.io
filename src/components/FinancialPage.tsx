@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
-import { USDInvestmentTable } from './common/USDTable';
+import { USDTable_A } from './common/USDTable';
 import { USDRedeemedInvestmentsTable } from './common/USDRedeemedInvestmentsTable';
-import { RMBInvestmentTable } from './common/RMBTable';
+import { RMBTable_A } from './common/RMBTable';
 import { RMBRedeemedInvestmentsTable } from './common/RMBRedeemedInvestmentsTable';
-import { DepositTable } from './common/DepositTable';
+import { DepositTable_A } from './common/DepositTable';
 import { DepositRedeemedTable } from './common/DepositRedeemedTable';
-import { FundInvestmentTable } from './common/FundTable';
+import { FundTable_A } from './common/FundTable';
 import { FundRedeemedInvestmentsTable } from './common/FundRedeemedInvestmentsTable';
-import { PensionTable } from './common/PensionTable';
+import { PensionTable_A } from './common/PensionTable';
 import { PensionRedeemedTable } from './common/PensionRedeemedTable';
-import { StockInvestmentTable } from './common/StockTable';
+import { StockTable_A } from './common/StockTable';
 import { StockRedeemedInvestmentsTable } from './common/StockRedeemedInvestmentsTable';
 import { 
   USDInvestmentDetail, 
@@ -708,7 +708,7 @@ const FinancialPage: React.FC = () => {
             type="usd"
           />
         ) : (
-          <USDInvestmentTable 
+          <USDTable_A 
             usdData={displayUsdData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateUsdItem}
@@ -729,7 +729,7 @@ const FinancialPage: React.FC = () => {
             type="rmb"
           />
         ) : (
-          <RMBInvestmentTable 
+          <RMBTable_A 
             rmbData={displayRmbData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateRmbItem}
@@ -750,7 +750,7 @@ const FinancialPage: React.FC = () => {
             type="deposit"
           />
         ) : (
-          <DepositTable 
+          <DepositTable_A 
             depositData={displayDepositData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateDepositItem}
@@ -771,7 +771,7 @@ const FinancialPage: React.FC = () => {
             type="fund"
           />
         ) : (
-          <FundInvestmentTable 
+          <FundTable_A 
             fundData={displayFundData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateFundItem}
@@ -792,7 +792,7 @@ const FinancialPage: React.FC = () => {
             type="pension"
           />
         ) : (
-          <PensionTable
+          <PensionTable_A
             pensionData={displayPensionData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdatePensionItem}
@@ -814,7 +814,7 @@ const FinancialPage: React.FC = () => {
             type="stock"
           />
         ) : (
-          <StockInvestmentTable
+          <StockTable_A
             stockData={displayStockData}
             onDelete={handleDelete}
             onUpdateItem={handleUpdateStockItem}

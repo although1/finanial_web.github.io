@@ -7,7 +7,7 @@ interface DepositTableProps {
   onUpdateItem?: (index: number, updates: Partial<DepositDetailWithDates>) => void;
 }
 
-export const DepositTable: React.FC<DepositTableProps> = ({
+export const DepositTable_A: React.FC<DepositTableProps> = ({
   depositData,
   onDelete,
   onUpdateItem
