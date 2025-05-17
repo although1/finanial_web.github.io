@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail,PensionDetail } from '../../data/dataTypes';
+import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail,PensionDetail, StockInvestmentDetail} from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail) => void;
+  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail | StockInvestmentDetail) => void;
   onCancel: () => void;
-  type?: 'usd' | 'rmb' | 'deposit' | 'fund' | 'pension';
+  type?: 'usd' | 'rmb' | 'deposit' | 'fund' | 'pension' | 'stock';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];
@@ -53,8 +53,17 @@ const defaultFundForm: FundInvestmentDetail = {
   profit: 0
 }
 
+const defaultStockForm: StockInvestmentDetail = {
+  app: appOptions[0],
+  name: '',
+  initialStock: 0,
+  purchaseDate: '',
+  currentStock: 0,
+  profit: 0
+}
+
 export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel, type = 'usd' }) => {
-  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail>(
+  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail | StockInvestmentDetail>(
     type === 'usd' 
       ? { ...defaultUSDForm, purchaseDate: currentDate }
       : type === 'rmb'
@@ -63,6 +72,8 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
       ? { ...defaultDepositForm }
       : type === 'pension'
       ? { ...defaultPensionForm }
+      : type === 'stock'
+      ? { ...defaultStockForm, purchaseDate: currentDate }
       : { ...defaultFundForm, purchaseDate: currentDate }
   );
 

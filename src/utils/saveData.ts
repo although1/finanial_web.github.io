@@ -8,7 +8,9 @@ import {
   FundInvestmentDetail,
   FundRedeemedInvestment,
   PensionDetail,
-  PensionRedeemed
+  PensionRedeemed,
+  StockInvestmentDetail,
+  StockRedeemedInvestment
 } from '../data/dataTypes';
 
 export const saveToFile = async (
@@ -21,7 +23,9 @@ export const saveToFile = async (
   currentFundData?: FundInvestmentDetail[],
   FundRedeemedData?: FundRedeemedInvestment[],
   currentPensionData?: PensionDetail[],
-  PensionRedeemedData?: PensionRedeemed[]
+  PensionRedeemedData?: PensionRedeemed[],
+  currentStockData?: StockInvestmentDetail[],
+  StockRedeemedData?: StockRedeemedInvestment[]
 ): Promise<boolean> => {
   try {
     // Save USD investment data
@@ -91,6 +95,53 @@ export const saveToFile = async (
 
       if (!depositResponse.ok) {
         throw new Error('Failed to save deposit data');
+      }
+    }
+    // Save pension data if provided
+    if (currentPensionData) {
+      const pensionDataStr = 'import { PensionDetail } from \'./dataTypes\';\n' +
+        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
+        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+        'export const pensionData: PensionDetail[] ='+
+        JSON.stringify(currentPensionData, null, 2) + ';\n';
+
+      const pensionResponse = await fetch('URL_ADDRESS:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'pensionData.ts',
+          content: pensionDataStr
+        })
+      });
+
+      if (!pensionResponse.ok) {
+        throw new Error('Failed to save pension data');
+      }
+    }
+
+    // Save stock data if provided
+    if (currentStockData) {
+      const stockDataStr = 'import { StockInvestmentDetail } from \'./dataTypes\';\n' +
+        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
+        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+        'export const stockData: StockInvestmentDetail[] = ' +
+        JSON.stringify(currentStockData, null, 2) + ';\n';
+
+      const stockResponse = await fetch('http://localhost:3000/api/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'stockData.ts',
+          content: stockDataStr
+        })
+      });
+
+      if (!stockResponse.ok) {
+        throw new Error('Failed to save stock data');
       }
     }
 
