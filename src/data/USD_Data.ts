@@ -1,7 +1,6 @@
 import { USDDetailWithDates } from './dataTypes';
-import { SYSTEM_DATE } from '../utils/dateUtils';
 
-export const DEFAULT_DATE = SYSTEM_DATE;
+export const DEFAULT_DATE = '2025/05/10';
 
 export const USDData: USDDetailWithDates[] = [
   {
@@ -15,8 +14,8 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.66,
     "currentRMB": 74711.41,
     "profit": 2421.44,
-    "holdingDays": 289,
-    "annualizedReturn": 423.05
+    "holdingDays": 282,
+    "annualizedReturn": 433.55
   },
   {
     "app": "工商银行",
@@ -29,8 +28,8 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.66,
     "currentRMB": 392.26,
     "profit": 11.82,
-    "holdingDays": 289,
-    "annualizedReturn": 392.4
+    "holdingDays": 282,
+    "annualizedReturn": 402.14
   },
   {
     "app": "工商银行",
@@ -43,8 +42,8 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.66,
     "currentRMB": 14808.17,
     "profit": 316.17,
-    "holdingDays": 410,
-    "annualizedReturn": 194.22
+    "holdingDays": 403,
+    "annualizedReturn": 197.6
   },
   {
     "app": "工商银行",
@@ -57,8 +56,8 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.66,
     "currentRMB": 384.82,
     "profit": 8.03,
-    "holdingDays": 410,
-    "annualizedReturn": 189.73
+    "holdingDays": 403,
+    "annualizedReturn": 193.02
   },
   {
     "app": "招商银行",
@@ -71,8 +70,8 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.23,
     "currentRMB": 7430.52,
     "profit": 280.02,
-    "holdingDays": 269,
-    "annualizedReturn": 531.37
+    "holdingDays": 262,
+    "annualizedReturn": 545.56
   },
   {
     "app": "招商银行",
@@ -85,7 +84,7 @@ export const USDData: USDDetailWithDates[] = [
     "currentRate": 722.23,
     "currentRMB": 14878.88,
     "profit": 559.48,
-    "holdingDays": 270,
-    "annualizedReturn": 528.19
+    "holdingDays": 263,
+    "annualizedReturn": 542.25
   }
 ];

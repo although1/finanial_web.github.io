@@ -54,7 +54,7 @@ export const PensionTable_A: React.FC<PensionTableProps> = ({
                     value={item.currentRMB}
                     onChange={(e) => handleValueChange(index, e.target.value)}
                     className="w-32 py-1 text-lg font-medium text-right bg-blue-50 border-2 border-blue-200 rounded-md hover:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
-                    step="0.01"
+                    step="10"
                   />
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-blue-600 font-medium">¥</span>
                 </div>

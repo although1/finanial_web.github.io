@@ -1,7 +1,6 @@
 import { DepositDetail } from './dataTypes';
-import { SYSTEM_DATE } from '../utils/dateUtils';
 
-export const DEFAULT_DATE = SYSTEM_DATE;
+export const DEFAULT_DATE = '2025/05/10';
 
 export const DepositData: DepositDetail[] = [
   {

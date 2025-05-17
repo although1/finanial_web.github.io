@@ -258,7 +258,8 @@ const FinancialPage: React.FC = () => {
       newPensionData || pensionData,
       newPensionRedeemedData || pensionRedeemedData,
       newStockData || stockData,
-      newStockRedeemedData || stockRedeemedData
+      newStockRedeemedData || stockRedeemedData,
+      currentDate
     );
     setIsSaving(false);
     if (!success) {

@@ -12,6 +12,7 @@ import {
   StockInvestmentDetail,
   StockRedeemed_I
 } from '../data/dataTypes';
+import { DEFAULT_DATE } from '../data/USD_Data';
 
 export const saveToFile = async (
   currentUSDData: USDDetail[], 
@@ -25,13 +26,13 @@ export const saveToFile = async (
   currentPensionData?: PensionDetail[],
   redeemedPensionData?: PensionRedeemed_I[],
   currentStockData?: StockInvestmentDetail[],
-  redeemedStockData?: StockRedeemed_I[]
+  redeemedStockData?: StockRedeemed_I[],
+  selectedDate: string = DEFAULT_DATE
 ): Promise<boolean> => {
   try {
     // Save USD investment data
-    const usdDataStr = 'import { USDDetailWithDates } from \'./dataTypes\';\n' +
-      'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-      'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+    const usdDataStr = 'import { USDDetailWithDates } from \'./dataTypes\';\n\n' +
+      'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
       'export const USDData: USDDetailWithDates[] = ' + 
       JSON.stringify(currentUSDData, null, 2) + ';\n';
 
@@ -52,9 +53,8 @@ export const saveToFile = async (
 
     // Save RMB investment data if provided
     if (currentRMBData) {
-      const rmbDataStr = 'import { RMBDetail } from \'./dataTypes\';\n' +
-        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+      const rmbDataStr = 'import { RMBDetail } from \'./dataTypes\';\n\n' +
+        'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
         'export const RMBData: RMBDetail[] = ' + 
         JSON.stringify(currentRMBData, null, 2) + ';\n';
 
@@ -76,9 +76,8 @@ export const saveToFile = async (
 
     // Save deposit data if provided
     if (currentDepositData) {
-      const depositDataStr = 'import { DepositDetail } from \'./dataTypes\';\n' +
-        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+      const depositDataStr = 'import { DepositDetail } from \'./dataTypes\';\n\n' +
+        'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
         'export const DepositData: DepositDetail[] = ' + 
         JSON.stringify(currentDepositData, null, 2) + ';\n';
 
@@ -98,11 +97,10 @@ export const saveToFile = async (
       }
     }
 
-    // 将基金数据保存逻辑移到外面，作为独立的条件判断
+    // Save fund data if provided
     if (currentFundData) {
-      const fundDataStr = 'import { FundDetail } from \'./dataTypes\';\n' +
-        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+      const fundDataStr = 'import { FundDetail } from \'./dataTypes\';\n\n' +
+        'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
         'export const FundData: FundDetail[] = ' + 
         JSON.stringify(currentFundData, null, 2) + ';\n';
 
@@ -124,10 +122,9 @@ export const saveToFile = async (
 
     // Save pension data if provided
     if (currentPensionData) {
-      const pensionDataStr = 'import { PensionDetail } from \'./dataTypes\';\n' +
-        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-        'export const PensionData: PensionDetail[] =' +
+      const pensionDataStr = 'import { PensionDetail } from \'./dataTypes\';\n\n' +
+        'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
+        'export const PensionData: PensionDetail[] = ' +
         JSON.stringify(currentPensionData, null, 2) + ';\n';
 
       const pensionResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -148,9 +145,8 @@ export const saveToFile = async (
 
     // Save stock data if provided
     if (currentStockData) {
-      const stockDataStr = 'import { StockInvestmentDetail } from \'./dataTypes\';\n' +
-        'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
-        'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
+      const stockDataStr = 'import { StockInvestmentDetail } from \'./dataTypes\';\n\n' +
+        'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
         'export const StockData: StockInvestmentDetail[] = ' +
         JSON.stringify(currentStockData, null, 2) + ';\n';
 
@@ -236,7 +232,7 @@ export const saveToFile = async (
       }
     }
 
-    // 添加赎回基金数据的保存逻辑
+    // Save redeemed fund data if provided
     if (redeemedFundData) {
       const fundRedeemedDataStr = 'import { FundRedeemed_I } from \'./dataTypes\';\n\n' +
         'export const FundRedeemedData: FundRedeemed_I[] = ' + 
@@ -258,7 +254,7 @@ export const saveToFile = async (
       }
     }
 
-    // 添加赎回养老金数据的保存逻辑
+    // Save redeemed pension data if provided
     if (redeemedPensionData) {
       const pensionRedeemedDataStr = 'import { PensionRedeemed_I } from \'./dataTypes\';\n\n' +
         'export const PensionRedeemedData: PensionRedeemed_I[] = ' +
@@ -280,7 +276,7 @@ export const saveToFile = async (
       }
     }
 
-    // 添加赎回股票数据的保存逻辑
+    // Save redeemed stock data if provided
     if (redeemedStockData) {
       const stockRedeemedDataStr = 'import { StockRedeemed_I } from \'./dataTypes\';\n\n' +
         'export const StockRedeemedData: StockRedeemed_I[] = ' +
