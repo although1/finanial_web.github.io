@@ -22,7 +22,6 @@ export const DepositsRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ de
             <th className="px-4 py-2 text-left text-sm font-semibold">存款名称</th>
             <th className="px-4 py-2 text-center text-sm font-semibold">赎回日期</th>
             <th className="px-4 py-2 text-right text-sm font-semibold">赎回金额</th>
-            <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">{depositData.map((item, index) => (
@@ -31,17 +30,13 @@ export const DepositsRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ de
             <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
             <td className="px-4 py-2 text-sm text-center text-gray-900">{item.redeemDate}</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">¥{item.finalRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">{item.holdingDays}</td>
           </tr>
         ))}
         <tr className="bg-green-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-green-50">总计</td>
             <td className="px-4 py-2 text-sm text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.finalRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
           </tr>
         </tbody>
       </table>

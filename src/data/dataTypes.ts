@@ -121,6 +121,35 @@ export interface RMBRedeemedInvestment extends RMBInvestmentDetailWithDates {
 }
 
 /**
+ * 基金投资基本信息接口
+ */
+export interface FundInvestmentDetail {
+  app: string;                  // 对应APP
+  name: string;                 // 产品名称
+  initialFund: number;         // 初始投资金额（人民币）
+  purchaseDate: string;        // 购买日期
+  currentFund: number;         // 当前市值（人民币）
+  profit: number;              // 当前收益
+}
+
+/**
+ * 包含持有时间信息的基金投资接口
+ */
+export interface FundInvestmentDetailWithDates extends FundInvestmentDetail {
+  holdingDays: number;         // 持有天数
+  annualizedReturn: number;    // 年化收益率
+}
+
+/**
+ * 已赎回的基金投资接口
+ */
+export interface FundRedeemedInvestment extends FundInvestmentDetailWithDates {
+  redeemDate: string;          // 赎回日期
+  finalFund: number;            // 赎回时的金额（人民币）
+  finalProfit: number;         // 最终收益
+}
+
+/**
  * 定期存款基本信息接口
  */
 export interface DepositDetail {

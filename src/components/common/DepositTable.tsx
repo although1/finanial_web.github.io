@@ -14,7 +14,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
   onUpdateItem,
   onSaveAll
 }) => {
-  const handleValueChange = (index: number, field: keyof DepositDetailWithDates, value: string) => {
+  const handleValueChange = (index: number, value: string) => {
     if (!onUpdateItem) return;
 
     const numValue = parseFloat(value);
@@ -42,7 +42,6 @@ export const DepositTable: React.FC<DepositTableProps> = ({
               <th className="px-4 py-2 text-left text-sm font-semibold sticky left-0 bg-green-500">对应APP</th>
               <th className="px-4 py-2 text-left text-sm font-semibold">存款名称</th>
               <th className="px-4 py-2 text-right text-sm font-semibold">当前金额</th>
-              <th className="px-4 py-2 text-right text-sm font-semibold">持有天数</th>
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
@@ -55,14 +54,13 @@ export const DepositTable: React.FC<DepositTableProps> = ({
                   <input
                     type="number"
                     value={item.currentRMB}
-                    onChange={(e) => handleValueChange(index, 'currentRMB', e.target.value)}
+                    onChange={(e) => handleValueChange(index, e.target.value)}
                     className="w-32 py-1 text-lg font-medium text-right bg-blue-50 border-2 border-blue-200 rounded-md hover:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
                     step="0.01"
                   />
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-blue-600 font-medium">¥</span>
                 </div>
               </td>
-              <td className="px-4 py-2 text-sm text-right text-gray-900">{item.holdingDays}</td>
               {onDelete && (
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button onClick={() => onDelete(item)} className="px-2 py-1 text-white bg-green-600 hover:bg-green-700 rounded">
@@ -75,9 +73,7 @@ export const DepositTable: React.FC<DepositTableProps> = ({
           <tr className="bg-green-50 font-semibold">
             <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-green-50">总计</td>
             <td className="px-4 py-2 text-sm text-gray-900">-</td>
-            <td className="px-4 py-2 text-sm text-center text-gray-900">-</td>
             <td className="px-4 py-2 text-sm text-right text-gray-900">¥{totals.currentRMB.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
-            <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>
             {onDelete && <td className="px-4 py-2 text-sm text-right text-gray-900">-</td>}
           </tr>
           </tbody>
