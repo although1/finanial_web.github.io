@@ -140,16 +140,11 @@ const FinancialPage: React.FC = () => {
 
   const fundDataWithDates = useMemo(() => {
     return fundData.map(item => {
-      const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
-      const annualizedReturn = calculateAnnualizedReturn(item.profit, item.initialFund, holdingDays);
-      
       return {
-        ...item,
-        holdingDays,
-        annualizedReturn
+        ...item
       } as FundDetailWithDates;
     });
-  }, [fundData, currentDate]);
+  }, [fundData]);
 
   const depositWithDates = useMemo(() => {
     return depositData.map(item => {
@@ -287,13 +282,20 @@ const FinancialPage: React.FC = () => {
       }
     } else if ('initialRMB' in newItem) {
       // RMB investment
-      const newData = [...rmbData, newItem as RMBDetail];
-      const success = await handleSaveToFile(usdData,undefined, newData);
+      const newRmbDataSave = [...rmbData, newItem as RMBDetail];
+      const success = await handleSaveToFile(usdData, undefined, newRmbDataSave);
       if (success) {
-        setRmbData(newData);
+        setRmbData(newRmbDataSave.map(item => ({
+          ...item,
+          holdingDays: calculateDaysBetween(item.purchaseDate, currentDate),
+          annualizedReturn: calculateAnnualizedReturn(
+            item.profit,
+            item.initialRMB,
+            calculateDaysBetween(item.purchaseDate, currentDate)
+          )
+        })));
         setIsAddingRmb(false);
       }
-
     } else if ('initialFund' in newItem) {
       // Fund
       const newFundData = [...fundData, newItem as FundDetail];

@@ -53,9 +53,9 @@ export const saveToFile = async (
 
     // Save RMB investment data if provided
     if (currentRMBData) {
-      const rmbDataStr = 'import { RMBDetail } from \'./dataTypes\';\n\n' +
+      const rmbDataStr = 'import { RMBDetailWithDates } from \'./dataTypes\';\n\n' +
         'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
-        'export const RMBData: RMBDetail[] = ' + 
+        'export const RMBData: RMBDetailWithDates[] = ' + 
         JSON.stringify(currentRMBData, null, 2) + ';\n';
 
       const rmbResponse = await fetch('http://localhost:3000/api/save-data', {

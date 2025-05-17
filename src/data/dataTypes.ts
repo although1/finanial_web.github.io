@@ -127,7 +127,6 @@ export interface FundDetail {
   app: string;                  // 对应APP
   name: string;                 // 产品名称
   initialFund: number;         // 初始投资金额（人民币）
-  purchaseDate: string;        // 购买日期
   currentFund: number;         // 当前市值（人民币）
   profit: number;              // 当前收益
 }
@@ -136,8 +135,6 @@ export interface FundDetail {
  * 包含持有时间信息的基金投资接口
  */
 export interface FundDetailWithDates extends FundDetail {
-  holdingDays: number;         // 持有天数
-  annualizedReturn: number;    // 年化收益率
 }
 
 /**
@@ -145,7 +142,7 @@ export interface FundDetailWithDates extends FundDetail {
  */
 export interface FundRedeemed_I extends FundDetailWithDates {
   redeemDate: string;          // 赎回日期
-  finalFund: number;            // 赎回时的金额（人民币）
+  finalFund: number;           // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益
 }
 
