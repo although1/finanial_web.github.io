@@ -1,9 +1,9 @@
-import { FundInvestmentDetail } from './dataTypes';
+import { FundDetail } from './dataTypes';
 import { SYSTEM_DATE } from '../utils/dateUtils';
 
 export const DEFAULT_DATE = SYSTEM_DATE;
 
-export const FundData: FundInvestmentDetail[] = [
+export const FundData: FundDetail[] = [
   {
     "app": "支付宝",
     "name": "基金",

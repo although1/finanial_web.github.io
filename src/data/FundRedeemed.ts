@@ -1,3 +1,3 @@
-import { FundRedeemedInvestment } from './dataTypes';
+import { FundRedeemed_I } from './dataTypes';
 
-export const FundRedeemedData: FundRedeemedInvestment[] = [];
+export const FundRedeemedData: FundRedeemed_I[] = [];

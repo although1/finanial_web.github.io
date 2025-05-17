@@ -1,3 +1,3 @@
-import { USDRedeemedInvestment } from './dataTypes';
+import { USDRedeemed_I } from './dataTypes';
 
-export const USDRedeemedData: USDRedeemedInvestment[] = [];
+export const USDRedeemedData: USDRedeemed_I[] = [];

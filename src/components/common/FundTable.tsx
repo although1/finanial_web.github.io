@@ -1,10 +1,10 @@
 import React from 'react';
-import { FundInvestmentDetailWithDates } from '../../data/dataTypes';
+import { FundDetailWithDates } from '../../data/dataTypes';
 
 interface FundInvestmentTableProps {
-  fundData: FundInvestmentDetailWithDates[];
-  onDelete?: (item: FundInvestmentDetailWithDates) => void;
-  onUpdateItem?: (index: number, updates: Partial<FundInvestmentDetailWithDates>) => void;
+  fundData: FundDetailWithDates[];
+  onDelete?: (item: FundDetailWithDates) => void;
+  onUpdateItem?: (index: number, updates: Partial<FundDetailWithDates>) => void;
 }
 
 export const FundTable_A: React.FC<FundInvestmentTableProps> = ({
@@ -17,7 +17,7 @@ export const FundTable_A: React.FC<FundInvestmentTableProps> = ({
     return parseFloat(((10000 / initialFund * profit / holdingDays * 365)).toFixed(2));
   };
 
-  const handleValueChange = (index: number, field: keyof FundInvestmentDetailWithDates, value: string) => {
+  const handleValueChange = (index: number, field: keyof FundDetailWithDates, value: string) => {
     if (!onUpdateItem) return;
 
     const numValue = parseFloat(value);
@@ -66,7 +66,7 @@ export const FundTable_A: React.FC<FundInvestmentTableProps> = ({
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{fundData.map((item: FundInvestmentDetailWithDates, index: number) => (
+          <tbody className="divide-y divide-gray-200">{fundData.map((item: FundDetailWithDates, index: number) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>

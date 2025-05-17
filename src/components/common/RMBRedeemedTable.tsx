@@ -1,11 +1,11 @@
 import React from 'react';
-import { RMBRedeemedInvestment } from '../../data/dataTypes';
+import { RMBRedeemed_I } from '../../data/dataTypes';
 
 interface RMBRedeemedInvestmentsTableProps {
-  rmbData: RMBRedeemedInvestment[];
+  rmbData: RMBRedeemed_I[];
 }
 
-export const RMBRedeemedInvestmentsTable: React.FC<RMBRedeemedInvestmentsTableProps> = ({ rmbData }) => {
+export const RMBRedeemedTable_A: React.FC<RMBRedeemedInvestmentsTableProps> = ({ rmbData }) => {
   // 计算总计数据
   const totals = rmbData.reduce((acc, curr) => ({
     initialRMB: acc.initialRMB + curr.initialRMB,

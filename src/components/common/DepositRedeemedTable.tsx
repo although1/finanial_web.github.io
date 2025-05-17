@@ -1,11 +1,11 @@
 import React from 'react';
-import { DepositRedeemed } from '../../data/dataTypes';
+import { DepositRedeemed_I } from '../../data/dataTypes';
 
 interface RedeemedDepositsTableProps {
-  depositData: DepositRedeemed[];
+  depositData: DepositRedeemed_I[];
 }
 
-export const DepositRedeemedTable: React.FC<RedeemedDepositsTableProps> = ({ depositData }) => {
+export const DepositRedeemedTable_A: React.FC<RedeemedDepositsTableProps> = ({ depositData }) => {
   // 计算总计数据
   const totals = depositData.reduce((acc, curr) => ({
     finalRMB: acc.finalRMB + curr.finalRMB,

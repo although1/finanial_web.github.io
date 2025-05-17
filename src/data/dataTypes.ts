@@ -65,7 +65,7 @@ export interface ProcessedData {
 /**
  * 美元投资基本信息接口
  */
-export interface USDInvestmentDetail {
+export interface USDDetail {
   app: string;                 // 对应APP
   name: string;                // 产品名称
   initialUSD: number;          // 美元本金
@@ -78,23 +78,23 @@ export interface USDInvestmentDetail {
   profit: number;              // 当前收益（人民币）
 }
 
-export interface USDInvestmentDetailWithDates extends USDInvestmentDetail {
+export interface USDDetailWithDates extends USDDetail {
   holdingDays: number;         // 持有天数
   annualizedReturn: number;    // 年化收益率
 }
 
-export interface USDRedeemedInvestment extends USDInvestmentDetailWithDates {
+export interface USDRedeemed_I extends USDDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalUSD: number;            // 赎回时的金额（美元）
   finalRate: number;           // 赎回时的汇率  
   finalRMB: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益（人民币）
 }
-// export const redeemedInvestments: USDRedeemedInvestment[] = [];
+
 /**
  * 人民币投资基本信息接口
  */
-export interface RMBInvestmentDetail {
+export interface RMBDetail {
   app: string;                  // 对应APP
   name: string;                 // 产品名称
   initialRMB: number;          // 初始投资金额（人民币）
@@ -106,7 +106,7 @@ export interface RMBInvestmentDetail {
 /**
  * 包含持有时间信息的人民币投资接口
  */
-export interface RMBInvestmentDetailWithDates extends RMBInvestmentDetail {
+export interface RMBDetailWithDates extends RMBDetail {
   holdingDays: number;         // 持有天数
   annualizedReturn: number;    // 年化收益率
 }
@@ -114,7 +114,7 @@ export interface RMBInvestmentDetailWithDates extends RMBInvestmentDetail {
 /**
  * 已赎回的人民币投资接口
  */
-export interface RMBRedeemedInvestment extends RMBInvestmentDetailWithDates {
+export interface RMBRedeemed_I extends RMBDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益
@@ -123,7 +123,7 @@ export interface RMBRedeemedInvestment extends RMBInvestmentDetailWithDates {
 /**
  * 基金投资基本信息接口
  */
-export interface FundInvestmentDetail {
+export interface FundDetail {
   app: string;                  // 对应APP
   name: string;                 // 产品名称
   initialFund: number;         // 初始投资金额（人民币）
@@ -135,7 +135,7 @@ export interface FundInvestmentDetail {
 /**
  * 包含持有时间信息的基金投资接口
  */
-export interface FundInvestmentDetailWithDates extends FundInvestmentDetail {
+export interface FundDetailWithDates extends FundDetail {
   holdingDays: number;         // 持有天数
   annualizedReturn: number;    // 年化收益率
 }
@@ -143,7 +143,7 @@ export interface FundInvestmentDetailWithDates extends FundInvestmentDetail {
 /**
  * 已赎回的基金投资接口
  */
-export interface FundRedeemedInvestment extends FundInvestmentDetailWithDates {
+export interface FundRedeemed_I extends FundDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalFund: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益
@@ -161,7 +161,7 @@ export interface DepositDetail {
 export interface DepositDetailWithDates extends DepositDetail {
   holdingDays: number;         // 持有天数
 }
-export interface DepositRedeemed extends DepositDetailWithDates {
+export interface DepositRedeemed_I extends DepositDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
 }
@@ -178,7 +178,7 @@ export interface PensionDetail {
 export interface PensionDetailWithDates extends PensionDetail {
   holdingDays: number;         // 持有天数
 }
-export interface PensionRedeemed extends PensionDetailWithDates {
+export interface PensionRedeemed_I extends PensionDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalRMB: number;            // 赎回时的金额（人民币）
 }
@@ -206,7 +206,7 @@ export interface StockInvestmentDetailWithDates extends StockInvestmentDetail {
 /**
  * 已赎回的基金投资接口
  */
-export interface StockRedeemedInvestment extends StockInvestmentDetailWithDates {
+export interface StockRedeemed_I extends StockInvestmentDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalStock: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益

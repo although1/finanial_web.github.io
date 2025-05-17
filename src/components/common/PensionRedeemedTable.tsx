@@ -1,11 +1,11 @@
 import React from 'react';
-import { PensionRedeemed } from '../../data/dataTypes';
+import { PensionRedeemed_I } from '../../data/dataTypes';
 
 interface RedeemedPensionsTableProps {
-  pensionData: PensionRedeemed[];
+  pensionData: PensionRedeemed_I[];
 }
 
-export const PensionRedeemedTable: React.FC<RedeemedPensionsTableProps> = ({ pensionData }) => {
+export const PensionRedeemedTable_A: React.FC<RedeemedPensionsTableProps> = ({ pensionData }) => {
   // 计算总计数据
   const totals = pensionData.reduce((acc, curr) => ({
     finalRMB: acc.finalRMB + curr.finalRMB,

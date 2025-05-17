@@ -1,10 +1,10 @@
 import React from 'react';
-import { RMBInvestmentDetailWithDates } from '../../data/dataTypes';
+import { RMBDetailWithDates } from '../../data/dataTypes';
 
 interface RMBInvestmentTableProps {
-  rmbData: RMBInvestmentDetailWithDates[];
-  onDelete?: (item: RMBInvestmentDetailWithDates) => void;
-  onUpdateItem?: (index: number, updates: Partial<RMBInvestmentDetailWithDates>) => void;
+  rmbData: RMBDetailWithDates[];
+  onDelete?: (item: RMBDetailWithDates) => void;
+  onUpdateItem?: (index: number, updates: Partial<RMBDetailWithDates>) => void;
 }
 
 export const RMBTable_A: React.FC<RMBInvestmentTableProps> = ({
@@ -17,7 +17,7 @@ export const RMBTable_A: React.FC<RMBInvestmentTableProps> = ({
     return parseFloat(((10000 / initialRMB * profit / holdingDays * 365)).toFixed(2));
   };
 
-  const handleValueChange = (index: number, field: keyof RMBInvestmentDetailWithDates, value: string) => {
+  const handleValueChange = (index: number, field: keyof RMBDetailWithDates, value: string) => {
     if (!onUpdateItem) return;
 
     const numValue = parseFloat(value);
@@ -66,7 +66,7 @@ export const RMBTable_A: React.FC<RMBInvestmentTableProps> = ({
               {onDelete && <th className="px-4 py-2 text-right text-sm font-semibold">操作</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">{rmbData.map((item: RMBInvestmentDetailWithDates, index: number) => (
+          <tbody className="divide-y divide-gray-200">{rmbData.map((item: RMBDetailWithDates, index: number) => (
             <tr key={`${item.app}-${item.name}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               <td className="px-4 py-2 text-sm text-gray-900 sticky left-0 bg-white">{item.app}</td>
               <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>

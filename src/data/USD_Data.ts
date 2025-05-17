@@ -1,9 +1,9 @@
-import { USDInvestmentDetailWithDates } from './dataTypes';
+import { USDDetailWithDates } from './dataTypes';
 import { SYSTEM_DATE } from '../utils/dateUtils';
 
 export const DEFAULT_DATE = SYSTEM_DATE;
 
-export const USDData: USDInvestmentDetailWithDates[] = [
+export const USDData: USDDetailWithDates[] = [
   {
     "app": "工商银行",
     "name": "高盛每日理财",

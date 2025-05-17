@@ -1,11 +1,11 @@
 import React from 'react';
-import { StockRedeemedInvestment } from '../../data/dataTypes';
+import { StockRedeemed_I } from '../../data/dataTypes';
 
 interface StockRedeemedInvestmentsTableProps {
-  stockData: StockRedeemedInvestment[];
+  stockData: StockRedeemed_I[];
 }
 
-export const StockRedeemedInvestmentsTable: React.FC<StockRedeemedInvestmentsTableProps> = ({ stockData }) => {
+export const StockRedeemedTable_A: React.FC<StockRedeemedInvestmentsTableProps> = ({ stockData }) => {
   // 计算总计数据
   const totals = stockData.reduce((acc, curr) => ({
     initialStock: acc.initialStock + curr.initialStock,

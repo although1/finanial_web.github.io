@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { USDInvestmentDetail, RMBInvestmentDetail, DepositDetail,FundInvestmentDetail,PensionDetail, StockInvestmentDetail} from '../../data/dataTypes';
+import { USDDetail, RMBDetail, DepositDetail,FundDetail,PensionDetail, StockInvestmentDetail} from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail | StockInvestmentDetail) => void;
+  onSave: (item: USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockInvestmentDetail) => void;
   onCancel: () => void;
   type?: 'usd' | 'rmb' | 'deposit' | 'fund' | 'pension' | 'stock';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];
-const defaultUSDForm: USDInvestmentDetail = {
+const defaultUSDForm: USDDetail = {
   app: appOptions[0],
   name: '',
   initialUSD: 0,
@@ -23,7 +23,7 @@ const defaultUSDForm: USDInvestmentDetail = {
   profit: 0,
 };
 
-const defaultRMBForm: RMBInvestmentDetail = {
+const defaultRMBForm: RMBDetail = {
   app: appOptions[0],
   name: '',
   initialRMB: 0,
@@ -44,7 +44,7 @@ const defaultPensionForm: PensionDetail = {
   currentRMB: 0
 };
 
-const defaultFundForm: FundInvestmentDetail = {
+const defaultFundForm: FundDetail = {
   app: appOptions[0],
   name: '',
   initialFund: 0,
@@ -63,7 +63,7 @@ const defaultStockForm: StockInvestmentDetail = {
 }
 
 export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel, type = 'usd' }) => {
-  const [formData, setFormData] = useState<USDInvestmentDetail | RMBInvestmentDetail | DepositDetail | FundInvestmentDetail | PensionDetail | StockInvestmentDetail>(
+  const [formData, setFormData] = useState<USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockInvestmentDetail>(
     type === 'usd' 
       ? { ...defaultUSDForm, purchaseDate: currentDate }
       : type === 'rmb'
@@ -101,8 +101,8 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
       });
     } else if (type === 'usd') {
       setFormData(prev => {
-        const prevUSD = prev as USDInvestmentDetail;
-        const updates: Partial<USDInvestmentDetail> = { [name]: numValue };
+        const prevUSD = prev as USDDetail;
+        const updates: Partial<USDDetail> = { [name]: numValue };
         
         // USD investment calculations
         if (name === 'initialUSD' || name === 'buyRate') {
@@ -128,8 +128,8 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
       });
     } else {
       setFormData(prev => {
-        const prevRMB = prev as RMBInvestmentDetail;
-        const updates: Partial<RMBInvestmentDetail> = { [name]: numValue };
+        const prevRMB = prev as RMBDetail;
+        const updates: Partial<RMBDetail> = { [name]: numValue };
         
         // RMB investment calculations
         if (name === 'initialRMB') {
@@ -148,7 +148,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.app || !formData.name || (type !== 'deposit' && !(formData as USDInvestmentDetail | RMBInvestmentDetail | FundInvestmentDetail).purchaseDate)) {
+    if (!formData.app || !formData.name || (type !== 'deposit' && !(formData as USDDetail | RMBDetail | FundDetail).purchaseDate)) {
       alert('请填写所有必填字段');
       return;
     }
@@ -156,7 +156,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
   };
 
   const isUSDForm = type === 'usd';
-  const usdForm = isUSDForm ? formData as USDInvestmentDetail : null;
+  const usdForm = isUSDForm ? formData as USDDetail : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow">
@@ -218,7 +218,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
             <input
               type="number"
               name="initialRMB"
-              value={type === 'deposit' ? (formData as DepositDetail).currentRMB : (formData as RMBInvestmentDetail).initialRMB}
+              value={type === 'deposit' ? (formData as DepositDetail).currentRMB : (formData as RMBDetail).initialRMB}
               onChange={handleChange}
               step="0.01"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
@@ -231,7 +231,7 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
           <input
             type="date"
             name="purchaseDate"
-            value={type !== 'deposit' ? (formData as USDInvestmentDetail | RMBInvestmentDetail | FundInvestmentDetail).purchaseDate.split('/').join('-') : ''}
+            value={type !== 'deposit' ? (formData as USDDetail | RMBDetail | FundDetail).purchaseDate.split('/').join('-') : ''}
             onChange={(e) => handleChange({
               ...e,
               target: { ...e.target, value: e.target.value.split('-').join('/') }

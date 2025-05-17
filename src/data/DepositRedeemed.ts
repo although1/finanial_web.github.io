@@ -1,3 +1,3 @@
-import { DepositRedeemed } from './dataTypes';
+import { DepositRedeemed_I } from './dataTypes';
 
-export const DepositRedeemedData: DepositRedeemed[] = [];
+export const DepositRedeemedData: DepositRedeemed_I[] = [];

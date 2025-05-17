@@ -1,3 +1,3 @@
-import { RMBRedeemedInvestment } from './dataTypes';
+import { RMBRedeemed_I } from './dataTypes';
 
-export const RMBRedeemedData: RMBRedeemedInvestment[] = [];
+export const RMBRedeemedData: RMBRedeemed_I[] = [];

@@ -1,9 +1,9 @@
-import { RMBInvestmentDetail } from './dataTypes';
+import { RMBDetail } from './dataTypes';
 import { SYSTEM_DATE } from '../utils/dateUtils';
 
 export const DEFAULT_DATE = SYSTEM_DATE;
 
-export const RMBData: RMBInvestmentDetail[] = [
+export const RMBData: RMBDetail[] = [
   {
     "app": "招商银行",
     "name": "季季宝",

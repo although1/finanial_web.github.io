@@ -1,3 +1,3 @@
-import { PensionRedeemed } from './dataTypes';
+import { PensionRedeemed_I } from './dataTypes';
 
-export const PensionRedeemedData: PensionRedeemed[] = [];
+export const PensionRedeemedData: PensionRedeemed_I[] = [];

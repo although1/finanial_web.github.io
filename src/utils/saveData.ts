@@ -1,38 +1,38 @@
 import { 
-  USDInvestmentDetail, 
-  USDRedeemedInvestment,
-  RMBInvestmentDetail,
-  RMBRedeemedInvestment,
+  USDDetail, 
+  USDRedeemed_I,
+  RMBDetail,
+  RMBRedeemed_I,
   DepositDetail,
-  DepositRedeemed,
-  FundInvestmentDetail,
-  FundRedeemedInvestment,
+  DepositRedeemed_I,
+  FundDetail,
+  FundRedeemed_I,
   PensionDetail,
-  PensionRedeemed,
+  PensionRedeemed_I,
   StockInvestmentDetail,
-  StockRedeemedInvestment
+  StockRedeemed_I
 } from '../data/dataTypes';
 
 export const saveToFile = async (
-  currentUSDData: USDInvestmentDetail[], 
-  redeemedUSDData?: USDRedeemedInvestment[],
-  currentRMBData?: RMBInvestmentDetail[],
-  redeemedRMBData?: RMBRedeemedInvestment[],
+  currentUSDData: USDDetail[], 
+  redeemedUSDData?: USDRedeemed_I[],
+  currentRMBData?: RMBDetail[],
+  redeemedRMBData?: RMBRedeemed_I[],
   currentDepositData?: DepositDetail[],
-  redeemedDepositData?: DepositRedeemed[],
-  currentFundData?: FundInvestmentDetail[],
-  redeemedFundData?: FundRedeemedInvestment[],
+  redeemedDepositData?: DepositRedeemed_I[],
+  currentFundData?: FundDetail[],
+  redeemedFundData?: FundRedeemed_I[],
   currentPensionData?: PensionDetail[],
-  redeemedPensionData?: PensionRedeemed[],
+  redeemedPensionData?: PensionRedeemed_I[],
   currentStockData?: StockInvestmentDetail[],
-  redeemedStockData?: StockRedeemedInvestment[]
+  redeemedStockData?: StockRedeemed_I[]
 ): Promise<boolean> => {
   try {
     // Save USD investment data
-    const usdDataStr = 'import { USDInvestmentDetailWithDates } from \'./dataTypes\';\n' +
+    const usdDataStr = 'import { USDDetailWithDates } from \'./dataTypes\';\n' +
       'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
       'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-      'export const USDData: USDInvestmentDetailWithDates[] = ' + 
+      'export const USDData: USDDetailWithDates[] = ' + 
       JSON.stringify(currentUSDData, null, 2) + ';\n';
 
     const usdResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -52,10 +52,10 @@ export const saveToFile = async (
 
     // Save RMB investment data if provided
     if (currentRMBData) {
-      const rmbDataStr = 'import { RMBInvestmentDetail } from \'./dataTypes\';\n' +
+      const rmbDataStr = 'import { RMBDetail } from \'./dataTypes\';\n' +
         'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
         'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-        'export const RMBData: RMBInvestmentDetail[] = ' + 
+        'export const RMBData: RMBDetail[] = ' + 
         JSON.stringify(currentRMBData, null, 2) + ';\n';
 
       const rmbResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -100,10 +100,10 @@ export const saveToFile = async (
 
     // 将基金数据保存逻辑移到外面，作为独立的条件判断
     if (currentFundData) {
-      const fundDataStr = 'import { FundInvestmentDetail } from \'./dataTypes\';\n' +
+      const fundDataStr = 'import { FundDetail } from \'./dataTypes\';\n' +
         'import { SYSTEM_DATE } from \'../utils/dateUtils\';\n\n' +
         'export const DEFAULT_DATE = SYSTEM_DATE;\n\n' +
-        'export const FundData: FundInvestmentDetail[] = ' + 
+        'export const FundData: FundDetail[] = ' + 
         JSON.stringify(currentFundData, null, 2) + ';\n';
 
       const fundResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -172,8 +172,8 @@ export const saveToFile = async (
 
     // Save redeemed USD data if provided
     if (redeemedUSDData) {
-      const redeemedUSDDataStr = 'import { USDRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const USDRedeemedData: USDRedeemedInvestment[] = ' + 
+      const redeemedUSDDataStr = 'import { USDRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const USDRedeemedData: USDRedeemed_I[] = ' + 
         JSON.stringify(redeemedUSDData, null, 2) + ';\n';
 
       const redeemedUSDResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -194,8 +194,8 @@ export const saveToFile = async (
 
     // Save redeemed RMB data if provided
     if (redeemedRMBData) {
-      const redeemedRMBDataStr = 'import { RMBRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const RMBRedeemedData: RMBRedeemedInvestment[] = ' + 
+      const redeemedRMBDataStr = 'import { RMBRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const RMBRedeemedData: RMBRedeemed_I[] = ' + 
         JSON.stringify(redeemedRMBData, null, 2) + ';\n';
 
       const redeemedRMBResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -204,7 +204,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'RMBRedeemedInvestments.ts',
+          filename: 'RMBRedeemed.ts',
           content: redeemedRMBDataStr
         })
       });
@@ -216,8 +216,8 @@ export const saveToFile = async (
 
     // Save redeemed deposit data if provided
     if (redeemedDepositData) {
-      const redeemedDepositDataStr = 'import { DepositRedeemed } from \'./dataTypes\';\n\n' +
-        'export const DepositRedeemedData: DepositRedeemed[] = ' + 
+      const redeemedDepositDataStr = 'import { DepositRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const DepositRedeemedData: DepositRedeemed_I[] = ' + 
         JSON.stringify(redeemedDepositData, null, 2) + ';\n';
 
       const redeemedDepositResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -238,8 +238,8 @@ export const saveToFile = async (
 
     // 添加赎回基金数据的保存逻辑
     if (redeemedFundData) {
-      const fundRedeemedDataStr = 'import { FundRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const FundRedeemedData: FundRedeemedInvestment[] = ' + 
+      const fundRedeemedDataStr = 'import { FundRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const FundRedeemedData: FundRedeemed_I[] = ' + 
         JSON.stringify(redeemedFundData, null, 2) + ';\n';
 
       const fundRedeemedResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -248,7 +248,7 @@ export const saveToFile = async (
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          filename: 'FundRedeemedInvestments.ts',
+          filename: 'FundRedeemed.ts',
           content: fundRedeemedDataStr
         })
       });
@@ -260,8 +260,8 @@ export const saveToFile = async (
 
     // 添加赎回养老金数据的保存逻辑
     if (redeemedPensionData) {
-      const pensionRedeemedDataStr = 'import { PensionRedeemed } from \'./dataTypes\';\n\n' +
-        'export const PensionRedeemedData: PensionRedeemed[] = ' +
+      const pensionRedeemedDataStr = 'import { PensionRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const PensionRedeemedData: PensionRedeemed_I[] = ' +
         JSON.stringify(redeemedPensionData, null, 2) + ';\n';
 
       const pensionRedeemedResponse = await fetch('http://localhost:3000/api/save-data', {
@@ -282,8 +282,8 @@ export const saveToFile = async (
 
     // 添加赎回股票数据的保存逻辑
     if (redeemedStockData) {
-      const stockRedeemedDataStr = 'import { StockRedeemedInvestment } from \'./dataTypes\';\n\n' +
-        'export const StockRedeemedData: StockRedeemedInvestment[] = ' +
+      const stockRedeemedDataStr = 'import { StockRedeemed_I } from \'./dataTypes\';\n\n' +
+        'export const StockRedeemedData: StockRedeemed_I[] = ' +
         JSON.stringify(redeemedStockData, null, 2) + ';\n'; 
 
       const stockRedeemedResponse = await fetch('http://localhost:3000/api/save-data',
@@ -293,7 +293,7 @@ export const saveToFile = async (
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            filename: 'StockRedeemedInvestments.ts',
+            filename: 'StockRedeemed.ts',
             content: stockRedeemedDataStr
           })
         });
