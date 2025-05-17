@@ -2,17 +2,17 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartContainer } from './common/ChartContainer';
 import { USDTable_A } from './common/USDTable';
-import { USDRedeemedInvestmentsTable } from './common/USDRedeemedInvestmentsTable';
+import { USDRedeemedInvestmentsTable } from './common/USDRedeemedTable';
 import { RMBTable_A } from './common/RMBTable';
-import { RMBRedeemedInvestmentsTable } from './common/RMBRedeemedInvestmentsTable';
+import { RMBRedeemedInvestmentsTable } from './common/RMBRedeemedTable';
 import { DepositTable_A } from './common/DepositTable';
 import { DepositRedeemedTable } from './common/DepositRedeemedTable';
 import { FundTable_A } from './common/FundTable';
-import { FundRedeemedInvestmentsTable } from './common/FundRedeemedInvestmentsTable';
+import { FundRedeemedInvestmentsTable } from './common/FundRedeemedTable';
 import { PensionTable_A } from './common/PensionTable';
 import { PensionRedeemedTable } from './common/PensionRedeemedTable';
 import { StockTable_A } from './common/StockTable';
-import { StockRedeemedInvestmentsTable } from './common/StockRedeemedInvestmentsTable';
+import { StockRedeemedInvestmentsTable } from './common/StockRedeemedTable';
 import { 
   USDInvestmentDetail, 
   USDInvestmentDetailWithDates, 
