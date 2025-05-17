@@ -29,8 +29,8 @@ import {
   PensionDetail,
   PensionDetailWithDates,
   PensionRedeemed_I,
-  StockInvestmentDetail,
-  StockInvestmentDetailWithDates,
+  StockDetail,
+  StockDetailWithDates,
   StockRedeemed_I
 } from '../data/dataTypes';
 import { USDData, DEFAULT_DATE } from '../data/USD_Data';
@@ -90,7 +90,7 @@ const FinancialPage: React.FC = () => {
   const [editedFundData, setEditedFundData] = useState<FundDetailWithDates[]>([]);
   const [editedDepositData, setEditedDepositData] = useState<DepositDetailWithDates[]>([]);
   const [editedPensionData, setEditedPensionData] = useState<PensionDetailWithDates[]>([]);
-  const [editedStockData, setEditedStockData] = useState<StockInvestmentDetailWithDates[]>([]);
+  const [editedStockData, setEditedStockData] = useState<StockDetailWithDates[]>([]);
   const [hasUsdChanges, setHasUsdChanges] = useState(false);
   const [hasRmbChanges, setHasRmbChanges] = useState(false);
   const [hasFundChanges, setHasFundChanges] = useState(false);
@@ -164,16 +164,11 @@ const FinancialPage: React.FC = () => {
 
   const stockWithDates = useMemo(() => {
     return stockData.map(item => {
-      const holdingDays = calculateDaysBetween(item.purchaseDate, currentDate);
-      const annualizedReturn = calculateAnnualizedReturn(item.profit, item.initialStock, holdingDays);
-
       return {
-        ...item,
-        holdingDays,
-        annualizedReturn
-      } as StockInvestmentDetailWithDates;
+        ...item
+      } as StockDetailWithDates;
     });
-  }, [stockData, currentDate]);
+  }, [stockData]);
 
   useEffect(() => {
     if (!hasUsdChanges) {
@@ -237,7 +232,7 @@ const FinancialPage: React.FC = () => {
     newFundRedeemedData?: FundRedeemed_I[],
     newPensionData?: PensionDetail[],
     newPensionRedeemedData?: PensionRedeemed_I[],
-    newStockData?: StockInvestmentDetail[],
+    newStockData?: StockDetail[],
     newStockRedeemedData?: StockRedeemed_I[]
   ) => {
     setIsSaving(true);
@@ -263,7 +258,7 @@ const FinancialPage: React.FC = () => {
     return success;
   };
 
-  const handleSave = async (newItem: USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockInvestmentDetail) => {
+  const handleSave = async (newItem: USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockDetail) => {
     if ('initialUSD' in newItem) {
       // USD investment
       const newUsdDataSave = [...usdData, newItem as USDDetail];
@@ -314,7 +309,7 @@ const FinancialPage: React.FC = () => {
       }
     } else if ('initialStock' in newItem) {
       // Stock
-      const newStockData = [...stockData, newItem as StockInvestmentDetail];
+      const newStockData = [...stockData, newItem as StockDetail];
       const success = await handleSaveToFile(usdData, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, newStockData);
       if (success) {
         setStockData(newStockData);
@@ -376,7 +371,7 @@ const FinancialPage: React.FC = () => {
     setHasPensionChanges(true);
   };
 
-  const handleUpdateStockItem = (index: number, updates: Partial<StockInvestmentDetailWithDates>) => {
+  const handleUpdateStockItem = (index: number, updates: Partial<StockDetailWithDates>) => {
     setEditedStockData(prevData => {
       const newData = [...prevData];
       newData[index] = {...newData[index],...updates };
@@ -430,7 +425,7 @@ const FinancialPage: React.FC = () => {
     }
   };
 
-  const handleDelete = async (item: USDDetailWithDates | RMBDetailWithDates | DepositDetailWithDates | FundDetailWithDates | PensionDetailWithDates | StockInvestmentDetailWithDates) => {
+  const handleDelete = async (item: USDDetailWithDates | RMBDetailWithDates | DepositDetailWithDates | FundDetailWithDates | PensionDetailWithDates | StockDetailWithDates) => {
     if (window.confirm('确定要赎回该产品？赎回后将保存到历史记录中。')) {
       if ('initialUSD' in item) {
         // USD investment
@@ -507,7 +502,7 @@ const FinancialPage: React.FC = () => {
         }
       } else if ('initialStock' in item) {
         // Stock
-        const stockItem = item as StockInvestmentDetailWithDates;
+        const stockItem = item as StockDetailWithDates;
         const redeemedItem: StockRedeemed_I = {
           ...stockItem,
           redeemDate: currentDate,

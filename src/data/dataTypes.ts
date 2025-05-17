@@ -183,11 +183,10 @@ export interface PensionRedeemed_I extends PensionDetailWithDates {
 /**
  * 股票投资基本信息接口
  */
-export interface StockInvestmentDetail {
+export interface StockDetail {
   app: string;                  // 对应APP
   name: string;                 // 产品名称
   initialStock: number;         // 初始投资金额（人民币）
-  purchaseDate: string;        // 购买日期
   currentStock: number;         // 当前市值（人民币）
   profit: number;              // 当前收益
 }
@@ -195,15 +194,13 @@ export interface StockInvestmentDetail {
 /**
  * 包含持有时间信息的基金投资接口
  */
-export interface StockInvestmentDetailWithDates extends StockInvestmentDetail {
-  holdingDays: number;         // 持有天数
-  annualizedReturn: number;    // 年化收益率
+export interface StockDetailWithDates extends StockDetail {
 }
 
 /**
  * 已赎回的基金投资接口
  */
-export interface StockRedeemed_I extends StockInvestmentDetailWithDates {
+export interface StockRedeemed_I extends StockDetailWithDates {
   redeemDate: string;          // 赎回日期
   finalStock: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益

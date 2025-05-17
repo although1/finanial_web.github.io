@@ -9,7 +9,7 @@ import {
   FundRedeemed_I,
   PensionDetail,
   PensionRedeemed_I,
-  StockInvestmentDetail,
+  StockDetail,
   StockRedeemed_I
 } from '../data/dataTypes';
 import { DEFAULT_DATE } from '../data/USD_Data';
@@ -25,7 +25,7 @@ export const saveToFile = async (
   redeemedFundData?: FundRedeemed_I[],
   currentPensionData?: PensionDetail[],
   redeemedPensionData?: PensionRedeemed_I[],
-  currentStockData?: StockInvestmentDetail[],
+  currentStockData?: StockDetail[],
   redeemedStockData?: StockRedeemed_I[],
   selectedDate: string = DEFAULT_DATE
 ): Promise<boolean> => {
@@ -145,9 +145,9 @@ export const saveToFile = async (
 
     // Save stock data if provided
     if (currentStockData) {
-      const stockDataStr = 'import { StockInvestmentDetail } from \'./dataTypes\';\n\n' +
+      const stockDataStr = 'import { StockDetail } from \'./dataTypes\';\n\n' +
         'export const DEFAULT_DATE = \'' + selectedDate + '\';\n\n' +
-        'export const StockData: StockInvestmentDetail[] = ' +
+        'export const StockData: StockDetail[] = ' +
         JSON.stringify(currentStockData, null, 2) + ';\n';
 
       const stockResponse = await fetch('http://localhost:3000/api/save-data', {
