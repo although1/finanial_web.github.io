@@ -13,6 +13,178 @@ import {
   StockRedeemed_I
 } from '../data/dataTypes';
 
+interface AppDetail {
+  detail: {
+    [key: string]: number;
+  };
+  total: number;
+  total_profit: number;
+}
+
+interface AppTotalData {
+  [key: string]: AppDetail;
+}
+
+interface AppTotals {
+  [key: string]: AppDetail | number;
+  grand_total: number;
+  grand_total_profit: number;
+}
+
+const calculateAppTotals = (
+  usdData: USDDetail[],
+  rmbData: RMBDetail[] = [],
+  depositData: DepositDetail[] = [],
+  fundData: FundDetail[] = [],
+  pensionData: PensionDetail[] = [],
+  stockData: StockDetail[] = []
+): AppTotals => {
+  const appTotals: AppTotalData = {};
+  let grandTotal = 0;
+  let grandTotalProfit = 0;
+
+  // 处理美元理财
+  usdData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['美元理财']) {
+      appTotals[item.app].detail['美元理财'] = 0;
+      appTotals[item.app].detail['美元理财_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['美元理财'] = parseFloat((appTotals[item.app].detail['美元理财'] + item.currentRMB).toFixed(2));
+    appTotals[item.app].detail['美元理财_收益'] = parseFloat((appTotals[item.app].detail['美元理财_收益'] + item.profit).toFixed(2));
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentRMB).toFixed(2));
+    appTotals[item.app].total_profit = parseFloat((appTotals[item.app].total_profit + item.profit).toFixed(2));
+  });
+
+  // 处理人民币理财
+  rmbData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['人民币理财']) {
+      appTotals[item.app].detail['人民币理财'] = 0;
+      appTotals[item.app].detail['人民币理财_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['人民币理财'] = parseFloat((appTotals[item.app].detail['人民币理财'] + item.currentRMB).toFixed(2));
+    appTotals[item.app].detail['人民币理财_收益'] = parseFloat((appTotals[item.app].detail['人民币理财_收益'] + item.profit).toFixed(2));
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentRMB).toFixed(2));
+    appTotals[item.app].total_profit = parseFloat((appTotals[item.app].total_profit + item.profit).toFixed(2));
+  });
+
+  // 处理存款
+  depositData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['存款']) {
+      appTotals[item.app].detail['存款'] = 0;
+      appTotals[item.app].detail['存款_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['存款'] = parseFloat((appTotals[item.app].detail['存款'] + item.currentRMB).toFixed(2));
+    appTotals[item.app].detail['存款_收益'] = 0;
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentRMB).toFixed(2));
+  });
+
+  // 处理基金
+  fundData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['基金']) {
+      appTotals[item.app].detail['基金'] = 0;
+      appTotals[item.app].detail['基金_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['基金'] = parseFloat((appTotals[item.app].detail['基金'] + item.currentFund).toFixed(2));
+    appTotals[item.app].detail['基金_收益'] = parseFloat((appTotals[item.app].detail['基金_收益'] + item.profit).toFixed(2));
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentFund).toFixed(2));
+    appTotals[item.app].total_profit = parseFloat((appTotals[item.app].total_profit + item.profit).toFixed(2));
+  });
+
+  // 处理养老金
+  pensionData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['养老金']) {
+      appTotals[item.app].detail['养老金'] = 0;
+      appTotals[item.app].detail['养老金_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['养老金'] = parseFloat((appTotals[item.app].detail['养老金'] + item.currentRMB).toFixed(2));
+    appTotals[item.app].detail['养老金_收益'] = 0;
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentRMB).toFixed(2));
+  });
+
+  // 处理股票
+  stockData.forEach(item => {
+    if (!appTotals[item.app]) {
+      appTotals[item.app] = { detail: {}, total: 0, total_profit: 0 };
+    }
+    
+    if (!appTotals[item.app].detail['股票']) {
+      appTotals[item.app].detail['股票'] = 0;
+      appTotals[item.app].detail['股票_收益'] = 0;
+    }
+    
+    appTotals[item.app].detail['股票'] = parseFloat((appTotals[item.app].detail['股票'] + item.currentStock).toFixed(2));
+    appTotals[item.app].detail['股票_收益'] = parseFloat((appTotals[item.app].detail['股票_收益'] + item.profit).toFixed(2));
+    appTotals[item.app].total = parseFloat((appTotals[item.app].total + item.currentStock).toFixed(2));
+    appTotals[item.app].total_profit = parseFloat((appTotals[item.app].total_profit + item.profit).toFixed(2));
+  });
+
+  // 计算总计
+  Object.values(appTotals).forEach(app => {
+    if ('total' in app) {
+      grandTotal += app.total;
+      grandTotalProfit += app.total_profit;
+    }
+  });
+
+  return {
+    ...appTotals,
+    grand_total: parseFloat(grandTotal.toFixed(2)),
+    grand_total_profit: parseFloat(grandTotalProfit.toFixed(2))
+  } as AppTotals;
+};
+
+const saveAppTotals = async (
+  selectedDate: string,
+  appTotals: AppTotals
+): Promise<boolean> => {
+  try {
+    const filename = `app_totals_${selectedDate.split('/').join('-')}.json`;
+    const content = JSON.stringify(appTotals, null, 2);
+
+    const response = await fetch('http://localhost:3000/api/save-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        filename,
+        content,
+        isJson: true  // 添加标记表明这是 JSON 文件
+      })
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Failed to save app totals:', error);
+    return false;
+  }
+};
+
 export const saveToFile = async (
   selectedDate: string,
   currentUSDData: USDDetail[], 
@@ -27,7 +199,6 @@ export const saveToFile = async (
   redeemedPensionData?: PensionRedeemed_I[],
   currentStockData?: StockDetail[],
   redeemedStockData?: StockRedeemed_I[]
-
 ): Promise<boolean> => {
   try {
     // Save USD investment data
@@ -38,18 +209,11 @@ export const saveToFile = async (
 
     const usdResponse = await fetch('http://localhost:3000/api/save-data', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        filename: 'USD_Data.ts',
-        content: usdDataStr
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: 'USD_Data.ts', content: usdDataStr })
     });
 
-    if (!usdResponse.ok) {
-      throw new Error('Failed to save USD investment data');
-    }
+    if (!usdResponse.ok) throw new Error('Failed to save USD data');
 
     // Save RMB investment data if provided
     if (currentRMBData) {
@@ -298,9 +462,24 @@ export const saveToFile = async (
       }
     }
 
+    // 计算并保存 app_totals
+    const appTotals = calculateAppTotals(
+      currentUSDData,
+      currentRMBData || [],
+      currentDepositData || [],
+      currentFundData || [],
+      currentPensionData || [],
+      currentStockData || []
+    );
+
+    const appTotalsSaved = await saveAppTotals(selectedDate, appTotals);
+    if (!appTotalsSaved) {
+      throw new Error('Failed to save app totals');
+    }
+
     return true;
   } catch (error) {
-    console.error('Failed to save data:', error);
-    throw error;
+    console.error('Error saving data:', error);
+    return false;
   }
 };

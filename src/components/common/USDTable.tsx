@@ -76,7 +76,8 @@ export const USDTable_A: React.FC<USDInvestmentTableProps> = ({
 
   // 计算总体年化收益率
   const totalAnnualizedReturn = usdData.length > 0 ? 
-    (totals.profit / totals.initialRMB * 365 / usdData[0].holdingDays * 100) : 0;  return (
+    (totals.profit / totals.initialRMB * 365 / usdData[0].holdingDays * 100) : 0;  
+  return (
     <div className="relative flex flex-col bg-white shadow-md rounded-lg">
       <div className="overflow-x-auto">
         <table className="min-w-full">

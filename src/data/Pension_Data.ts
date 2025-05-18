@@ -11,6 +11,6 @@ export const PensionData: PensionDetail[] = [
   {
     "app": "招商银行",
     "name": "个人养老金",
-    "currentRMB": 12002.29
+    "currentRMB": 12002.79
   }
 ];
