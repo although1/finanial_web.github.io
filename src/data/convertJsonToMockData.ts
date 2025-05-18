@@ -13,9 +13,9 @@ type FinancialData = {
     detail: { [category: string]: number };
     total: number;
     total_profit?: number;
+    grand_total: number;
+    grand_total_profit?: number;
   };
-  grand_total: number;
-  grand_total_profit?: number;
 };
 
 // 1. 读取 JSON 文件目录

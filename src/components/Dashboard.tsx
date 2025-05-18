@@ -22,6 +22,52 @@ const Dashboard: React.FC = () => {
   const [activeChart, setActiveChart] = useState<ChartType>('monthly');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [showAllDates, setShowAllDates] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/run-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          command: 'tsx',
+          args: ['src/data/convertJsonToMockData.ts']
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to sync data');
+      }
+
+      const data = await response.json();
+      console.log('Sync completed:', data);
+
+      // 等待一秒，确保文件已经写入
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 重新加载数据
+      const processedData = processFinancialData(mockData);
+      setData(processedData);
+
+      // 重新初始化日期选择
+      if (mockData.length > 0) {
+        const latestDate = mockData.reduce((latest, curr) => 
+          new Date(curr.date) > new Date(latest) ? curr.date : latest
+        , mockData[0].date);
+        setSelectedDate(latestDate);
+      }
+
+    } catch (err) {
+      console.error('Sync error:', err);
+      setError(err instanceof Error ? err.message : 'Error syncing data. Please try again.');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -71,6 +117,23 @@ const Dashboard: React.FC = () => {
               className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 rounded-md border border-blue-600 hover:border-blue-800"
             >
               理财详情
+            </button>
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className={`px-4 py-2 text-sm font-medium text-green-600 hover:text-green-800 rounded-md border border-green-600 hover:border-green-800 flex items-center ${syncing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {syncing ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  同步中...
+                </>
+              ) : (
+                <>同步数据</>
+              )}
             </button>
             <h2 className="text-xl font-bold text-gray-800">投资类型汇总</h2>
             <button

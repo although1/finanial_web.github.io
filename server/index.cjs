@@ -3,6 +3,8 @@ const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
+const { spawn } = require('child_process');
+
 const app = express();
 
 app.use(cors());
@@ -17,6 +19,80 @@ const convertToSystemEOL = (content) => {
   // 然后转换为系统对应的换行符
   return content.replace(/\n/g, EOL);
 };
+
+// API endpoint for running scripts
+app.post('/api/run-script', async (req, res) => {
+  try {
+    const { command, args } = req.body;
+    
+    if (!command || !Array.isArray(args)) {
+      return res.status(400).json({ error: 'Invalid command or arguments' });
+    }
+
+    const rootDir = path.join(__dirname, '..');
+
+    // 根据操作系统选择合适的命令
+    let finalCommand;
+    let finalArgs;
+    if (os.platform() === 'win32') {
+      // 在 Windows 上，使用 npx 来运行 tsx
+      finalCommand = 'npx';
+      finalArgs = ['tsx', ...args];
+    } else {
+      finalCommand = command;
+      finalArgs = args;
+    }
+
+    const scriptProcess = spawn(finalCommand, finalArgs, {
+      cwd: rootDir,
+      shell: true,
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    scriptProcess.stdout.on('data', (data) => {
+      stdout += data;
+    });
+
+    scriptProcess.stderr.on('data', (data) => {
+      stderr += data;
+    });
+
+    scriptProcess.on('error', (error) => {
+      console.error('Failed to start script:', error);
+      res.status(500).json({
+        error: 'Failed to start script',
+        details: error.message
+      });
+    });
+
+    scriptProcess.on('close', (code) => {
+      if (code === 0) {
+        res.json({ 
+          success: true, 
+          stdout,
+          command: `${finalCommand} ${finalArgs.join(' ')}`
+        });
+      } else {
+        res.status(500).json({
+          error: 'Script execution failed',
+          code,
+          stdout,
+          stderr,
+          command: `${finalCommand} ${finalArgs.join(' ')}`
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error running script:', error);
+    res.status(500).json({
+      error: 'Failed to run script',
+      details: error.message
+    });
+  }
+});
 
 // API endpoint to save data
 app.post('/api/save-data', async (req, res) => {
