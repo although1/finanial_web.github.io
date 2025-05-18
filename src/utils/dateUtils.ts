@@ -9,7 +9,11 @@ export const SYSTEM_DATE = (() => {
 
 // 验证日期是否超出系统当前日期
 export const isValidDate = (dateStr: string): boolean => {
-  const systemDate = new Date(SYSTEM_DATE);
-  const selectedDate = new Date(dateStr.split('-').join('/'));
-  return selectedDate <= systemDate;
+  try {
+    const systemDate = new Date(SYSTEM_DATE.split('/').join('-'));
+    const selectedDate = new Date(dateStr.split('/').join('-'));
+    return !isNaN(selectedDate.getTime()) && selectedDate <= systemDate;
+  } catch {
+    return false;
+  }
 };

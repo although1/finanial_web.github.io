@@ -1,173 +1,157 @@
 import React, { useState } from 'react';
-import { USDDetail, RMBDetail, DepositDetail,FundDetail,PensionDetail, StockInvestmentDetail} from '../../data/dataTypes';
+import { USDDetail, RMBDetail, DepositDetail, FundDetail, PensionDetail, StockDetail } from '../../data/dataTypes';
 import { isValidDate, SYSTEM_DATE } from '../../utils/dateUtils';
 
 interface AddFormProps {
   currentDate: string;
-  onSave: (item: USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockInvestmentDetail) => void;
+  onSave: (item: USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockDetail) => void;
   onCancel: () => void;
   type?: 'usd' | 'rmb' | 'deposit' | 'fund' | 'pension' | 'stock';
 }
 
 const appOptions = ["工商银行", "招商银行", "网商银行", "腾讯自选股", "支付宝"];
-const defaultUSDForm: USDDetail = {
-  app: appOptions[0],
-  name: '',
-  initialUSD: 0,
-  buyRate: 0,
-  initialRMB: 0,
-  purchaseDate: '',
-  currentUSD: 0,
-  currentRate: 0,
-  currentRMB: 0,
-  profit: 0,
-};
-
-const defaultRMBForm: RMBDetail = {
-  app: appOptions[0],
-  name: '',
-  initialRMB: 0,
-  purchaseDate: '',
-  currentRMB: 0,
-  profit: 0,
-};
-
-const defaultDepositForm: DepositDetail = {
-  app: appOptions[0],
-  name: '',
-  currentRMB: 0
-};
-
-const defaultPensionForm: PensionDetail = {
-  app: appOptions[0],
-  name: '',
-  currentRMB: 0
-};
-
-const defaultFundForm: FundDetail = {
-  app: appOptions[0],
-  name: '',
-  initialFund: 0,
-  purchaseDate: '',
-  currentFund: 0,
-  profit: 0
-}
-
-const defaultStockForm: StockInvestmentDetail = {
-  app: appOptions[0],
-  name: '',
-  initialStock: 0,
-  purchaseDate: '',
-  currentStock: 0,
-  profit: 0
-}
 
 export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel, type = 'usd' }) => {
-  const [formData, setFormData] = useState<USDDetail | RMBDetail | DepositDetail | FundDetail | PensionDetail | StockInvestmentDetail>(
-    type === 'usd' 
-      ? { ...defaultUSDForm, purchaseDate: currentDate }
-      : type === 'rmb'
-      ? { ...defaultRMBForm, purchaseDate: currentDate }
-      : type === 'deposit'
-      ? { ...defaultDepositForm }
-      : type === 'pension'
-      ? { ...defaultPensionForm }
-      : type === 'stock'
-      ? { ...defaultStockForm, purchaseDate: currentDate }
-      : { ...defaultFundForm, purchaseDate: currentDate }
-  );
+  const [formData, setFormData] = useState(() => {
+    switch (type) {
+      case 'usd':
+        return {
+          app: appOptions[0],
+          name: '',
+          initialUSD: 0,
+          buyRate: 0,
+          initialRMB: 0,
+          purchaseDate: currentDate,
+          currentUSD: 0,
+          currentRate: 0,
+          currentRMB: 0,
+          profit: 0,
+        };
+      case 'rmb':
+        return {
+          app: appOptions[0],
+          name: '',
+          initialRMB: 0,
+          purchaseDate: currentDate,
+          currentRMB: 0,
+          profit: 0,
+        };
+      case 'deposit':
+      case 'pension':
+        return {
+          app: appOptions[0],
+          name: '',
+          currentRMB: 0,
+        };
+      case 'fund':
+        return {
+          app: appOptions[0],
+          name: '',
+          initialFund: 0,
+          currentFund: 0,
+          profit: 0,
+        };
+      case 'stock':
+        return {
+          app: appOptions[0],
+          name: '',
+          initialStock: 0,
+          currentStock: 0,
+          profit: 0,
+        };
+      default:
+        return {};
+    }
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (!name) return;
 
     // 验证日期
-    if (name === 'purchaseDate') {
-      if (!isValidDate(value)) {
+    if (name === 'purchaseDate' && (type === 'usd' || type === 'rmb')) {
+      const formattedDate = value.split('-').join('/');
+      if (!isValidDate(formattedDate)) {
         alert(`不能选择超过${SYSTEM_DATE}的日期`);
         return;
       }
     }
-    
+
     let numValue: string | number = value;
-    
-    if (name.includes('USD') || name.includes('Rate') || name.includes('RMB') || name.includes('Fund')) {
+    const isNumericField = ['USD', 'Rate', 'RMB', 'Fund', 'Stock'].some(field => name.includes(field));
+    if (isNumericField) {
       numValue = parseFloat(value) || 0;
     }
 
-    if (type === 'deposit' || type === 'pension') {
-      setFormData(prev => {
-        const prevData = prev as DepositDetail | PensionDetail;
-        return { ...prevData, [name]: numValue };
-      });
-    } else if (type === 'usd') {
-      setFormData(prev => {
-        const prevUSD = prev as USDDetail;
-        const updates: Partial<USDDetail> = { [name]: numValue };
-        
-        // USD investment calculations
-        if (name === 'initialUSD' || name === 'buyRate') {
-          const initialUSD = name === 'initialUSD' ? (numValue as number) : prevUSD.initialUSD;
-          const buyRate = name === 'buyRate' ? (numValue as number) : prevUSD.buyRate;
-          
-          updates.initialRMB = parseFloat((initialUSD * buyRate/100).toFixed(2));
-          updates.currentUSD = initialUSD;
-          updates.currentRate = buyRate;
-          updates.currentRMB = updates.initialRMB;
-          updates.profit = 0;
-        }
-        
-        if (name === 'currentUSD' || name === 'currentRate') {
-          const currentUSD = name === 'currentUSD' ? (numValue as number) : prevUSD.currentUSD;
-          const currentRate = name === 'currentRate' ? (numValue as number) : prevUSD.currentRate;
-          
-          updates.currentRMB = parseFloat((currentUSD * currentRate).toFixed(2));
-          updates.profit = parseFloat((updates.currentRMB - prevUSD.initialRMB).toFixed(2));
-        }
-        
-        return { ...prevUSD, ...updates };
-      });
-    } else {
-      setFormData(prev => {
-        const prevRMB = prev as RMBDetail;
-        const updates: Partial<RMBDetail> = { [name]: numValue };
-        
-        // RMB investment calculations
-        if (name === 'initialRMB') {
-          updates.currentRMB = numValue as number;
-          updates.profit = 0;
-        }
-        
-        if (name === 'currentRMB') {
-          updates.profit = parseFloat(((numValue as number) - prevRMB.initialRMB).toFixed(2));
-        }
-        
-        return { ...prevRMB, ...updates };
-      });
-    }
+    setFormData(prev => {
+      const updates: any = { [name]: numValue };
+
+      switch (type) {
+        case 'usd':
+          if (name === 'initialUSD' || name === 'buyRate') {
+            const initialUSD = name === 'initialUSD' ? (numValue as number) : (prev as USDDetail).initialUSD;
+            const buyRate = name === 'buyRate' ? (numValue as number) : (prev as USDDetail).buyRate;
+            updates.initialRMB = parseFloat((initialUSD * buyRate / 100).toFixed(2));
+            updates.currentUSD = initialUSD;
+            updates.currentRate = buyRate;
+            updates.currentRMB = updates.initialRMB;
+            updates.profit = 0;
+          }
+          break;
+
+        case 'rmb':
+          if (name === 'initialRMB') {
+            updates.currentRMB = numValue;
+            updates.profit = 0;
+          }
+          break;
+
+        case 'fund':
+          if (name === 'initialFund') {
+            updates.currentFund = numValue;
+            updates.profit = 0;
+          } else if (name === 'currentFund') {
+            const currentValue = numValue as number;
+            const initialValue = (prev as FundDetail).initialFund;
+            updates.profit = parseFloat((currentValue - initialValue).toFixed(2));
+          }
+          break;
+
+        case 'stock':
+          if (name === 'initialStock') {
+            updates.currentStock = numValue;
+            updates.profit = 0;
+          } else if (name === 'currentStock') {
+            const currentValue = numValue as number;
+            const initialValue = (prev as StockDetail).initialStock;
+            updates.profit = parseFloat((currentValue - initialValue).toFixed(2));
+          }
+          break;
+      }
+
+      return { ...prev, ...updates };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.app || !formData.name || (type !== 'deposit' && !(formData as USDDetail | RMBDetail | FundDetail).purchaseDate)) {
+    if (!formData.app || !formData.name) {
       alert('请填写所有必填字段');
       return;
     }
-    onSave(formData);
+    onSave(formData as any);
   };
 
-  const isUSDForm = type === 'usd';
-  const usdForm = isUSDForm ? formData as USDDetail : null;
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">对应APP</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">对应APP</label>
           <select
             name="app"
             value={formData.app}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             {appOptions.map(app => (
               <option key={app} value={app}>{app}</option>
@@ -176,82 +160,161 @@ export const AddForm: React.FC<AddFormProps> = ({ currentDate, onSave, onCancel,
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">产品名称</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">产品名称</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            required
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
-        {isUSDForm && usdForm ? (
+        {type === 'usd' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700">初始美元金额</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">美元本金</label>
               <input
                 type="number"
                 name="initialUSD"
-                value={usdForm.initialUSD}
+                value={(formData as USDDetail).initialUSD || ''}
                 onChange={handleChange}
                 step="0.01"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700">购汇汇率</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">购汇价</label>
               <input
                 type="number"
                 name="buyRate"
-                value={usdForm.buyRate}
+                value={(formData as USDDetail).buyRate || ''}
                 onChange={handleChange}
-                step="0.0001"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                step="0.01"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">购汇RMB价格 (自动计算)</label>
+              <input
+                type="number"
+                name="initialRMB"
+                value={(formData as USDDetail).initialRMB}
+                readOnly
+                disabled
+                className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
               />
             </div>
           </>
-        ) : (
+        )}
+
+        {(type === 'rmb' || type === 'deposit' || type === 'pension') && (
           <div>
-            <label className="block text-sm font-medium text-gray-700">初始人民币金额</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {type === 'rmb' ? '人民币本金' : '金额'}
+            </label>
             <input
               type="number"
-              name="initialRMB"
-              value={type === 'deposit' ? (formData as DepositDetail).currentRMB : (formData as RMBDetail).initialRMB}
+              name={type === 'rmb' ? 'initialRMB' : 'currentRMB'}
+              value={type === 'rmb' ? (formData as RMBDetail).initialRMB : (formData as DepositDetail).currentRMB}
               onChange={handleChange}
               step="0.01"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+              required
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">购买日期</label>
-          <input
-            type="date"
-            name="purchaseDate"
-            value={type !== 'deposit' ? (formData as USDDetail | RMBDetail | FundDetail).purchaseDate.split('/').join('-') : ''}
-            onChange={(e) => handleChange({
-              ...e,
-              target: { ...e.target, value: e.target.value.split('-').join('/') }
-            })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
-          />
-        </div>
+        {type === 'fund' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">初始基金金额</label>
+              <input
+                type="number"
+                name="initialFund"
+                value={(formData as FundDetail).initialFund}
+                onChange={handleChange}
+                step="0.01"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">当前市值</label>
+              <input
+                type="number"
+                name="currentFund"
+                value={(formData as FundDetail).currentFund}
+                onChange={handleChange}
+                step="0.01"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </>
+        )}
+
+        {type === 'stock' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">初始股票金额</label>
+              <input
+                type="number"
+                name="initialStock"
+                value={(formData as StockDetail).initialStock}
+                onChange={handleChange}
+                step="0.01"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">当前市值</label>
+              <input
+                type="number"
+                name="currentStock"
+                value={(formData as StockDetail).currentStock}
+                onChange={handleChange}
+                step="0.01"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </>
+        )}
+
+        {(type === 'usd' || type === 'rmb') && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">购买日期</label>
+            <input
+              type="date"
+              name="purchaseDate"
+              value={(formData as USDDetail | RMBDetail).purchaseDate.split('/').join('-')}
+              onChange={(e) => handleChange({
+                ...e,
+                target: { ...e.target, name: 'purchaseDate',value: e.target.value.split('-').join('/') }
+              })}
+	      required
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+        )}
       </div>
 
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end space-x-2">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
         >
           取消
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
         >
           保存
         </button>

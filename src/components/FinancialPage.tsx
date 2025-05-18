@@ -33,7 +33,7 @@ import {
   StockDetailWithDates,
   StockRedeemed_I
 } from '../data/dataTypes';
-import { USDData, DEFAULT_DATE } from '../data/USD_Data';
+import { USDData } from '../data/USD_Data';
 import { USDRedeemedData } from '../data/USDRedeemed';
 import { RMBData } from '../data/RMB_Data';
 import { RMBRedeemedData } from '../data/RMBRedeemed';
@@ -83,7 +83,7 @@ const FinancialPage: React.FC = () => {
   const [isAddingDeposit, setIsAddingDeposit] = useState(false);
   const [isAddingPension, setIsAddingPension] = useState(false);
   const [isAddingStock, setIsAddingStock] = useState(false);
-  const [currentDate, setCurrentDate] = useState(DEFAULT_DATE);
+  const [currentDate, setCurrentDate] = useState(SYSTEM_DATE);
   const [isSaving, setIsSaving] = useState(false);
   const [editedUsdData, setEditedUsdData] = useState<USDDetailWithDates[]>([]);
   const [editedRmbData, setEditedRmbData] = useState<RMBDetailWithDates[]>([]);
@@ -237,6 +237,7 @@ const FinancialPage: React.FC = () => {
   ) => {
     setIsSaving(true);
     const success = await saveToFile(
+      currentDate,
       newUsdData || usdData, 
       newUsdRedeemedData || usdRedeemedData, 
       newRmbData || rmbData,
@@ -248,8 +249,7 @@ const FinancialPage: React.FC = () => {
       newPensionData || pensionData,
       newPensionRedeemedData || pensionRedeemedData,
       newStockData || stockData,
-      newStockRedeemedData || stockRedeemedData,
-      currentDate
+      newStockRedeemedData || stockRedeemedData
     );
     setIsSaving(false);
     if (!success) {

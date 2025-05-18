@@ -12,9 +12,9 @@ import {
   StockDetail,
   StockRedeemed_I
 } from '../data/dataTypes';
-import { DEFAULT_DATE } from '../data/USD_Data';
 
 export const saveToFile = async (
+  selectedDate: string,
   currentUSDData: USDDetail[], 
   redeemedUSDData?: USDRedeemed_I[],
   currentRMBData?: RMBDetail[],
@@ -26,8 +26,8 @@ export const saveToFile = async (
   currentPensionData?: PensionDetail[],
   redeemedPensionData?: PensionRedeemed_I[],
   currentStockData?: StockDetail[],
-  redeemedStockData?: StockRedeemed_I[],
-  selectedDate: string = DEFAULT_DATE
+  redeemedStockData?: StockRedeemed_I[]
+
 ): Promise<boolean> => {
   try {
     // Save USD investment data
