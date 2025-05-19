@@ -205,3 +205,14 @@ export interface StockRedeemed_I extends StockDetailWithDates {
   finalStock: number;            // 赎回时的金额（人民币）
   finalProfit: number;         // 最终收益
 }
+
+/** 机构总计表格数据结构 */
+export interface InstitutionTotalTableRow {
+  date: string;                 // 日期
+  支付宝: number;               // 支付宝总计
+  网商银行: number;             // 网商银行总计
+  工行银行: number;             // 工行银行总计
+  腾讯自选股: number;           // 腾讯自选股总计
+  招商银行: number;             // 招商银行总计
+  总计: number;                 // 总资产
+}

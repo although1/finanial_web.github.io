@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { processFinancialData } from '../data/dataProcessor';
-import { ProcessedData } from '../data/dataTypes';
+import { ProcessedData, InstitutionTotalTableRow } from '../data/dataTypes';
 import { mockData } from '../data/mockData';
 import { TrendChart } from './charts/TrendChart';
 import { DetailedBarChart } from './charts/DetailedBarChart';
@@ -11,6 +11,7 @@ import { InvestmentChart } from './charts/InvestmentChart';
 import { ChartContainer } from './common/ChartContainer';
 import { LoadingIndicator } from './common/LoadingIndicator';
 import { SummaryTable } from './common/SummaryTable';
+import { InstitutionTotalTable } from './common/InstitutionTotalTable';
 
 type ChartType = 'monthly' | 'usd' | 'cny'| 'fund'| 'stock';
 
@@ -23,6 +24,7 @@ const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [showAllDates, setShowAllDates] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [institutionTotalData, setInstitutionTotalData] = useState<InstitutionTotalTableRow[]>([]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -74,6 +76,19 @@ const Dashboard: React.FC = () => {
     try {
       const processedData = processFinancialData(mockData);
       setData(processedData);
+      
+      // 处理机构总计数据
+      const institutionTotals: InstitutionTotalTableRow[] = mockData.map(item => ({
+        date: item.date,
+        支付宝: item.data.支付宝?.total || 0,
+        网商银行: item.data.网商银行?.total || 0,
+        工行银行: item.data.工商银行?.total || 0,
+        腾讯自选股: item.data.腾讯自选股?.total || 0,
+        招商银行: item.data.招商银行?.total || 0,
+        总计: item.data.grand_total
+      }));
+      setInstitutionTotalData(institutionTotals);
+
       // 找到最新日期并设置为默认选中日期
       if (mockData.length > 0) {
         const latestDate = mockData.reduce((latest, curr) => 
@@ -181,6 +196,16 @@ const Dashboard: React.FC = () => {
             />
           </ChartContainer>
           
+          <ChartContainer 
+            title="机构资产总计表"
+            description="各金融机构资产总额统计。"
+          >
+            <InstitutionTotalTable 
+              data={institutionTotalData}
+              showAllDates={showAllDates}
+            />
+          </ChartContainer>
+
           <div className="mt-4 bg-white rounded-lg shadow-md p-4">
             <h3 className="text-lg font-semibold mb-3">收益率与攒钱分析</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-6">
