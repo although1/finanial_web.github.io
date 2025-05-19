@@ -1,6 +1,6 @@
 import { USDDetailWithDates } from './dataTypes';
 
-export const DEFAULT_DATE = '2025/05/18';
+export const DEFAULT_DATE = '2025/05/20';
 
 export const USDData: USDDetailWithDates[] = [
   {
@@ -10,12 +10,12 @@ export const USDData: USDDetailWithDates[] = [
     "buyRate": 720.8,
     "initialRMB": 72289.97,
     "purchaseDate": "2024/08/01",
-    "currentUSD": 10399.41,
-    "currentRate": 720.22,
-    "currentRMB": 74898.63,
-    "profit": 2608.66,
-    "holdingDays": 290,
-    "annualizedReturn": 454.19
+    "currentUSD": 10401.35,
+    "currentRate": 720.21,
+    "currentRMB": 74911.56,
+    "profit": 2621.59,
+    "holdingDays": 292,
+    "annualizedReturn": 453.31
   },
   {
     "app": "工商银行",
@@ -24,12 +24,12 @@ export const USDData: USDDetailWithDates[] = [
     "buyRate": 720.8,
     "initialRMB": 380.44,
     "purchaseDate": "2024/08/01",
-    "currentUSD": 54.34,
-    "currentRate": 720.22,
-    "currentRMB": 391.37,
-    "profit": 10.93,
-    "holdingDays": 290,
-    "annualizedReturn": 361.6
+    "currentUSD": 54.39,
+    "currentRate": 720.21,
+    "currentRMB": 391.72,
+    "profit": 11.28,
+    "holdingDays": 292,
+    "annualizedReturn": 370.62
   },
   {
     "app": "工商银行",
@@ -39,11 +39,11 @@ export const USDData: USDDetailWithDates[] = [
     "initialRMB": 14492,
     "purchaseDate": "2024/04/02",
     "currentUSD": 2050.78,
-    "currentRate": 720.22,
-    "currentRMB": 14770.13,
-    "profit": 278.13,
-    "holdingDays": 411,
-    "annualizedReturn": 170.44
+    "currentRate": 720.21,
+    "currentRMB": 14769.92,
+    "profit": 277.92,
+    "holdingDays": 413,
+    "annualizedReturn": 169.49
   },
   {
     "app": "招商银行",
@@ -52,12 +52,12 @@ export const USDData: USDDetailWithDates[] = [
     "buyRate": 715.05,
     "initialRMB": 7150.5,
     "purchaseDate": "2024/08/21",
-    "currentUSD": 1029.56,
-    "currentRate": 719.94,
-    "currentRMB": 7412.21,
-    "profit": 261.71,
-    "holdingDays": 270,
-    "annualizedReturn": 494.78
+    "currentUSD": 1029.66,
+    "currentRate": 719.98,
+    "currentRMB": 7413.35,
+    "profit": 262.85,
+    "holdingDays": 272,
+    "annualizedReturn": 493.28
   },
   {
     "app": "招商银行",
@@ -66,11 +66,11 @@ export const USDData: USDDetailWithDates[] = [
     "buyRate": 715.97,
     "initialRMB": 14319.4,
     "purchaseDate": "2024/08/20",
-    "currentUSD": 2061.62,
-    "currentRate": 719.94,
-    "currentRMB": 14842.43,
-    "profit": 523.03,
-    "holdingDays": 271,
-    "annualizedReturn": 491.95
+    "currentUSD": 2061.81,
+    "currentRate": 719.98,
+    "currentRMB": 14844.62,
+    "profit": 525.22,
+    "holdingDays": 273,
+    "annualizedReturn": 490.4
   }
 ];

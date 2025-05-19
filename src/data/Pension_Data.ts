@@ -1,6 +1,6 @@
 import { PensionDetail } from './dataTypes';
 
-export const DEFAULT_DATE = '2025/05/18';
+export const DEFAULT_DATE = '2025/05/20';
 
 export const PensionData: PensionDetail[] = [
   {
